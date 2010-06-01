@@ -1,0 +1,96 @@
+
+kdwm: Karl's Declarative Window Manager
+=======================================
+
+This is what is now referred to as a "manual tiling window manager". However,
+unlike any window manager I have seen, as much of the tile management as
+possible will be done in a declarative style.
+
+The program and configuration will be in Haskell.
+
+Only click-to-focus will be supported. At all times the focus belongs to either
+one tile of the current workspace or to one floating window of the current
+workspace.
+
+
+The Declaration Monad
+---------------------
+
+Declarations are made in a monad which gives them access to certain information
+that is only known once the program begins initialization, such as the height
+and width of the screen and of the characters used to draw statusbars.
+
+
+Things You Can Declare
+----------------------
+
+table: a grid of rows and columns, where each row and each column has a
+specified size.
+
+tile: a named, rectangular area which spans some positive, natural number of
+rows and columns of a table instance.
+
+layout: an instance of a table and a set of non-overlapping tiles on that
+table instance.
+
+statusbar: a named instance of a layout (whose sizes are characters), with at
+most one program name, argument list, and update frequency per tile.
+
+workspace: a named set of windows with an instance of a layout (whose sizes are
+pixels) in which each window is either floating or is in a list of windows
+which the workspace associates with one of its layout's tiles. A workspace may
+also have a statusbar.
+
+attraction: a property of a tile instance of a workspace which causes new
+windows having certain characteristics to be in that tile.
+
+
+Things You Can Configure
+------------------------
+
+What modifier key should allow the left and right mouse buttons to be used
+to drag and resize floating windows.
+
+What keys should cause what commands to be executed.
+
+
+Runtime Events
+--------------
+
+Certain events may have commands associated with them:
+
+Ready: the window manager is done initializing.
+
+Window created.
+
+Window destroyed.
+
+Current workspace changed.
+
+Focus changed.
+
+
+Runtime Commands
+----------------
+
+Move the focus in a particular direction.
+
+Move the focus to a tile by name (with a Boolean flag to determine if this
+should fail if the named tile is not on the current workspace).
+
+Change the current workspace.
+
+Move the focus to a window by a query on its properties. The window may be
+floating or in a tile, in which case it is brought to the front of the tile.
+
+
+Runtime Information
+-------------------
+
+The workspaces and their windows, including the position and order of floating
+windows.
+
+The current workspace.
+
+The focus.
+
