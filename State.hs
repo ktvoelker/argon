@@ -1,6 +1,7 @@
 
 module State where
 
+import qualified Data.Map as Map
 import Data.Queue.Class
 import Data.Queue.PQueue
 import Data.Queue.Queue
@@ -38,4 +39,10 @@ data SSpace = SSpace
   , floats :: Stack Window
   , status :: Assoc Name String
   } deriving (Show)
+
+emptyState :: State
+emptyState = State
+  { spaces = Map.empty
+  , timers = empty
+  }
 
