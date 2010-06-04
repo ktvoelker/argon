@@ -16,6 +16,7 @@ import qualified Declare.Layout    as DL
 import qualified Declare.Statusbar as DS
 import qualified Declare.Workspace as DW
 
+import qualified Data.Map as Map
 import Graphics.X11 hiding (EventType)
 
 class HasName a where
@@ -70,7 +71,7 @@ emptyConfig :: Config
 emptyConfig = Config
   { spaces   = []
   , floatMod = mod1Mask
-  , keys     = []
-  , events   = []
+  , keys     = Map.empty
+  , events   = Map.empty
   }
 

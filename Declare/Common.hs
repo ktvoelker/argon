@@ -1,11 +1,10 @@
 
-module Declare.Common where
+module Declare.Common (
+    module Declare.Common,
+    module Types
+  ) where
 
-type Nat = Int
-
-type Name = String
-
-type Assoc k v = [(k, v)]
+import Types
 
 data Table = Table
   { rows :: [Nat]
