@@ -13,6 +13,6 @@ data Exec = Exec
 data Statusbar = Statusbar
   { name   :: Name
   , layout :: Layout
-  , execs  :: Assoc Name Exec
+  , execs  :: Map Name Exec
   } deriving (Eq, Ord, Show)
 

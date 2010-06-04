@@ -1,11 +1,6 @@
 
 module State where
 
-import qualified Data.Map as Map
-import Data.Queue.Class
-import Data.Queue.PQueue
-import Data.Queue.Queue
-import Data.Queue.Stack
 import Graphics.X11
 
 import Types
@@ -22,27 +17,21 @@ instance Show Timer where
   showsPrec n (Timer t _ x) =
     ("Timer " ++) . showsPrec n t . (" " ++) . showsPrec n x
 
-instance (Show e) => Show (Queue e) where
-  showsPrec n q = ("fromList " ++) . showsPrec n (toList q)
-
-instance (Show e) => Show (Stack e) where
-  showsPrec n q = ("fromList " ++) . showsPrec n (toList q)
-
 data State = State
-  { spaces :: Assoc Name SSpace
+  { spaces :: Map Name SSpace
   , timers :: PQueue Timer
   } deriving (Show)
 
 data SSpace = SSpace
   { focus  :: Either Window Name
-  , tiles  :: Assoc Name (Queue Window)
+  , tiles  :: Map Name (Queue Window)
   , floats :: Stack Window
-  , status :: Assoc Name String
+  , status :: Map Name String
   } deriving (Show)
 
 emptyState :: State
 emptyState = State
-  { spaces = Map.empty
+  { spaces = empty
   , timers = empty
   }
 

@@ -15,6 +15,6 @@ data Workspace = Workspace
   { name     :: Name
   , layout   :: Layout
   , status   :: Statusbar
-  , attracts :: Assoc Name [Attract]
+  , attracts :: Map (Maybe Name) [Attract]
   } deriving (Eq, Ord, Show)
 

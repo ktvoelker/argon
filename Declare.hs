@@ -46,8 +46,8 @@ data EventType =
 data Config = Config
   { spaces   :: [Workspace]
   , floatMod :: Modifier
-  , keys     :: Assoc (Modifier, KeySym) Command
-  , events   :: Assoc EventType Command
+  , keys     :: Map (Modifier, KeySym) Command
+  , events   :: Map EventType Command
   } deriving (Eq, Ord, Show)
 
 data Dir = Up | Down | Left | Right deriving (Enum, Eq, Ord, Show)
