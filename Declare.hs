@@ -4,7 +4,8 @@ module Declare (
     module Declare.Common,
     module Declare.Layout,
     module Declare.Statusbar,
-    module Declare.Workspace
+    module Declare.Workspace,
+    module Graphics.X11
   ) where
 
 import Declare.Common
@@ -14,6 +15,8 @@ import Declare.Workspace hiding (name, layout)
 import qualified Declare.Layout    as DL
 import qualified Declare.Statusbar as DS
 import qualified Declare.Workspace as DW
+
+import Graphics.X11 hiding (EventType)
 
 class HasName a where
   name   :: a -> Name
@@ -35,4 +38,39 @@ instance HasName Workspace where
 
 instance HasLayout Workspace where
   layout = DW.layout
+
+data EventType =
+  EReady | ECreate | EDestroy | ESpace | EFocus deriving (Enum, Eq, Ord, Show)
+
+data Config = Config
+  { spaces   :: [Workspace]
+  , floatMod :: Modifier
+  , keys     :: Assoc (Modifier, KeySym) Command
+  , events   :: Assoc EventType Command
+  } deriving (Eq, Ord, Show)
+
+data Dir = Up | Down | Left | Right deriving (Enum, Eq, Ord, Show)
+
+data Command =
+    CFocusDir   Dir
+  | CFocusName  Name Bool
+  | CFocusQuery Attract
+  | CSpace      Name
+  | CSeq        [Command]
+  deriving (Eq, Ord, Show)
+
+data XInfo = XInfo
+  { width      :: Nat
+  , height     :: Nat
+  , fontWidth  :: Nat
+  , fontHeight :: Nat
+  } deriving (Eq, Ord, Show)
+
+emptyConfig :: Config
+emptyConfig = Config
+  { spaces   = []
+  , floatMod = mod1Mask
+  , keys     = []
+  , events   = []
+  }
 

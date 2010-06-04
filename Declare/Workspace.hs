@@ -6,9 +6,9 @@ import Declare.Layout    (Layout)
 import Declare.Statusbar (Statusbar)
 
 data Attract = Attract
-  { wm_name  :: Maybe String
-  , wm_class :: Maybe String
-  , wm_trans :: Maybe Bool
+  { xName  :: Maybe String
+  , xClass :: Maybe String
+  , xTrans :: Maybe Bool
   } deriving (Eq, Ord, Show)
 
 data Workspace = Workspace

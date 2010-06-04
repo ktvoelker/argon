@@ -4,7 +4,7 @@ OPTIONS=-fglasgow-exts -XDisambiguateRecordFields -XRecordWildCards
 
 all: kdwm
 
-kdwm: *.hs
+kdwm: *.hs */*.hs
 	ghc -fglasgow-exts -o kdwm --make Main.hs
 
 clean:

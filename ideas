@@ -83,6 +83,8 @@ Change the current workspace.
 Move the focus to a window by a query on its properties. The window may be
 floating or in a tile, in which case it is brought to the front of the tile.
 
+Move the focus to the next or previous window in the current tile.
+
 
 Runtime Information
 -------------------
