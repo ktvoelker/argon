@@ -4,6 +4,7 @@ module Action where
 import Graphics.X11
 
 import Types
+import X11
 
 data Action =
     AHide  Window
@@ -12,6 +13,6 @@ data Action =
   deriving (Eq, Ord, Show)
 
 -- TODO
-act :: Action -> IO ()
+act :: Action -> X11 ()
 act _ = return ()
 

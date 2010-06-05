@@ -8,11 +8,16 @@ import Event
 import Info
 import Init
 import State
+import X11
 
-main = do
+xMain :: X11 ()
+xMain = do
   xi <- getXInfo
   initEvents
   let config' = runInfo config xi in do
-    print config'
+    liftIO $ print config'
     eventLoop config' emptyState
+
+main :: IO ()
+main = runX11 xMain ":0.0"
 
