@@ -1,6 +1,6 @@
 
 module X11 (
-    X11, liftIO, display, runX11
+    X11, liftIO, liftM, liftM2, display, dispScr, withDispScr, runX11
   ) where
 
 import Control.Monad.Reader
@@ -14,6 +14,12 @@ data X11Env = X11Env
 
 display :: (MonadReader X11Env m) => m Display
 display = ask >>= return . xDisplay
+
+dispScr :: (MonadReader X11Env m) => m (Display, ScreenNumber)
+dispScr = display >>= \d -> return (d, defaultScreen d)
+
+withDispScr :: (MonadReader X11Env m) => (Display -> ScreenNumber -> m a) -> m a
+withDispScr f = dispScr >>= uncurry f
 
 runX11 :: X11 a -> String -> IO a
 runX11 x11 dStr = do

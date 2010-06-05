@@ -5,14 +5,23 @@ import Declare
 import Event
 import X11
 
--- TODO
-getXInfo :: X11 XInfo
-getXInfo = return (XInfo 0 0 0 0)
+import Graphics.X11
+import Graphics.X11.Xlib.Extras
 
--- TODO
--- Add standard event handlers to all existing windows.
--- Also add special event handlers so that we find out about new windows and
--- add the standard handlers to them.
+getXInfo :: X11 XInfo
+getXInfo = do
+  (d, s) <- dispScr
+  return XInfo
+    { width      = fromIntegral $ displayWidth d s
+    , height     = fromIntegral $ displayHeight d s
+    , fontWidth  = 0
+    , fontHeight = 0
+    }
+
 initEvents :: X11 ()
-initEvents = return ()
+initEvents = do
+  root <- dispScr >>= liftIO . uncurry rootWindow
+  addRootEvents root
+  (_, _, wins) <- display >>= liftIO . flip queryTree root
+  mapM_ addStdEvents wins
 
