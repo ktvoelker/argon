@@ -1,12 +1,15 @@
 
 module Event where
 
+import Action
 import Declare
 import State
 import X11
 
 import Data.Bits
 import Foreign.Marshal.Alloc
+import Graphics.X11
+import Graphics.X11.Xlib.Extras
 
 addStdEvents :: Window -> X11 ()
 addStdEvents win = do
@@ -21,25 +24,17 @@ addRootEvents win = do
   liftIO $ selectInput disp win
     (resizeRedirectMask .|. substructureRedirectMask .|. substructureNotifyMask)
 
-eventLoop :: Config -> State -> X11 ()
-eventLoop conf state = do
-  ptr <- mallocBytes 96
-  until (???) handler (???)
-  free ptr
+eventLoop :: Config -> World -> X11 ()
+eventLoop conf world = do
+  ptr <- lift $ mallocBytes 96
+  runX11State world $
+    sequence_ $ map actX11State $ repeat $ safe ptr $ handler conf
+  lift $ free ptr
+
+safe :: XEventPtr -> (Event -> X11State a) -> X11State a
+safe ptr = ((lift . lift . lift) (getEvent ptr) >>=)
 
 -- TODO
--- Add another monad, the X11State monad, which is:
---  type X11State a = StateT State X11 a
--- Add another constructor to the State type: Quit.
--- Make the event handler use this monad between the malloc and free.
---   It will loop until the state is Quit.
-
-{-
-loop :: Display -> (Display -> XEventPtr -> IO ()) -> IO ()
-loop disp h = allocaXEvent
-  (sequence_ . repeat . (\p -> nextEvent disp p >> h disp p))
-
-safeHandler :: (Display -> Event -> IO ()) -> Display -> XEventPtr -> IO ()
-safeHandler h disp ptr = getEvent ptr >>= h disp
--}
+handler :: Config -> Event -> X11State [Action]
+handler _ _ = quitState
 

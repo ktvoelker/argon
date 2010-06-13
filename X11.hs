@@ -1,6 +1,7 @@
 
 module X11 (
-    X11, liftIO, liftM, liftM2, display, dispScr, withDispScr, runX11
+    lift, liftIO, liftM, liftM2,
+    X11, X11Env, display, dispScr, withDispScr, runX11
   ) where
 
 import Control.Monad.Reader

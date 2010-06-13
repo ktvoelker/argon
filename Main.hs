@@ -1,7 +1,6 @@
 
 module Main (main) where
 
-import Action
 import Config
 import Declare
 import Event
@@ -16,7 +15,7 @@ xMain = do
   initEvents
   let config' = runInfo config xi in do
     liftIO $ print config'
-    eventLoop config' emptyState
+    eventLoop config' $ emptyWorld config'
 
 main :: IO ()
 main = runX11 xMain ":0.0"

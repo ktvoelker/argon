@@ -9,7 +9,7 @@ module Types (
   ) where
 
 import Data.Map hiding (
-    keys, null, empty, fromList, insert, singleton, size, toList
+    keys, null, empty, fromList, insert, singleton, size, toList, map
   )
 import Data.Queue.Class hiding (
     null, delete, empty, fromList, insert, singleton, size, toList
