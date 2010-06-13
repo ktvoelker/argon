@@ -1,0 +1,23 @@
+
+Support for screen size changes
+===============================
+
+Change the X11 monad to be a newtype around a StateT. Allow it to be
+parameterized on both the state and result types.
+
+Inside X11, in the event loop, keep a pair of the Config and the X11Info.
+
+Inside X11, during Config generation, keep a pair of the previous Config (as
+a Maybe) and the X11Info.
+
+Provide an interface allowing the Config (or Maybe Config) and X11Info to be
+read from the X11.
+
+Provide an interface that allows the X11Info to be changed, at which time the
+Config is regenerated.
+
+Add a field to the Config which contains a mapping from tile names to tile
+names (plus floating as the Nothing tile), where each mapping indicates that
+windows should be moved from the key tile (under the previous Config) to the
+value tile (under the new Config).
+
