@@ -50,7 +50,7 @@ data Config = Config
   , events   :: Map EventType Command
   } deriving (Eq, Ord, Show)
 
-data Dir = Up | Down | Left | Right deriving (Enum, Eq, Ord, Show)
+data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
 
 data Command =
     CFocusDir   Dir

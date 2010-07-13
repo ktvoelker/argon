@@ -69,6 +69,28 @@ instance (Ord e) => Collection (PQueue e) where
   singleton = DQ.singleton
   size = DQ.size
   toList = DQ.toList
+ 
+instance (Ord e) => Collection (Queue e) where
+  type Entry (Queue e) = e
+  type Key (Queue e) = e
+  null = DQ.null
+  empty = DQ.empty
+  fromList = DQ.fromList
+  insert = DQ.insert
+  singleton = DQ.singleton
+  size = DQ.size
+  toList = DQ.toList
+ 
+instance (Ord e) => Collection (Stack e) where
+  type Entry (Stack e) = e
+  type Key (Stack e) = e
+  null = DQ.null
+  empty = DQ.empty
+  fromList = DQ.fromList
+  insert = DQ.insert
+  singleton = DQ.singleton
+  size = DQ.size
+  toList = DQ.toList
 
 instance (Show e) => Show (Queue e) where
   showsPrec n q = ("fromList " ++) . showsPrec n (DQ.toList q)

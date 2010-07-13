@@ -32,31 +32,12 @@ quitState = fail "quit"
 runX11State :: World -> X11State a -> X11 (Maybe a, World)
 runX11State world = flip runStateT world . runMaybeT
 
--- Find timers in the World that have expired and add their actions to the list
--- of actions to perform.
--- TODO
-extractTimers :: X11State [Action] -> X11State [Action]
-extractTimers = id
-
--- Execute the actions, including any expired timers in the World.
+-- Execute the actions.
 actX11State :: X11State [Action] -> X11State ()
-actX11State = (>>= lift . lift . mapM_ act) . extractTimers
-
-data Timer = Timer Nat (X11State [Action]) (Maybe String)
-
-instance Ord Timer where
-  compare (Timer a _ _) (Timer b _ _) = compare a b
-
-instance Eq Timer where
-  a == b = compare a b == EQ
-
-instance Show Timer where
-  showsPrec n (Timer t _ x) =
-    ("Timer " ++) . showsPrec n t . (" " ++) . showsPrec n x
+actX11State = (>>= lift . lift . mapM_ act)
 
 data World = World
   { wSpaces :: Map Name WSpace
-  , wTimers :: PQueue Timer
   , wFocus  :: Name
   } deriving (Show)
 
@@ -67,11 +48,20 @@ data WSpace = WSpace
   , wsStatus :: Map Name String
   } deriving (Show)
 
--- TODO
 emptyWorld :: Config -> World
-emptyWorld _ = World
-  { wSpaces = empty
-  , wTimers = empty
-  , wFocus  = ""
+emptyWorld c = World
+  { wSpaces = fromList $ map emptyWSpace $ spaces c
+  , wFocus  = name $ head $ spaces c
   }
+
+emptyWSpace :: Workspace -> (Name, WSpace)
+emptyWSpace w = (name w, WSpace
+  { wsFocus  = Right $ name $ head $ tiles $ layout w
+  , wsTiles  = emptyLayout empty w
+  , wsFloats = empty
+  , wsStatus = emptyLayout "" $ status w
+  })
+
+emptyLayout :: (HasLayout a) => b -> a -> Map Name b
+emptyLayout e x = fromList $ map (, e) $ map name $ tiles $ layout x
 

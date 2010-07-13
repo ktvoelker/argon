@@ -2,12 +2,10 @@
 TODO
 ====
 
-Implement State.extractTimers
-
-Implement State.emptyWorld
-
 Implement Event.handler
 
 Implement Action.act
 
+Implement specific lift functions for each monad transition that needs to
+occur. Implement all of them in terms of liftIO for better efficiency.
 

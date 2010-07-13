@@ -1,11 +1,16 @@
 
-OPTIONS=-fglasgow-exts -XDisambiguateRecordFields -XRecordWildCards
+OPTIONS=                     \
+  -fglasgow-exts             \
+  -XDisambiguateRecordFields \
+  -XRecordWildCards          \
+  -XTupleSections
+
 .PHONY: all clean
 
 all: kdwm
 
 kdwm: *.hs */*.hs
-	ghc -fglasgow-exts -o kdwm --make Main.hs
+	ghc $(OPTIONS) -o kdwm --make Main.hs
 
 clean:
 	-rm */*.hi */*.o *.hi *.o kdwm
