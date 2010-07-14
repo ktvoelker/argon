@@ -2,10 +2,19 @@
 TODO
 ====
 
-Implement Event.handler
+Implement Action.act.
 
-Implement Action.act
+Implement resizeRequestHandler, mapNotifyHandler, and mapRequestHandler
+in Event so that new windows go where they are attracted (or to the focus,
+by default).
+
+Implement keyReleaseHandler to execute defined commands.
+
+Implement buttonPressHandler to set the focus and pass the button press
+through.
 
 Implement specific lift functions for each monad transition that needs to
 occur. Implement all of them in terms of liftIO for better efficiency.
+
+Implement user-defined event-handling support.
 
