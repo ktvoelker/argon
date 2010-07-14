@@ -3,13 +3,11 @@ module State where
 
 import Action
 import Declare
-import Types
 import X11
 
 import Control.Monad.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
-import Graphics.X11
 
 -- The MaybeT determines whether or not the user has asked the program to
 -- terminate.

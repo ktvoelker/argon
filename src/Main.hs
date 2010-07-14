@@ -2,7 +2,6 @@
 module Main (main) where
 
 import Config
-import Declare
 import Event
 import Info
 import Init
