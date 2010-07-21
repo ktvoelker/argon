@@ -76,6 +76,8 @@ mapRequestHandler c e = do
   return [a]
   where
     win = ev_window e
-    float sn = return $ AShow win (0, 0) (100, 100) -- TODO
-    tile sn tn = AShow win (100, 100) (100, 100) -- TODO
+    -- TODO use the requested size of the window
+    float sn = return $ AShow win (0, 0) (100, 100)
+    -- TODO use the position and size of the tile
+    tile sn tn = AShow win (100, 100) (100, 100)
 
