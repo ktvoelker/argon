@@ -2,9 +2,13 @@
 TODO
 ====
 
-Implement resizeRequestHandler and mapRequestHandler
-in Event so that new windows go where they are attracted (or to the focus,
-by default).
+Implement Attract.attract which determines where to place a new window.
+
+Finish mapRequestHandler, using attract. Note that if attract determines that
+the window should be floating, the window's requested size must be
+determined.
+
+Implement resizeRequestHandler.
 
 Implement keyReleaseHandler to execute defined commands.
 
