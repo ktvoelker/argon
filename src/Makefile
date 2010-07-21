@@ -12,7 +12,8 @@ WARNINGS=                  \
   -fno-warn-orphans        \
   -fno-warn-unused-binds   \
   -fno-warn-unused-matches \
-  -fno-warn-unused-do-bind
+  -fno-warn-unused-do-bind \
+  -fno-warn-name-shadowing
 
 .PHONY: all clean
 

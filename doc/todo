@@ -2,6 +2,10 @@
 TODO
 ====
 
+Once the config is loaded, transform it to use maps instead of lists.
+
+  Rename the existing Config types to have names prefixed with Input.
+
 Implement Attract.attract which determines where to place a new window.
 
 Finish mapRequestHandler, using attract. Note that if attract determines that

@@ -2,14 +2,17 @@
 module Event where
 
 import Action
+import Attract
 import Declare
 import State
 import X11
 
+import Control.Applicative
 import Data.Bits
 import Foreign.Marshal.Alloc
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
+import Prelude hiding (span, filter)
 
 addStdEvents :: Window -> X11 ()
 addStdEvents win = do
@@ -63,7 +66,16 @@ resizeRequestHandler = defaultHandler
 
 mapRequestHandler c e = do
   wo <- getWorld
-  return [AShow win (0, 0) (0, 0)] -- TODO
+  (wSpaceName, wTileName) <- attract win
+  a <- case wTileName of
+    Nothing        -> float wSpaceName
+    Just wTileName -> return $ tile wSpaceName wTileName
+  return [a]
   where
     win = ev_window e
+    float sn = return $ AShow win (0, 0) (100, 100) -- TODO
+    tile sn tn = AShow win (pos t) (span t)
+      where
+        t = head $ filter ((== tn) . name) $
+            pure (spaces c ! sn) <**> layout <**> tiles
 
