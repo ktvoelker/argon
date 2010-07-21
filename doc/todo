@@ -2,15 +2,11 @@
 TODO
 ====
 
-Once the config is loaded, transform it to use maps instead of lists.
-
-  Rename the existing Config types to have names prefixed with Input.
-
-Implement Attract.attract which determines where to place a new window.
-
 Finish mapRequestHandler, using attract. Note that if attract determines that
 the window should be floating, the window's requested size must be
 determined.
+
+Implement Attract.attract which determines where to place a new window.
 
 Implement resizeRequestHandler.
 
@@ -23,4 +19,6 @@ Implement specific lift functions for each monad transition that needs to
 occur. Implement all of them in terms of liftIO for better efficiency.
 
 Implement user-defined event-handling support.
+
+Write a Config module that reads a file containing a simpler config format.
 

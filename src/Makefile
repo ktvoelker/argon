@@ -10,6 +10,7 @@ WARNINGS=                  \
   -Werror                  \
   -Wall                    \
   -fno-warn-orphans        \
+  -fno-warn-unused-imports \
   -fno-warn-unused-binds   \
   -fno-warn-unused-matches \
   -fno-warn-unused-do-bind \

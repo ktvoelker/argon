@@ -1,20 +1,15 @@
 
 module Declare.Workspace where
 
-import Declare.Common
+import Declare.Attract
 import Declare.Layout    (Layout)
 import Declare.Statusbar (Statusbar)
-
-data Attract = Attract
-  { xName  :: Maybe String
-  , xClass :: Maybe String
-  , xTrans :: Maybe Bool
-  } deriving (Eq, Ord, Show)
+import Types
 
 data Workspace = Workspace
-  { name     :: Name
-  , layout   :: Layout
-  , status   :: Statusbar
-  , attracts :: Map (Maybe Name) [Attract]
+  { layout    :: Layout
+  , status    :: Statusbar
+  , attracts  :: [(Attract, Maybe Name)]
+  , startTile :: Maybe Name
   } deriving (Eq, Ord, Show)
 

@@ -4,6 +4,7 @@ module State where
 import Action
 import Declare
 import Fields
+import Types
 import X11
 
 import Control.Monad.Maybe
@@ -41,7 +42,7 @@ data World = World
   } deriving (Show)
 
 data WSpace = WSpace
-  { wsFocus  :: Either Window Name
+  { wsFocus  :: Either (Maybe Window) Name
   , wsTiles  :: Map Name (Queue Window)
   , wsFloats :: Stack Window
   , wsStatus :: Map Name String
@@ -57,18 +58,18 @@ modifyFocusSpace f =
 
 emptyWorld :: Config -> World
 emptyWorld c = World
-  { wSpaces = fromList $ map emptyWSpace $ spaces c
-  , wFocus  = name $ head $ spaces c
+  { wSpaces = fmap emptyWSpace $ spaces c
+  , wFocus  = startSpace c
   }
 
-emptyWSpace :: Workspace -> (Name, WSpace)
-emptyWSpace w = (name w, WSpace
-  { wsFocus  = Right $ name $ head $ tiles $ layout w
+emptyWSpace :: Workspace -> WSpace
+emptyWSpace w = WSpace
+  { wsFocus  = maybe (Left Nothing) Right $ startTile w
   , wsTiles  = emptyLayout empty w
   , wsFloats = empty
   , wsStatus = emptyLayout "" $ status w
-  })
+  }
 
 emptyLayout :: (HasLayout a) => b -> a -> Map Name b
-emptyLayout e x = fromList $ map (, e) $ map name $ tiles $ layout x
+emptyLayout e x = fmap (const e) $ tiles $ layout x
 

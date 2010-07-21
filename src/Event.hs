@@ -7,7 +7,6 @@ import Declare
 import State
 import X11
 
-import Control.Applicative
 import Data.Bits
 import Foreign.Marshal.Alloc
 import Graphics.X11
@@ -64,6 +63,10 @@ buttonPressHandler = defaultHandler
 -- TODO ignore except for floating windows
 resizeRequestHandler = defaultHandler
 
+-- TODO add the window to the appropriate window collection in the World.
+-- TODO if the window wasn't attracted away from the focus, tell X to focus it
+--   (This requires implementing a new Action constructor, AFocus.)
+-- TODO if the window is floating and focused, record the new focus.
 mapRequestHandler c e = do
   wo <- getWorld
   (wSpaceName, wTileName) <- attract win
@@ -74,8 +77,5 @@ mapRequestHandler c e = do
   where
     win = ev_window e
     float sn = return $ AShow win (0, 0) (100, 100) -- TODO
-    tile sn tn = AShow win (pos t) (span t)
-      where
-        t = head $ filter ((== tn) . name) $
-            pure (spaces c ! sn) <**> layout <**> tiles
+    tile sn tn = AShow win (100, 100) (100, 100) -- TODO
 
