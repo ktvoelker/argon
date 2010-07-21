@@ -2,7 +2,7 @@
 TODO
 ====
 
-Implement resizeRequestHandler, mapNotifyHandler, and mapRequestHandler
+Implement resizeRequestHandler and mapRequestHandler
 in Event so that new windows go where they are attracted (or to the focus,
 by default).
 

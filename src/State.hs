@@ -3,6 +3,7 @@ module State where
 
 import Action
 import Declare
+import Fields
 import X11
 
 import Control.Monad.Maybe
@@ -45,6 +46,14 @@ data WSpace = WSpace
   , wsFloats :: Stack Window
   , wsStatus :: Map Name String
   } deriving (Show)
+
+wFocusSpace :: World -> WSpace
+wFocusSpace w = wSpaces w ! wFocus w
+
+modifyFocusSpace :: (WSpace -> WSpace) -> X11State ()
+modifyFocusSpace f =
+  modifyWorld (\w ->
+    $(upd 'wSpaces) (insert (wFocus w, f $ wFocusSpace w)) w)
 
 emptyWorld :: Config -> World
 emptyWorld c = World

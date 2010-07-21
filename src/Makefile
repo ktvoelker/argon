@@ -3,12 +3,15 @@ OPTIONS=                     \
   -fglasgow-exts             \
   -XDisambiguateRecordFields \
   -XRecordWildCards          \
-  -XTupleSections
+  -XTupleSections            \
+  -XTemplateHaskell
 
-WARNINGS=           \
-  -Werror           \
-  -Wall             \
-  -fno-warn-orphans \
+WARNINGS=                  \
+  -Werror                  \
+  -Wall                    \
+  -fno-warn-orphans        \
+  -fno-warn-unused-binds   \
+  -fno-warn-unused-matches \
   -fno-warn-unused-do-bind
 
 .PHONY: all clean

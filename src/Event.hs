@@ -42,12 +42,12 @@ handlers = fromList
   [ (keyRelease,    keyReleaseHandler)
   , (buttonPress,   buttonPressHandler)
   , (resizeRequest, resizeRequestHandler)
-  , (mapNotify,     mapNotifyHandler)
   , (mapRequest,    mapRequestHandler)
   ]
 
-handler, defaultHandler, keyReleaseHandler, buttonPressHandler,
-  resizeRequestHandler, mapNotifyHandler, mapRequestHandler
+handler, defaultHandler,
+  keyReleaseHandler, buttonPressHandler,
+  resizeRequestHandler, mapRequestHandler
   :: Config -> Event -> X11State [Action]
 
 handler c e = findWithDefault defaultHandler (ev_event_type e) handlers c e
@@ -58,9 +58,12 @@ keyReleaseHandler = defaultHandler
 
 buttonPressHandler = defaultHandler
 
+-- TODO ignore except for floating windows
 resizeRequestHandler = defaultHandler
 
-mapNotifyHandler = defaultHandler
-
-mapRequestHandler = defaultHandler
+mapRequestHandler c e = do
+  wo <- getWorld
+  return [AShow win (0, 0) (0, 0)] -- TODO
+  where
+    win = ev_window e
 
