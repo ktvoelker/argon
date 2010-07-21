@@ -19,7 +19,8 @@ display = ask >>= return . xDisplay
 dispScr :: (MonadReader X11Env m) => m (Display, ScreenNumber)
 dispScr = display >>= \d -> return (d, defaultScreen d)
 
-withDispScr :: (MonadReader X11Env m) => (Display -> ScreenNumber -> m a) -> m a
+withDispScr :: (MonadReader X11Env m)
+            => (Display -> ScreenNumber -> m a) -> m a
 withDispScr f = dispScr >>= uncurry f
 
 runX11 :: X11 a -> String -> IO a
