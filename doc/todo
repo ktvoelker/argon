@@ -2,7 +2,10 @@
 TODO
 ====
 
-Make a config with a couple of tiles and test the code.
+Test!
+
+Fix mapRequestHandler to properly size windows in tiles with a span greater
+than (1, 1).
 
 Implement keyReleaseHandler to execute defined commands.
 

@@ -2,12 +2,12 @@
 module Declare.Workspace where
 
 import Declare.Attract
-import Declare.Layout    (Layout)
-import Declare.Statusbar (Statusbar)
+import Declare.Layout
+import Declare.Statusbar
 import Types
 
 data Workspace = Workspace
-  { layout    :: Layout
+  { spLayout  :: Layout
   , status    :: Statusbar
   , attracts  :: [(Attract, Maybe Name)]
   , startTile :: Maybe Name

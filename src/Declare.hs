@@ -12,11 +12,8 @@ module Declare (
 import Declare.Attract
 import Declare.Common
 import Declare.Layout
-import Declare.Statusbar hiding (layout)
-import Declare.Workspace hiding (layout)
-import qualified Declare.Layout    as DL
-import qualified Declare.Statusbar as DS
-import qualified Declare.Workspace as DW
+import Declare.Statusbar
+import Declare.Workspace
 
 import qualified Data.Map as Map
 import Graphics.X11 hiding (EventType)
@@ -25,10 +22,10 @@ class HasLayout a where
   layout :: a -> Layout
 
 instance HasLayout Statusbar where
-  layout = DS.layout
+  layout = stLayout
 
 instance HasLayout Workspace where
-  layout = DW.layout
+  layout = spLayout
 
 data EventType =
   EReady | ECreate | EDestroy | ESpace | EFocus deriving (Enum, Eq, Ord, Show)

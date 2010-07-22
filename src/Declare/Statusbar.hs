@@ -2,7 +2,8 @@
 module Declare.Statusbar where
 
 import Declare.Common
-import Declare.Layout (Layout)
+import Declare.Layout
+import Types
 
 data Exec = Exec
   { prog :: String
@@ -11,8 +12,13 @@ data Exec = Exec
   } deriving (Eq, Ord, Show)
 
 data Statusbar = Statusbar
-  { name   :: Name
-  , layout :: Layout
-  , execs  :: Map Name Exec
+  { stLayout :: Layout
+  , execs    :: Map Name Exec
   } deriving (Eq, Ord, Show)
+
+emptyStatusbar :: Statusbar
+emptyStatusbar = Statusbar
+  { stLayout = emptyLayout
+  , execs    = empty
+  }
 

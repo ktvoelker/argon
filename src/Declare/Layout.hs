@@ -2,6 +2,7 @@
 module Declare.Layout where
 
 import Declare.Common
+import Types
 
 data Tile = Tile
   { pos      :: (Nat, Nat)
@@ -12,4 +13,10 @@ data Layout = Layout
   { table     :: Table
   , tiles     :: Map Name Tile
   } deriving (Eq, Ord, Show)
+
+emptyLayout :: Layout
+emptyLayout = Layout
+  { table = Table { rows = [], cols = [] }
+  , tiles = empty
+  }
 
