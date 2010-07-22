@@ -3,6 +3,7 @@ module Event where
 
 import Action
 import Attract
+import Debug
 import Declare
 import Fields
 import State
@@ -26,9 +27,12 @@ addStdEvents win = do
 addRootEvents :: Window -> X11 ()
 addRootEvents win = do
   disp <- display
-  liftIO $ selectInput disp win
-    (resizeRedirectMask .|.
-     substructureRedirectMask .|. substructureNotifyMask)
+  debug "Root is:"
+  dprint win
+  debug "Select resize redir on root"
+  liftIO $ selectInput disp win resizeRedirectMask
+  debug "Select substruct redir on root"
+  liftIO $ selectInput disp win substructureRedirectMask
 
 eventLoop :: X11 ()
 eventLoop = do
@@ -57,14 +61,14 @@ handler, defaultHandler,
 
 handler c e = findWithDefault defaultHandler (ev_event_type e) handlers c e
 
-defaultHandler _ _ = quitState
+defaultHandler _ _ = return ()
 
 keyReleaseHandler = defaultHandler
 
 buttonPressHandler = defaultHandler
 
 -- TODO for floating windows, don't ignore
-resizeRequestHandler _ _ = return ()
+resizeRequestHandler = defaultHandler
 
 mapRequestHandler c e = do
   wo <- getWorld
