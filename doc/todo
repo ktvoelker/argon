@@ -2,8 +2,6 @@
 TODO
 ====
 
-Implement Attract.attract which determines where to place a new window.
-
 Implement keyReleaseHandler to execute defined commands.
 
 Implement buttonPressHandler to set the focus and pass the button press

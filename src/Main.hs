@@ -1,7 +1,7 @@
 
 module Main (main) where
 
-import Config
+import qualified Config
 import Event
 import Info
 import Init
@@ -12,10 +12,10 @@ xMain :: X11 ()
 xMain = do
   xi <- getXInfo
   initEvents
-  let config' = runInfo config xi in do
+  let config' = runInfo Config.config xi in do
     liftIO $ print config'
-    eventLoop config' $ emptyWorld config'
+    localConfig (const config') eventLoop
 
 main :: IO ()
-main = runX11 xMain ":0.0"
+main = runX11 xMain ":0.0" $ error "Not configured"
 

@@ -30,8 +30,10 @@ addRootEvents win = do
     (resizeRedirectMask .|.
      substructureRedirectMask .|. substructureNotifyMask)
 
-eventLoop :: Config -> World -> X11 ()
-eventLoop conf world = do
+eventLoop :: X11 ()
+eventLoop = do
+  conf <- config
+  let world = emptyWorld conf
   ptr <- lift $ mallocBytes 96
   runX11State world $
     sequence_ $ repeat $ (safe ptr $ handler conf) >> runActions
