@@ -8,6 +8,7 @@ import Control.Monad.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
 import Control.Monad.Trans
+import Graphics.X11
 
 debugEnabled :: Bool
 debugEnabled = True
@@ -18,12 +19,13 @@ class Debug m where
 dprint :: (Debug m, Show a) => a -> m ()
 dprint = debug . show
 
-instance Debug IO where
-  debug = if debugEnabled then putStrLn else const $ return ()
-
 instance Debug (ReaderT X11Env IO) where
-  debug = liftIO . debug
+  debug xs =
+    if debugEnabled
+       then display >>= liftIO . flip sync False
+            >> liftIO (putStrLn xs)
+       else return ()
 
 instance Debug (MaybeT (StateT World (ReaderT X11Env IO))) where
-  debug = lift . lift . liftIO . debug
+  debug = lift . lift . debug
 

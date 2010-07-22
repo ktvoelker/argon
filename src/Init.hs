@@ -1,6 +1,7 @@
 
 module Init where
 
+import Debug
 import Declare
 import Event
 import X11
@@ -19,8 +20,13 @@ getXInfo = do
 
 initEvents :: X11 ()
 initEvents = do
+  debug "Get root window"
   root <- dispScr >>= liftIO . uncurry rootWindow
+  debug "Add root events"
   addRootEvents root
+  debug "Query window tree"
+  dprint root
   (_, _, wins) <- display >>= liftIO . flip queryTree root
+  debug "Add standard events"
   mapM_ addStdEvents wins
 
