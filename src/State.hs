@@ -33,12 +33,20 @@ runX11State :: World -> X11State a -> X11 (Maybe a, World)
 runX11State world = flip runStateT world . runMaybeT
 
 -- Execute the actions.
-actX11State :: X11State [Action] -> X11State ()
-actX11State = (>>= lift . lift . mapM_ act)
+runActions :: X11State ()
+runActions =
+  getWorld
+  >>= lift . lift . mapM_ runAction . toList . wActions
+  >>  modifyWorld (\w -> w { wActions = empty })
+
+-- Enqueue an action.
+act :: Action -> X11State ()
+act a = modifyWorld $ $(upd 'wActions) $ insert a
 
 data World = World
-  { wSpaces :: Map Name WSpace
-  , wFocus  :: Name
+  { wSpaces  :: Map Name WSpace
+  , wFocus   :: Name
+  , wActions :: Queue Action
   } deriving (Show)
 
 data WSpace = WSpace
@@ -51,15 +59,22 @@ data WSpace = WSpace
 wFocusSpace :: World -> WSpace
 wFocusSpace w = wSpaces w ! wFocus w
 
-modifyFocusSpace :: (WSpace -> WSpace) -> X11State ()
-modifyFocusSpace f =
+modifySpace :: Name -> (WSpace -> WSpace) -> X11State ()
+modifySpace n f =
   modifyWorld (\w ->
-    $(upd 'wSpaces) (insert (wFocus w, f $ wFocusSpace w)) w)
+    $(upd 'wSpaces) (insert (n, f $ wSpaces w ! n)) w)
+
+modifyFocusSpace :: (WSpace -> WSpace) -> X11State ()
+modifyFocusSpace f = getWorld >>= flip modifySpace f . wFocus
+
+wholeFocus :: World -> (Name, Either (Maybe Window) Name)
+wholeFocus w = (wFocus w, wsFocus $ wSpaces w ! wFocus w)
 
 emptyWorld :: Config -> World
 emptyWorld c = World
-  { wSpaces = fmap emptyWSpace $ spaces c
-  , wFocus  = startSpace c
+  { wSpaces  = fmap emptyWSpace $ spaces c
+  , wFocus   = startSpace c
+  , wActions = empty
   }
 
 emptyWSpace :: Workspace -> WSpace

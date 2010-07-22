@@ -4,6 +4,7 @@ module Event where
 import Action
 import Attract
 import Declare
+import Fields
 import State
 import X11
 
@@ -33,13 +34,13 @@ eventLoop :: Config -> World -> X11 ()
 eventLoop conf world = do
   ptr <- lift $ mallocBytes 96
   runX11State world $
-    sequence_ $ map actX11State $ repeat $ safe ptr $ handler conf
+    sequence_ $ repeat $ (safe ptr $ handler conf) >> runActions
   lift $ free ptr
 
 safe :: XEventPtr -> (Event -> X11State a) -> X11State a
 safe ptr = ((lift . lift . lift) (getEvent ptr) >>=)
 
-handlers :: Map Graphics.X11.EventType (Config -> Event -> X11State [Action])
+handlers :: Map Graphics.X11.EventType (Config -> Event -> X11State ())
 handlers = fromList
   [ (keyRelease,    keyReleaseHandler)
   , (buttonPress,   buttonPressHandler)
@@ -50,7 +51,7 @@ handlers = fromList
 handler, defaultHandler,
   keyReleaseHandler, buttonPressHandler,
   resizeRequestHandler, mapRequestHandler
-  :: Config -> Event -> X11State [Action]
+  :: Config -> Event -> X11State ()
 
 handler c e = findWithDefault defaultHandler (ev_event_type e) handlers c e
 
@@ -60,24 +61,54 @@ keyReleaseHandler = defaultHandler
 
 buttonPressHandler = defaultHandler
 
--- TODO ignore except for floating windows
-resizeRequestHandler = defaultHandler
+-- TODO for floating windows, don't ignore
+resizeRequestHandler _ _ = return ()
 
--- TODO add the window to the appropriate window collection in the World.
--- TODO if the window wasn't attracted away from the focus, tell X to focus it
---   (This requires implementing a new Action constructor, AFocus.)
--- TODO if the window is floating and focused, record the new focus.
 mapRequestHandler c e = do
   wo <- getWorld
+  -- Put the window where it belongs.
   (wSpaceName, wTileName) <- attract win
-  a <- case wTileName of
-    Nothing        -> float wSpaceName
-    Just wTileName -> return $ tile wSpaceName wTileName
-  return [a]
+  case wTileName of
+    -- The new window is floating.
+    Nothing        -> do
+      -- Add the window to the top of the floating stack.
+      modifySpace wSpaceName $ $(upd 'wsFloats) $ insert win
+      -- Display the new window.
+      float wSpaceName
+    -- The new window is tiled.
+    Just wTileName -> do
+      -- Add the window to the front of the tile queue.
+      modifySpace wSpaceName $ $(upd 'wsTiles) $ adjust (insert win) wTileName
+      -- Display the new window.
+      act $ tile wSpaceName wTileName
+  -- Determine if the new window should now be focused.
+  let (focusSpace, focusTile) = wholeFocus wo
+  if focusSpace == wSpaceName
+     then case (wTileName, focusTile) of
+       -- A new floating window always gains the focus.
+       (Nothing, _) -> do
+         -- Record that the new window has the focus.
+         modifyFocusSpace (\s -> s { wsFocus = Left $ Just win })
+         -- Focus the new window.
+         act $ AFocus win
+       -- A new tiled window in the focused tile gains the focus.
+       (Just tn, Right ftn) | tn == ftn -> act $ AFocus win
+       -- Otherwise, leave the focus alone.
+       _ -> return ()
+     else return ()
   where
     win = ev_window e
     -- TODO use the requested size of the window
-    float sn = return $ AShow win (0, 0) (100, 100)
-    -- TODO use the position and size of the tile
-    tile sn tn = AShow win (100, 100) (100, 100)
+    float sn = act $ AShow win (0, 0) (100, 100)
+    tile sn tn = AShow win (px, py) (sx, sy)
+      where
+        lay = layout $ spaces c ! sn
+        Tile { pos = (pc, pr), span = (sc, sr) } = (tiles lay) ! tn
+        Table { rows = rs, cols = cs } = table lay
+        (bcs, acs) = splitAt pc cs
+        (brs, ars) = splitAt pr rs
+        px = sum bcs
+        py = sum brs
+        sx = head acs
+        sy = head ars
 

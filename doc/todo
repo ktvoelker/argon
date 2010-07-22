@@ -2,21 +2,26 @@
 TODO
 ====
 
-Finish mapRequestHandler, using attract. Note that if attract determines that
-the window should be floating, the window's requested size must be
-determined.
-
 Implement Attract.attract which determines where to place a new window.
-
-Implement resizeRequestHandler.
 
 Implement keyReleaseHandler to execute defined commands.
 
 Implement buttonPressHandler to set the focus and pass the button press
 through.
 
+Finish mapRequestHandler and resizeRequestHandler so that floating windows go
+where requested.
+
 Implement specific lift functions for each monad transition that needs to
 occur. Implement all of them in terms of liftIO for better efficiency.
+
+Add Commands for entering and leaving the move and resize modes for floating
+windows.
+
+Expand the key-handling system to also support handling mouse clicks (with the
+same modifier support). It should be possible to bind separately on press and
+release, so that the user can either do drag-based move and resize or
+two-click move and resize.
 
 Implement user-defined event-handling support.
 

@@ -10,13 +10,14 @@ data Action =
     AHide  Window
   | AShow  Window (Nat, Nat) (Nat, Nat)
   | AStack [Window]
+  | AFocus Window
   deriving (Eq, Ord, Show)
 
-act :: Action -> X11 ()
+runAction :: Action -> X11 ()
 
-act (AHide w) = display >>= lift . flip mapWindow w
+runAction (AHide w) = display >>= liftIO . flip mapWindow w
 
-act (AShow w (px, py) (dw, dh)) = do
+runAction (AShow w (px, py) (dw, dh)) = do
   d <- display
   liftIO $ moveResizeWindow d w (fi px) (fi py) (fi dw) (fi dh)
   liftIO $ mapWindow d w
@@ -24,5 +25,8 @@ act (AShow w (px, py) (dw, dh)) = do
     fi :: (Integral a, Num b) => a -> b
     fi = fromIntegral
 
-act (AStack ws) = display >>= lift . flip restackWindows ws
+runAction (AStack ws) = display >>= liftIO . flip restackWindows ws
+
+runAction (AFocus w) =
+  display >>= \d -> liftIO $ setInputFocus d w revertToNone 0
 
