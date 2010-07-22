@@ -2,6 +2,8 @@
 TODO
 ====
 
+Make a config with a couple of tiles and test the code.
+
 Implement keyReleaseHandler to execute defined commands.
 
 Implement buttonPressHandler to set the focus and pass the button press
