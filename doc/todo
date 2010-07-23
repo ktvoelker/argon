@@ -2,13 +2,6 @@
 TODO
 ====
 
-Test!
-
-  The event loop runs. xterm was run but did not appear.
-
-  1. Put debugging output into the event loop.
-  2. Put debugging output into the event handlers.
-
 Fix mapRequestHandler to properly size windows in tiles with a span greater
 than (1, 1).
 
