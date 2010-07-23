@@ -36,15 +36,27 @@ addRootEvents win = do
 
 eventLoop :: X11 ()
 eventLoop = do
+  debug "Get config"
   conf <- config
   let world = emptyWorld conf
+  debug "Allocate event pointer"
   ptr <- lift $ mallocBytes 96
-  runX11State world $
-    sequence_ $ repeat $ (safe ptr $ handler conf) >> runActions
+  debug "Start looping"
+  runX11State world $ sequence_ $ repeat $ do
+    -- Get the next event from the server.
+    debug "Get next event"
+    display >>= liftIO . flip nextEvent ptr
+    -- Extract a safe event value from the event pointer and handle it.
+    debug "Extract and handle event"
+    safely ptr (handler conf)
+    -- Run the actions emitted by the handler.
+    debug "Run actions"
+    runActions
+  debug "Free event pointer"
   lift $ free ptr
 
-safe :: XEventPtr -> (Event -> X11State a) -> X11State a
-safe ptr = ((lift . lift . lift) (getEvent ptr) >>=)
+safely :: XEventPtr -> (Event -> X11State a) -> X11State a
+safely ptr = ((lift . lift . lift) (getEvent ptr) >>=)
 
 handlers :: Map Graphics.X11.EventType (Config -> Event -> X11State ())
 handlers = fromList
