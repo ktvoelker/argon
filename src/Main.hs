@@ -9,6 +9,8 @@ import Init
 import State
 import X11
 
+import Command
+
 import System.Environment
 
 xMain :: X11 ()

@@ -70,7 +70,7 @@ wrapXY x y = (wrap x, wrap y)
 wrapYX :: (Wrapper w) => N -> N -> (w Y, w X)
 wrapYX y x = (wrap y, wrap x)
 
-convert :: (Wrapper w, Wrapper y) => w x -> y x
+convert :: (Wrapper w1, Wrapper w2) => w1 x1 -> w2 x2
 convert = wrap . unwrap
 
 instance Wrapper (Posn t) where
@@ -132,7 +132,7 @@ instance Sub (Posn t x) (Posn t x) (Span t x) where
   (-.) = anyAbsMinus
 
 instance Sub (Posn t x) (Posn t x) (Diff t x) where
-  (-.) = anyAbsMinus
+  (-.) = anyMinus
 
 instance Add (Posn t x) (Span t x) (Posn t x) where
   (+.) = anyPlus
