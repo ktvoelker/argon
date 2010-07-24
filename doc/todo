@@ -2,7 +2,7 @@
 TODO
 ====
 
-Replace all uses of Nat with a type that carries units along.
+Use the new Maths library for all pixel- and cell-related values.
 
 Implement Command.runCommand.
 
