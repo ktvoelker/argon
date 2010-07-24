@@ -38,6 +38,19 @@ class Sub a b c where
   infixl 6 -.
   (-.) :: a -> b -> c
 
+class Mul a b c where
+  infixl 7 *.
+  (*.) :: a -> b -> c
+
+class Div a b c where
+  infix 7 /%.
+  (/%.) :: a -> b -> (c, c)
+
+infixl 7 /., %.
+(/.), (%.) :: (Div a b c) => a -> b -> c
+(/.) a b = fst $ a /%. b
+(%.) a b = snd $ a /%. b
+
 {-
  - posn + posn -> invalid
  - posn - posn -> span or diff
@@ -47,6 +60,11 @@ class Sub a b c where
  - span - span -> span or diff
  - diff + diff -> invalid for now (could be diff)
  - diff - diff -> invalid for now (could be diff)
+ - span * free -> span
+ - span / span -> free
+ - span / free -> span
+ - span % span -> free
+ - span % free -> span
  -}
 
 instance (Num a) => Sub (Posn t a) (Posn t a) (Span t a) where
@@ -69,4 +87,13 @@ instance (Num a) => Sub (Span t a) (Span t a) (Span t a) where
 
 instance (Num a) => Sub (Span t a) (Span t a) (Diff t a) where
   (-.) = anyMinus
+
+instance (Num a) => Mul (Span t a) a (Span t a) where
+  (*.) a b = wrap $ (unwrap a) * b
+
+instance (Integral a) => Div (Span t a) (Span t a) a where
+  (/%.) a b = (unwrap a) `divMod` (unwrap b)
+
+instance (Integral a) => Div (Span t a) a (Span t a) where
+  (/%.) a b = case (unwrap a) `divMod` b of (d, m) -> (wrap d, wrap m)
 
