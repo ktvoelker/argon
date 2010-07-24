@@ -4,7 +4,8 @@ OPTIONS=                     \
   -XDisambiguateRecordFields \
   -XRecordWildCards          \
   -XTupleSections            \
-  -XTemplateHaskell
+  -XTemplateHaskell          \
+  -XEmptyDataDecls
 
 WARNINGS=                  \
   -Werror                  \

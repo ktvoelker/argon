@@ -1,12 +1,15 @@
 
 module Types (
     module Types,
+    module Maths,
     module Data.Map,
     module Data.Queue.Class,
     module Data.Queue.PQueue,
     module Data.Queue.Queue,
     module Data.Queue.Stack
   ) where
+
+import Maths
 
 import Data.Map hiding (
     keys, null, empty, fromList, insert, singleton, size, toList, map
