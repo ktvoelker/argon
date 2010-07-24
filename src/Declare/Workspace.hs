@@ -7,7 +7,7 @@ import Declare.Statusbar
 import Types
 
 data Workspace = Workspace
-  { spLayout  :: Layout
+  { spLayout  :: Layout Pix
   , status    :: Statusbar
   , attracts  :: [(Attract, Maybe Name)]
   , startTile :: Maybe Name

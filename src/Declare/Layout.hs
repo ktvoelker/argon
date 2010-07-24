@@ -4,17 +4,17 @@ module Declare.Layout where
 import Declare.Common
 import Types
 
-data Tile = Tile
-  { pos      :: (Nat, Nat)
-  , span     :: (Nat, Nat)
+data Tile t = Tile
+  { pos      :: XY Posn t
+  , span     :: XY Span t
   } deriving (Eq, Ord, Show)
 
-data Layout = Layout
-  { table     :: Table
-  , tiles     :: Map Name Tile
+data Layout t = Layout
+  { table     :: Table t
+  , tiles     :: Map Name (Tile Cel)
   } deriving (Eq, Ord, Show)
 
-emptyLayout :: Layout
+emptyLayout :: Layout t
 emptyLayout = Layout
   { table = Table { rows = [], cols = [] }
   , tiles = empty

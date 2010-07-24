@@ -2,8 +2,6 @@
 TODO
 ====
 
-Use the new Maths library for all pixel- and cell-related values.
-
 Implement Command.runCommand.
 
 Implement keyReleaseHandler.
@@ -21,6 +19,10 @@ Expand the key-handling system to also support handling mouse clicks (with the
 same modifier support). It should be possible to bind separately on press and
 release, so that the user can either do drag-based move and resize or
 two-click move and resize.
+
+Implement a timer system.
+
+Implement statusbar support.
 
 Implement user-defined event-handling support.
 

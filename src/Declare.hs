@@ -18,13 +18,13 @@ import Declare.Workspace
 import qualified Data.Map as Map
 import Graphics.X11 hiding (EventType)
 
-class HasLayout a where
-  layout :: a -> Layout
+class HasLayout a t where
+  layout :: a -> Layout t
 
-instance HasLayout Statusbar where
+instance HasLayout Statusbar Chr where
   layout = stLayout
 
-instance HasLayout Workspace where
+instance HasLayout Workspace Pix where
   layout = spLayout
 
 data EventType =
@@ -49,10 +49,10 @@ data Command =
   deriving (Eq, Ord, Show)
 
 data XInfo = XInfo
-  { width      :: Nat
-  , height     :: Nat
-  , fontWidth  :: Nat
-  , fontHeight :: Nat
+  { width      :: PixSpan X
+  , height     :: PixSpan Y
+  , fontWidth  :: PixSpan X
+  , fontHeight :: PixSpan Y
   } deriving (Eq, Ord, Show)
 
 emptyConfig :: Config

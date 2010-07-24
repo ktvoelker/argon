@@ -6,8 +6,8 @@ module Declare.Common (
 
 import Types
 
-data Table = Table
-  { rows :: [Nat]
-  , cols :: [Nat]
+data Table t = Table
+  { rows :: [Span t Y]
+  , cols :: [Span t X]
   } deriving (Eq, Ord, Show)
 

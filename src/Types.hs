@@ -25,8 +25,6 @@ import qualified Data.List as DL
 import qualified Data.Map as DM
 import qualified Data.Queue.Class as DQ
 
-type Nat = Int
-
 type Name = String
 
 class Collection a where

@@ -5,7 +5,9 @@ OPTIONS=                     \
   -XRecordWildCards          \
   -XTupleSections            \
   -XTemplateHaskell          \
-  -XEmptyDataDecls
+  -XEmptyDataDecls           \
+  -XLiberalTypeSynonyms      \
+  -XFlexibleContexts
 
 WARNINGS=                  \
   -Werror                  \

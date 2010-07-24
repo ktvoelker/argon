@@ -80,11 +80,11 @@ emptyWorld c = World
 emptyWSpace :: Workspace -> WSpace
 emptyWSpace w = WSpace
   { wsFocus  = maybe (Left Nothing) Right $ startTile w
-  , wsTiles  = emptyWLayout empty w
+  , wsTiles  = emptyWLayout empty $ spLayout w
   , wsFloats = empty
-  , wsStatus = emptyWLayout "" $ status w
+  , wsStatus = emptyWLayout "" $ stLayout $ status w
   }
 
-emptyWLayout :: (HasLayout a) => b -> a -> Map Name b
-emptyWLayout e x = fmap (const e) $ tiles $ layout x
+emptyWLayout :: a -> Layout t -> Map Name a
+emptyWLayout e x = fmap (const e) $ tiles x
 

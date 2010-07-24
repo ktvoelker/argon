@@ -1,14 +1,15 @@
 
 module Action where
 
-import Graphics.X11
-
+import Maths.Unsafe
 import Types
 import X11
 
+import Graphics.X11
+
 data Action =
     AHide  Window
-  | AShow  Window (Nat, Nat) (Nat, Nat)
+  | AShow  Window (XY Posn Pix) (XY Span Pix)
   | AStack [Window]
   | AFocus Window
   deriving (Eq, Ord, Show)
@@ -22,8 +23,8 @@ runAction (AShow w (px, py) (dw, dh)) = do
   liftIO $ moveResizeWindow d w (fi px) (fi py) (fi dw) (fi dh)
   liftIO $ mapWindow d w
   where
-    fi :: (Integral a, Num b) => a -> b
-    fi = fromIntegral
+    fi :: (Wrapper w, Num b) => w x -> b
+    fi = fromIntegral . unwrap
 
 runAction (AStack ws) = display >>= liftIO . flip restackWindows ws
 

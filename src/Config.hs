@@ -8,10 +8,10 @@ config :: Info XInfo Config
 config = do
   w <- get width
   h <- get height
-  let w' = w `div` 2
+  let w' = w /. (2 :: Int)
       t = Table { rows = [h], cols = [w', w'] }
-      a = Tile { pos = (0, 0), span = (1, 1) }
-      b = Tile { pos = (1, 0), span = (1, 1) }
+      a = Tile { pos = (wrapXY 0 0), span = (wrapXY 1 1) }
+      b = Tile { pos = (wrapXY 1 0), span = (wrapXY 1 1) }
   return emptyConfig
     { startSpace = "main"
     , spaces = fromList

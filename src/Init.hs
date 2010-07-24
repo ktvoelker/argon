@@ -12,10 +12,10 @@ getXInfo :: X11 XInfo
 getXInfo = do
   (d, s) <- dispScr
   return XInfo
-    { width      = fromIntegral $ displayWidth d s
-    , height     = fromIntegral $ displayHeight d s
-    , fontWidth  = 0
-    , fontHeight = 0
+    { width      = wrap $ fromIntegral $ displayWidth d s
+    , height     = wrap $ fromIntegral $ displayHeight d s
+    , fontWidth  = wrap 0  -- TODO
+    , fontHeight = wrap 0  -- TODO
     }
 
 initEvents :: X11 ()

@@ -8,11 +8,11 @@ import Types
 data Exec = Exec
   { prog :: String
   , args :: [String]
-  , freq :: Nat
+  , wait :: SecSpan
   } deriving (Eq, Ord, Show)
 
 data Statusbar = Statusbar
-  { stLayout :: Layout
+  { stLayout :: Layout Chr
   , execs    :: Map Name Exec
   } deriving (Eq, Ord, Show)
 
