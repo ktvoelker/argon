@@ -2,16 +2,17 @@
 TODO
 ====
 
-Implement keyReleaseHandler to execute defined commands.
+Replace all uses of Nat with a type that carries units along.
+
+Implement Command.runCommand.
+
+Implement keyReleaseHandler.
 
 Implement buttonPressHandler to set the focus and pass the button press
 through.
 
 Finish mapRequestHandler and resizeRequestHandler so that floating windows go
 where requested.
-
-Implement specific lift functions for each monad transition that needs to
-occur. Implement all of them in terms of liftIO for better efficiency.
 
 Add Commands for entering and leaving the move and resize modes for floating
 windows.

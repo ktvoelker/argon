@@ -6,6 +6,7 @@ import Attract
 import Debug
 import Declare
 import Fields
+import Layout
 import State
 import X11
 
@@ -118,15 +119,9 @@ mapRequestHandler c e = do
     win = ev_window e
     -- TODO use the requested size of the window
     float sn = act $ AShow win (0, 0) (100, 100)
-    tile sn tn = AShow win (px, py) (sx, sy)
+    tile sn tn = AShow win (realPos ta ti) (realSpan ta ti)
       where
         lay = layout $ spaces c ! sn
-        Tile { pos = (pc, pr), span = (sc, sr) } = (tiles lay) ! tn
-        Table { rows = rs, cols = cs } = table lay
-        (bcs, acs) = splitAt pc cs
-        (brs, ars) = splitAt pr rs
-        px = sum bcs
-        py = sum brs
-        sx = sum $ take sc $ acs
-        sy = sum $ take sr $ ars
+        ti = (tiles lay) ! tn
+        ta = table lay
 
