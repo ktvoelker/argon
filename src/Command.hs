@@ -106,7 +106,7 @@ sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
 runCommand :: Command -> X11State ()
 
 runCommand (CFocusDir dir) = do
-  c  <- lift $ lift $ config
+  c  <- lift $ lift getConfig
   wo <- getWorld
   case wholeFocus wo of
     -- A floating window is focused.
@@ -131,7 +131,7 @@ runCommand (CFocusDir dir) = do
       -- Record the newly-focused tile.
       modifyFocusSpace $ $(upd 'wsFocus) $ const $ Right $ ftn'
       -- Tell X to focus the window atop that tile.
-      disp <- display
+      disp <- getDisplay
       act $ AFocus $ topWinOrRoot disp $ wsTiles (wFocusSpace wo) ! ftn'
 
 -- TODO

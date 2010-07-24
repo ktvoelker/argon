@@ -16,18 +16,18 @@ data Action =
 
 runAction :: Action -> X11 ()
 
-runAction (AHide w) = display >>= liftIO . flip mapWindow w
+runAction (AHide w) = getDisplay >>= liftIO . flip mapWindow w
 
 runAction (AShow w (px, py) (dw, dh)) = do
-  d <- display
+  d <- getDisplay
   liftIO $ moveResizeWindow d w (fi px) (fi py) (fi dw) (fi dh)
   liftIO $ mapWindow d w
   where
     fi :: (Num a) => Qty u t x -> a
     fi = fromIntegral . unwrap
 
-runAction (AStack ws) = display >>= liftIO . flip restackWindows ws
+runAction (AStack ws) = getDisplay >>= liftIO . flip restackWindows ws
 
 runAction (AFocus w) =
-  display >>= \d -> liftIO $ setInputFocus d w revertToNone 0
+  getDisplay >>= \d -> liftIO $ setInputFocus d w revertToNone 0
 

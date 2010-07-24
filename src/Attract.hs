@@ -15,7 +15,7 @@ import Graphics.X11.Xlib.Extras
 -- Determine the workspace and tile where a window should be placed.
 attract :: Window -> X11State (Name, Maybe Name)
 attract win = do
-  c <- lift config
+  c <- lift $ getConfig
   wo <- getWorld
   atts <- lift $ lift $
     fmap (filter (isJust . snd)) $
@@ -38,7 +38,7 @@ attractInSpace win space =
 -- TODO Don't assume the string encoding in the TP matches ours.
 stringWay :: Atom -> (a -> String -> Bool) -> Window -> a -> X11 Bool
 stringWay atom pred win want =
-  display
+  getDisplay
   >>= \d -> lift $
     getTextProperty d win atom
     >>= peekCString . tp_value

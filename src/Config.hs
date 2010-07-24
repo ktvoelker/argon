@@ -2,12 +2,13 @@
 module Config (config) where
 
 import Declare
-import Info
 
-config :: Info XInfo Config
+import Control.Monad.Reader
+
+config :: Reader XInfo Config
 config = do
-  w <- get width
-  h <- get height
+  w <- asks width
+  h <- asks height
   let w' = w /. free 2
       t = Table { rows = [h], cols = [w', w'] }
       a = Tile { tiPos = (posnXY 0 0), tiSpan = (spanXY 1 1) }

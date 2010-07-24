@@ -3,7 +3,12 @@ TODO
 ====
 
 Convert all members of records to standard naming scheme. Not finished:
+  - Table
+  - Exec
+  - Statusbar
   - Workspace
+  Questionable ones:
+  - XInfo
 
 Implement Command.runCommand.
 

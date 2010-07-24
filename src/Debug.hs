@@ -23,7 +23,7 @@ dprint = debug . show
 instance Debug (ReaderT X11Env IO) where
   debug xs =
     if debugEnabled
-       then display >>= liftIO . flip sync False
+       then getDisplay >>= liftIO . flip sync False
             >> liftIO (putStrLn xs)
        else return ()
 

@@ -2,6 +2,7 @@
 module Fields (upd) where
 
 import Language.Haskell.TH
+import Prelude
 
 upd :: Name -> Q Exp
 upd n = do

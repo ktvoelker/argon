@@ -18,7 +18,7 @@ import Prelude hiding (span, filter)
 
 addStdEvents :: Window -> X11 ()
 addStdEvents win = do
-  disp <- display
+  disp <- getDisplay
   liftIO $ do
     grabButton
       disp anyButton anyModifier win True
@@ -27,7 +27,7 @@ addStdEvents win = do
 
 addRootEvents :: Window -> X11 ()
 addRootEvents win = do
-  disp <- display
+  disp <- getDisplay
   debug "Root is:"
   dprint win
   debug "Select resize redir on root"
@@ -38,7 +38,7 @@ addRootEvents win = do
 eventLoop :: X11 ()
 eventLoop = do
   debug "Get config"
-  conf <- config
+  conf <- getConfig
   let world = emptyWorld conf
   debug "Allocate event pointer"
   ptr <- lift $ mallocBytes 96
@@ -46,7 +46,7 @@ eventLoop = do
   runX11State world $ sequence_ $ repeat $ do
     -- Get the next event from the server.
     debug "Get next event"
-    display >>= liftIO . flip nextEvent ptr
+    getDisplay >>= liftIO . flip nextEvent ptr
     -- Extract a safe event value from the event pointer and handle it.
     debug "Extract and handle event"
     safely ptr (handler conf)

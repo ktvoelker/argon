@@ -3,6 +3,8 @@
 
 module Maths.Unsafe where
 
+import Prelude
+
 data O
 data N
 

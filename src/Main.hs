@@ -1,10 +1,9 @@
 
 module Main (main) where
 
-import qualified Config
+import Config
 import Debug
 import Event
-import Info
 import Init
 import State
 import Types
@@ -12,6 +11,7 @@ import X11
 
 import Command
 
+import Control.Monad.Reader
 import System.Environment
 
 xMain :: X11 ()
@@ -21,7 +21,7 @@ xMain = do
   debug "Init events"
   initEvents
   debug "Run config"
-  let config' = runInfo Config.config xi in do
+  let config' = runReader config xi in do
     dprint config'
     debug "Event loop"
     localConfig (const config') eventLoop

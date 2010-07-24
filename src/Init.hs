@@ -26,7 +26,7 @@ initEvents = do
   addRootEvents root
   debug "Query window tree"
   dprint root
-  (_, _, wins) <- display >>= liftIO . flip queryTree root
+  (_, _, wins) <- getDisplay >>= liftIO . flip queryTree root
   debug "Add standard events"
   mapM_ addStdEvents wins
 
