@@ -2,9 +2,6 @@
 TODO
 ====
 
-Fix mapRequestHandler to properly size windows in tiles with a span greater
-than (1, 1).
-
 Implement keyReleaseHandler to execute defined commands.
 
 Implement buttonPressHandler to set the focus and pass the button press

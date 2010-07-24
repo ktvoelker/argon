@@ -127,6 +127,6 @@ mapRequestHandler c e = do
         (brs, ars) = splitAt pr rs
         px = sum bcs
         py = sum brs
-        sx = head acs
-        sy = head ars
+        sx = sum $ take sc $ acs
+        sy = sum $ take sr $ ars
 
