@@ -5,8 +5,8 @@ import Declare.Common
 import Types
 
 data Tile t = Tile
-  { pos      :: XY Posn t
-  , span     :: XY Span t
+  { pos      :: XYPosn t
+  , span     :: XYSpan t
   } deriving (Eq, Ord, Show)
 
 data Layout t = Layout

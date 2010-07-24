@@ -2,8 +2,6 @@
 TODO
 ====
 
-Fix Command module to use the new Maths library.
-
 Implement Command.runCommand.
 
 Implement keyReleaseHandler.

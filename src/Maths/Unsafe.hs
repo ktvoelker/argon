@@ -1,116 +1,24 @@
 
-module Maths.Unsafe
-  ( PixPosn, PixSpan, PixDiff
-  , ChrPosn, ChrSpan, ChrDiff
-  , CelPosn, CelSpan, CelDiff
-  , SecPosn, SecSpan, SecDiff
-  , XY, YX, X, Y
-  , Pix, Chr, Cel, Sec
-  , Posn, Span, Diff
-  , Wrapper(..), wrapXY, wrapYX, convert
-  , Add(..), Sub(..), Mul(..), Div(..)
-  , (/.), (%.), sum'
-  ) where
+-- inspired by Dimensional library
 
-type N = Int
+module Maths.Unsafe where
 
-type XY u t = (u t X, u t Y)
-type YX u t = (u t Y, u t X)
+data O
+data N
 
-type PixPosn x = Posn Pix x
-type PixSpan x = Span Pix x
-type PixDiff x = Diff Pix x
+data U posn span diff free
 
-type ChrPosn x = Posn Chr x
-type ChrSpan x = Span Chr x
-type ChrDiff x = Diff Chr x
+type UPosn = U O N N N
+type USpan = U N O N N
+type UDiff = U N N O N
+type UFree = U N N N O
 
-type CelPosn x = Posn Cel x
-type CelSpan x = Span Cel x
-type CelDiff x = Diff Cel x
+newtype Qty u t x = Qty Int deriving (Enum, Eq, Ord, Show)
 
-type SecPosn = Posn Sec X
-type SecSpan = Span Sec X
-type SecDiff = Diff Sec X
-
--- Pixels
-data Pix
-
--- Characters
-data Chr
-
--- Cells (in a layout table)
-data Cel
-
--- Seconds
-data Sec
-
--- X axis
-data X
-
--- Y axis
-data Y
-
--- A position
-newtype Posn t x = Posn N deriving (Enum, Eq, Ord, Show)
-
--- A size
-newtype Span t x = Span N deriving (Enum, Eq, Ord, Show)
-
--- A difference
-newtype Diff t x = Diff N deriving (Enum, Eq, Ord, Show)
-
-class Wrapper w where
-  unwrap :: w x -> N
-  wrap   :: N -> w x
-
-wrapXY :: (Wrapper w) => N -> N -> (w X, w Y)
-wrapXY x y = (wrap x, wrap y)
-
-wrapYX :: (Wrapper w) => N -> N -> (w Y, w X)
-wrapYX y x = (wrap y, wrap x)
-
-convert :: (Wrapper w1, Wrapper w2) => w1 x1 -> w2 x2
-convert = wrap . unwrap
-
-instance Wrapper (Posn t) where
-  unwrap (Posn n) = n
-  wrap = Posn
-
-instance Wrapper (Span t) where
-  unwrap (Span n) = n
-  wrap = Span
-
-instance Wrapper (Diff t) where
-  unwrap (Diff n) = n
-  wrap = Diff
-
-anyPlus, anyMinus, anyAbsMinus
-  :: (Wrapper a, Wrapper b, Wrapper c) => a x -> b x -> c x
-anyPlus a b = wrap $ (unwrap a) + (unwrap b)
-anyMinus a b = wrap $ (unwrap a) - (unwrap b)
-anyAbsMinus a b = wrap $ abs $ (unwrap a) - (unwrap b)
-
-class Add a b c where
-  infixl 6 +.
-  (+.) :: a -> b -> c
-
-class Sub a b c where
-  infixl 6 -.
-  (-.) :: a -> b -> c
-
-class Mul a b c | a b -> c where
-  infixl 7 *.
-  (*.) :: a -> b -> c
-
-class Div a b c | a b -> c where
-  infix 7 /%.
-  (/%.) :: a -> b -> (c, c)
-
-infixl 7 /., %.
-(/.), (%.) :: (Div a b c) => a -> b -> c
-(/.) a b = fst $ a /%. b
-(%.) a b = snd $ a /%. b
+class Add a b c | a b -> c
+class Sub a b c | a b -> c
+class Mul a b c | a b -> c
+class Div a b c | a b -> c
 
 {-
  - posn + posn -> invalid
@@ -128,36 +36,95 @@ infixl 7 /., %.
  - span % free -> span
  -}
 
-instance Sub (Posn t x) (Posn t x) (Span t x) where
-  (-.) = anyAbsMinus
+instance Sub UPosn UPosn UDiff
+instance Add UPosn USpan UPosn
+instance Sub UPosn USpan UPosn
+instance Add USpan USpan USpan
+instance Sub USpan USpan UDiff
+instance Add UFree UFree UFree
+instance Sub UFree UFree UFree
+instance Mul USpan UFree USpan
+instance Mul UFree UFree UFree
+instance Div USpan USpan UFree
+instance Div USpan UFree USpan
+instance Div UFree UFree UFree
 
-instance Sub (Posn t x) (Posn t x) (Diff t x) where
-  (-.) = anyMinus
+wrap :: Int -> Qty u t x
+wrap = Qty
 
-instance Add (Posn t x) (Span t x) (Posn t x) where
-  (+.) = anyPlus
+free :: Int -> Qty UFree t x
+free = wrap
 
-instance Sub (Posn t x) (Span t x) (Posn t x) where
-  (-.) = anyMinus
+unwrap :: Qty u t x -> Int
+unwrap (Qty n) = n
 
-instance Add (Span t x) (Span t x) (Span t x) where
-  (+.) = anyPlus
+convert :: Qty u1 t1 x1 -> Qty u2 t2 x2
+convert = wrap . unwrap
 
-instance Sub (Span t x) (Span t x) (Span t x) where
-  (-.) = anyAbsMinus
+fix1 :: (Int -> Int) -> Qty u1 t1 x1 -> Qty u2 t2 x2
+fix1 f = wrap . f . unwrap
 
-instance Sub (Span t x) (Span t x) (Diff t x) where
-  (-.) = anyMinus
+fix2 :: (Int -> Int -> Int) -> Qty u1 t1 x1 -> Qty u2 t2 x2 -> Qty u3 t3 x3
+fix2 f a b = wrap $ f (unwrap a) (unwrap b)
 
-instance Mul (Span t x) N (Span t x) where
-  (*.) a b = wrap $ (unwrap a) * b
+fix22 :: (Int -> Int -> (Int, Int)) -> Qty u1 t1 x1 -> Qty u2 t2 x2
+      -> (Qty u3 t3 x3, Qty u3 t3 x3)
+fix22 f a b = case f (unwrap a) (unwrap b) of (a, b) -> (wrap a, wrap b)
 
-instance Div (Span t x) (Span t x) N where
-  (/%.) a b = (unwrap a) `divMod` (unwrap b)
+infixl 6 +., -.
+infix  7 /%.
+infixl 7 *., /., %.
 
-instance Div (Span t x) N (Span t x) where
-  (/%.) a b = case (unwrap a) `divMod` b of (d, m) -> (wrap d, wrap m)
+(+.) :: (Add a b c) => Qty a t x -> Qty b t x -> Qty c t x
+(+.) = fix2 (+)
 
-sum' :: (Wrapper w, Add (w x) (w x) (w x)) => [w x] -> w x
+(-.) :: (Sub a b c) => Qty a t x -> Qty b t x -> Qty c t x
+(-.) = fix2 (-)
+
+(*.) :: (Mul a b c) => Qty a t x -> Qty b t x -> Qty c t x
+(*.) = fix2 (*)
+
+(/%.) :: (Div a b c) => Qty a t x -> Qty b t x -> (Qty c t x, Qty c t x)
+(/%.) = fix22 divMod
+
+(/.) :: (Div a b c) => Qty a t x -> Qty b t x -> Qty c t x
+(/.) a b = fst $ a /%. b
+
+(%.) :: (Div a b c) => Qty a t x -> Qty b t x -> Qty c t x
+(%.) a b = snd $ a /%. b
+
+sum' :: (Add u u u) => [Qty u t x] -> Qty u t x
 sum' = foldr (+.) $ wrap 0
+
+abs' :: Diff t x -> Span t x
+abs' = fix1 abs
+
+type Posn t x = Qty UPosn t x
+type Span t x = Qty USpan t x
+type Diff t x = Qty UDiff t x
+type Free t x = Qty UFree t x
+
+data X
+data Y
+
+type XY u t = (Qty u t X, Qty u t Y)
+type XYPosn t = XY UPosn t
+type XYSpan t = XY USpan t
+type XYDiff t = XY UDiff t
+
+instance Num (Free t x) where
+  (+) = fix2 (+)
+  (*) = fix2 (*)
+  (-) = fix2 (-)
+  abs = fix1 abs
+  signum = fix1 signum
+  fromInteger = wrap . fromInteger
+
+instance Real (Free t x) where
+  toRational = toRational . unwrap
+
+instance Integral (Free t x) where
+  quotRem = fix22 quotRem
+  divMod = fix22 divMod
+  toInteger = toInteger . unwrap
 

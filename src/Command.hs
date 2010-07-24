@@ -10,8 +10,9 @@ import State
 import Types
 import X11
 
-import Data.List
+import Data.List hiding (span)
 import Data.Maybe
+import Prelude hiding (span)
 
 data LookDir = LookDir
   -- axis rearranges an (x,y) pair so that the coordinate on the axis
@@ -20,7 +21,7 @@ data LookDir = LookDir
   -- In order for this to work with the Maths module, it is implemented as
   -- a rotation of the entire coordinate space, so that Y is known as X, and
   -- vice-versa.
-  { axis :: forall u t. (Wrapper (u t)) => XY u t -> XY u t
+  { axis :: forall u t. XY u t -> XY u t
   -- dir is the one-dimensional direction of the gaze.
   , dir  :: Ordering
   }
@@ -41,16 +42,18 @@ data LookDir = LookDir
 toSide, fromSide :: Ordering -> (Posn t x, Span t x) -> Posn t x
 toSide   LT = uncurry (+.)
 toSide   GT = uncurry const
+toSide   EQ = impossible
 fromSide LT = uncurry const
 fromSide GT = uncurry (+.)
+fromSide EQ = impossible
 
 -- Get the position and size of a tile along either the parallel or
 -- perpendicular axes, relative to the gaze.
 parPS :: LookDir -> Tile t -> (Posn t X, Span t X)
-parPS ld tile = (fst $ axis ld $ pos tile, fst $ axis ld $ size tile)
+parPS ld tile = (fst $ axis ld $ pos tile, fst $ axis ld $ span tile)
 
 perPS :: LookDir -> Tile t -> (Posn t Y, Span t Y)
-perPS ld tile = (snd $ axis ld $ pos tile, snd $ axis ld $ size tile)
+perPS ld tile = (snd $ axis ld $ pos tile, snd $ axis ld $ span tile)
 
 -- True iff the second tile borders the first and is visible when gazing in
 -- the given direction.
@@ -63,7 +66,7 @@ borders ld from to =
     toPS   = parPS ld to
     s      = dir ld
 
-xAxis, yAxis :: (Wrapper (u t)) => XY u t -> XY u t
+xAxis, yAxis :: XY u t -> XY u t
 xAxis        = id
 yAxis (x, y) = (convert y, convert x)
 
@@ -89,14 +92,14 @@ lookDir = fromList
 
 -- Assuming the given tiles share an edge perpendicular to the given gaze,
 -- what is the length of their shared edge?
-sharedEdge :: LookDir -> Table p -> Tile t -> Tile t -> Span p Y
-sharedEdge ld t a b = shareEnd -. shareBegin
+sharedEdge :: LookDir -> Table p -> Tile Cel -> Tile Cel -> Span p Y
+sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
   where
-    ap, bp :: Posn p Y
-    as, bs :: Span p Y
-    (ap, as)   = perPS $ realTile t a
-    (bp, bs)   = perPS $ realTile t b
-    shareBegin, shareEnd :: Posn p Y
+    -- ap, bp :: Posn p Y
+    -- as, bs :: Span p Y
+    (ap, as)   = perPS ld $ realTile t a
+    (bp, bs)   = perPS ld $ realTile t b
+    -- shareBegin, shareEnd :: Posn p Y
     shareBegin = max ap bp
     shareEnd   = min (ap +. as) (bp +. bs)
 

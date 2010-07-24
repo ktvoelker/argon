@@ -5,10 +5,10 @@ import Declare
 import Maths.Unsafe
 import Prelude hiding (span)
 
-realPos :: Table t -> Tile Cel -> XY Posn t
+realPos :: Table t -> Tile Cel -> XYPosn t
 realPos  ta ti = pos  $ realTile ta ti
 
-realSpan :: Table t -> Tile Cel -> XY Span t
+realSpan :: Table t -> Tile Cel -> XYSpan t
 realSpan ta ti = span $ realTile ta ti
 
 realTile :: Table t -> Tile Cel -> Tile t

@@ -54,7 +54,7 @@ eventLoop = do
     debug "Run actions"
     runActions
   debug "Free event pointer"
-  lift $ free ptr
+  lift $ Foreign.Marshal.Alloc.free ptr
 
 safely :: XEventPtr -> (Event -> X11State a) -> X11State a
 safely ptr = ((lift . lift . lift) (getEvent ptr) >>=)

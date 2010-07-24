@@ -9,7 +9,7 @@ import Graphics.X11
 
 data Action =
     AHide  Window
-  | AShow  Window (XY Posn Pix) (XY Span Pix)
+  | AShow  Window (XYPosn Pix) (XYSpan Pix)
   | AStack [Window]
   | AFocus Window
   deriving (Eq, Ord, Show)
@@ -23,7 +23,7 @@ runAction (AShow w (px, py) (dw, dh)) = do
   liftIO $ moveResizeWindow d w (fi px) (fi py) (fi dw) (fi dh)
   liftIO $ mapWindow d w
   where
-    fi :: (Wrapper w, Num b) => w x -> b
+    fi :: (Num a) => Qty u t x -> a
     fi = fromIntegral . unwrap
 
 runAction (AStack ws) = display >>= liftIO . flip restackWindows ws
