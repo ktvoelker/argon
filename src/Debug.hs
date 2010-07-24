@@ -2,6 +2,7 @@
 module Debug where
 
 import State
+import Types
 import X11
 
 import Control.Monad.Maybe

@@ -6,16 +6,16 @@ import Maths.Unsafe
 import Prelude hiding (span)
 
 realPos :: Table t -> Tile Cel -> XYPosn t
-realPos  ta ti = pos  $ realTile ta ti
+realPos  ta ti = tiPos  $ realTile ta ti
 
 realSpan :: Table t -> Tile Cel -> XYSpan t
-realSpan ta ti = span $ realTile ta ti
+realSpan ta ti = tiSpan $ realTile ta ti
 
 realTile :: Table t -> Tile Cel -> Tile t
 realTile
   Table { rows = rs, cols = cs }
-  Tile { pos = (pc, pr), span = (sc, sr) } =
-  Tile { pos = (px, py), span = (sx, sy) }
+  Tile { tiPos = (pc, pr), tiSpan = (sc, sr) } =
+  Tile { tiPos = (px, py), tiSpan = (sx, sy) }
   where
     (bcs, acs) = splitAt (unwrap pc) cs
     (brs, ars) = splitAt (unwrap pr) rs

@@ -2,7 +2,7 @@
 module Maths (module Maths, module Maths.Unsafe) where
 
 import Maths.Unsafe hiding
-  ( fix1, fix2, fix22, unwrap, convert
+  ( fix1, fix2, fix22, wrap, unwrap, convert, wrapXY
   , O, N, U, UPosn, USpan, UDiff, Qty(..)
   , Add, Sub, Mul, Div
   )
@@ -27,7 +27,4 @@ type CelDiff x = Diff Cel x
 type SecPosn = Posn Sec X
 type SecSpan = Span Sec X
 type SecDiff = Diff Sec X
-
-wrapXY :: Int -> Int -> XY u t
-wrapXY x y = (wrap x, wrap y)
 

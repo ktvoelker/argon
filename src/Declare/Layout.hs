@@ -5,18 +5,18 @@ import Declare.Common
 import Types
 
 data Tile t = Tile
-  { pos      :: XYPosn t
-  , span     :: XYSpan t
+  { tiPos      :: XYPosn t
+  , tiSpan     :: XYSpan t
   } deriving (Eq, Ord, Show)
 
 data Layout t = Layout
-  { table     :: Table t
-  , tiles     :: Map Name (Tile Cel)
+  { laTable     :: Table t
+  , laTiles     :: Map Name (Tile Cel)
   } deriving (Eq, Ord, Show)
 
 emptyLayout :: Layout t
 emptyLayout = Layout
-  { table = Table { rows = [], cols = [] }
-  , tiles = empty
+  { laTable = Table { rows = [], cols = [] }
+  , laTiles = empty
   }
 

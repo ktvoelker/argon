@@ -22,11 +22,11 @@ class Div a b c | a b -> c
 
 {-
  - posn + posn -> invalid
- - posn - posn -> span or diff
+ - posn - posn -> diff
  - posn + span -> posn
  - posn - span -> posn
  - span + span -> span
- - span - span -> span or diff
+ - span - span -> diff
  - diff + diff -> invalid for now (could be diff)
  - diff - diff -> invalid for now (could be diff)
  - span * free -> span
@@ -34,6 +34,7 @@ class Div a b c | a b -> c
  - span / free -> span
  - span % span -> free
  - span % free -> span
+ - abs diff    -> span
  -}
 
 instance Sub UPosn UPosn UDiff
@@ -51,6 +52,15 @@ instance Div UFree UFree UFree
 
 wrap :: Int -> Qty u t x
 wrap = Qty
+
+posn :: Int -> Qty UPosn t x
+posn = wrap
+
+span :: Int -> Qty USpan t x
+span n = if n < 0 then error "Negative span" else wrap n
+
+diff :: Int -> Qty UDiff t x
+diff = wrap
 
 free :: Int -> Qty UFree t x
 free = wrap
@@ -111,6 +121,18 @@ type XY u t = (Qty u t X, Qty u t Y)
 type XYPosn t = XY UPosn t
 type XYSpan t = XY USpan t
 type XYDiff t = XY UDiff t
+
+wrapXY :: Int -> Int -> XY u t
+wrapXY x y = (wrap x, wrap y)
+
+posnXY :: Int -> Int -> XYPosn t
+posnXY = wrapXY
+
+spanXY :: Int -> Int -> XYSpan t
+spanXY x y = wrapXY (abs x) (abs y)
+
+diffXY :: Int -> Int -> XYDiff t
+diffXY = wrapXY
 
 instance Num (Free t x) where
   (+) = fix2 (+)

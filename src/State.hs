@@ -72,8 +72,8 @@ wholeFocus w = (wFocus w, wsFocus $ wSpaces w ! wFocus w)
 
 emptyWorld :: Config -> World
 emptyWorld c = World
-  { wSpaces  = fmap emptyWSpace $ spaces c
-  , wFocus   = startSpace c
+  { wSpaces  = fmap emptyWSpace $ cSpaces c
+  , wFocus   = cStartSpace c
   , wActions = empty
   }
 
@@ -86,5 +86,5 @@ emptyWSpace w = WSpace
   }
 
 emptyWLayout :: a -> Layout t -> Map Name a
-emptyWLayout e x = fmap (const e) $ tiles x
+emptyWLayout e x = fmap (const e) $ laTiles x
 

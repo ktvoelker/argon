@@ -118,10 +118,10 @@ mapRequestHandler c e = do
   where
     win = ev_window e
     -- TODO use the requested size of the window
-    float sn = act $ AShow win (wrapXY 0 0) (wrapXY 100 100)
+    float sn = act $ AShow win (posnXY 0 0) (spanXY 100 100)
     tile sn tn = AShow win (realPos ta ti) (realSpan ta ti)
       where
-        lay = layout $ spaces c ! sn
-        ti = (tiles lay) ! tn
-        ta = table lay
+        lay = layout $ cSpaces c ! sn
+        ti = (laTiles lay) ! tn
+        ta = laTable lay
 

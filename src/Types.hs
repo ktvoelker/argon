@@ -6,13 +6,14 @@ module Types (
     module Data.Queue.Class,
     module Data.Queue.PQueue,
     module Data.Queue.Queue,
-    module Data.Queue.Stack
+    module Data.Queue.Stack,
+    module Prelude
   ) where
 
 import Maths
 
 import Data.Map hiding (
-    keys, null, empty, fromList, insert, singleton, size, toList, map
+    keys, null, empty, fromList, insert, singleton, size, toList, map, filter
   )
 import Data.Queue.Class hiding (
     null, delete, empty, fromList, insert, singleton, size, toList
@@ -25,6 +26,8 @@ import qualified Data.List as DL
 import qualified Data.Map as DM
 import qualified Data.Queue.Class as DQ
 
+import Prelude hiding (filter, lookup, null, span)
+
 impossible :: a
 impossible = error "Impossible!"
 
@@ -33,13 +36,23 @@ type Name = String
 class Collection a where
   type Entry a
   type Key a
-  null      :: a -> Bool
-  empty     :: a
-  fromList  :: (Ord (Key a)) => [Entry a] -> a
-  insert    :: (Ord (Key a)) => Entry a -> a -> a
+
+  fromList :: (Ord (Key a)) => [Entry a] -> a
+  toList :: a -> [Entry a]
+  empty :: a
   singleton :: Entry a -> a
-  size      :: a -> Int
-  toList    :: a -> [Entry a]
+
+  null :: a -> Bool
+  null = DL.null . toList
+
+  insert :: (Ord (Key a)) => Entry a -> a -> a
+  insert v = fromList . (v :) . toList
+
+  size :: a -> Int
+  size = length . toList
+
+  filter :: (Ord (Key a)) => (Entry a -> Bool) -> a -> a
+  filter p = fromList . DL.filter p . toList
 
 instance Collection [e] where
   type Entry [e] = e
@@ -51,6 +64,7 @@ instance Collection [e] where
   singleton = (: [])
   size = length
   toList = id
+  filter = DL.filter
 
 instance Collection (Map k v) where
   type Entry (Map k v) = (k, v)
@@ -62,6 +76,7 @@ instance Collection (Map k v) where
   singleton = uncurry DM.singleton
   size = DM.size
   toList = DM.toList
+  filter = DM.filterWithKey . curry
  
 instance (Ord e) => Collection (PQueue e) where
   type Entry (PQueue e) = e

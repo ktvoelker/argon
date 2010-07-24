@@ -10,15 +10,15 @@ config = do
   h <- get height
   let w' = w /. free 2
       t = Table { rows = [h], cols = [w', w'] }
-      a = Tile { pos = (wrapXY 0 0), span = (wrapXY 1 1) }
-      b = Tile { pos = (wrapXY 1 0), span = (wrapXY 1 1) }
+      a = Tile { tiPos = (posnXY 0 0), tiSpan = (spanXY 1 1) }
+      b = Tile { tiPos = (posnXY 1 0), tiSpan = (spanXY 1 1) }
   return emptyConfig
-    { startSpace = "main"
-    , spaces = fromList
+    { cStartSpace = "main"
+    , cSpaces = fromList
       [ ("main", Workspace
           { spLayout = Layout
-            { table = t
-            , tiles = fromList [("a", a), ("b", b)]
+            { laTable = t
+            , laTiles = fromList [("a", a), ("b", b)]
             }
           , status = emptyStatusbar
           , attracts = []

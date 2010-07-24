@@ -50,10 +50,10 @@ fromSide EQ = impossible
 -- Get the position and size of a tile along either the parallel or
 -- perpendicular axes, relative to the gaze.
 parPS :: LookDir -> Tile t -> (Posn t X, Span t X)
-parPS ld tile = (fst $ axis ld $ pos tile, fst $ axis ld $ span tile)
+parPS ld tile = (fst $ axis ld $ tiPos tile, fst $ axis ld $ tiSpan tile)
 
 perPS :: LookDir -> Tile t -> (Posn t Y, Span t Y)
-perPS ld tile = (snd $ axis ld $ pos tile, snd $ axis ld $ span tile)
+perPS ld tile = (snd $ axis ld $ tiPos tile, snd $ axis ld $ tiSpan tile)
 
 -- True iff the second tile borders the first and is visible when gazing in
 -- the given direction.
@@ -116,18 +116,18 @@ runCommand (CFocusDir dir) = do
       -- Determine the tile to focus.
       let
         ld          = lookDir ! dir
-        space       = spaces c ! fsn
+        space       = cSpaces c ! fsn
         lay         = spLayout space
-        from        = tiles lay ! ftn
+        from        = laTiles lay ! ftn
         (ftn', ft') =
           -- Pick the bordering tile with the most shared edge.
           snd $ maximumBy (\a b -> compare (fst a) (fst b))
           -- Pair each bordering tile with the length of its shared edge.
-          $ map (\to -> (sharedEdge ld (table lay) from $ snd to, to))
+          $ map (\to -> (sharedEdge ld (laTable lay) from $ snd to, to))
           -- Pick out the bordering tiles.
           $ Prelude.filter (borders ld from . snd)
           -- Get all the tiles in the workspace.
-          $ toList $ tiles lay
+          $ toList $ laTiles lay
       -- Record the newly-focused tile.
       modifyFocusSpace $ $(upd 'wsFocus) $ const $ Right $ ftn'
       -- Tell X to focus the window atop that tile.

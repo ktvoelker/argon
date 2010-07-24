@@ -7,7 +7,8 @@ OPTIONS=                     \
   -XTemplateHaskell          \
   -XEmptyDataDecls           \
   -XLiberalTypeSynonyms      \
-  -XFlexibleContexts
+  -XFlexibleContexts         \
+  -XNoImplicitPrelude
 
 WARNINGS=                  \
   -Werror                  \

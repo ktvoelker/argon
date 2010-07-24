@@ -18,9 +18,9 @@ attract win = do
   c <- lift config
   wo <- getWorld
   atts <- lift $ lift $
-    fmap (Prelude.filter (isJust . snd)) $
+    fmap (filter (isJust . snd)) $
     sequence $ map (\(n, io) -> fmap (n, ) io) $ toList $
-    fmap (attractInSpace win) $ spaces c
+    fmap (attractInSpace win) $ cSpaces c
   return $ case atts of
       [(sn, Just tn)] -> (sn, tn)
       _ -> case wholeFocus wo of
@@ -55,7 +55,7 @@ ways = [ maybeWay xName  $ stringWay wM_NAME          (==)
        , maybeWay xTrans $ stringWay wM_TRANSIENT_FOR notEmpty
        ]
   where
-    notEmpty want str = want == not (Prelude.null str)
+    notEmpty want str = want == not (null str)
 
 anyM :: [X11 Bool] -> X11 Bool
 anyM []       = return False

@@ -7,6 +7,7 @@ import Event
 import Info
 import Init
 import State
+import Types
 import X11
 
 import Command

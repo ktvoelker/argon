@@ -31,11 +31,11 @@ data EventType =
   EReady | ECreate | EDestroy | ESpace | EFocus deriving (Enum, Eq, Ord, Show)
 
 data Config = Config
-  { spaces     :: Map Name Workspace
-  , startSpace :: Name
-  , floatMod   :: Modifier
-  , keys       :: Map (Modifier, KeySym) Command
-  , events     :: Map EventType Command
+  { cSpaces     :: Map Name Workspace
+  , cStartSpace :: Name
+  , cFloatMod   :: Modifier
+  , cKeys       :: Map (Modifier, KeySym) Command
+  , cEvents     :: Map EventType Command
   } deriving (Eq, Ord, Show)
 
 data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
@@ -57,10 +57,10 @@ data XInfo = XInfo
 
 emptyConfig :: Config
 emptyConfig = Config
-  { spaces     = Map.empty
-  , startSpace = error "No start space"
-  , floatMod   = mod1Mask
-  , keys       = Map.empty
-  , events     = Map.empty
+  { cSpaces     = Map.empty
+  , cStartSpace = error "No start space"
+  , cFloatMod   = mod1Mask
+  , cKeys       = Map.empty
+  , cEvents     = Map.empty
   }
 

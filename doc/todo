@@ -2,6 +2,9 @@
 TODO
 ====
 
+Convert all members of records to standard naming scheme. Not finished:
+  - Workspace
+
 Implement Command.runCommand.
 
 Implement keyReleaseHandler.
