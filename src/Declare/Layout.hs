@@ -16,7 +16,7 @@ data Layout t = Layout
 
 emptyLayout :: Layout t
 emptyLayout = Layout
-  { laTable = Table { rows = [], cols = [] }
+  { laTable = Table { taRows = [], taCols = [] }
   , laTiles = empty
   }
 

@@ -33,7 +33,7 @@ attract win = do
 attractInSpace :: Window -> Workspace -> X11 (Maybe (Maybe Name))
 attractInSpace win space =
   fmap (listToMaybe . map snd) $
-  filterM (attractOne win . fst) $ attracts space
+  filterM (attractOne win . fst) $ spAttracts space
 
 -- TODO Don't assume the string encoding in the TP matches ours.
 stringWay :: Atom -> (a -> String -> Bool) -> Window -> a -> X11 Bool

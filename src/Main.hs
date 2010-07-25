@@ -9,8 +9,6 @@ import State
 import Types
 import X11
 
-import Command
-
 import Control.Monad.Reader
 import System.Environment
 

@@ -13,7 +13,7 @@ realSpan ta ti = tiSpan $ realTile ta ti
 
 realTile :: Table t -> Tile Cel -> Tile t
 realTile
-  Table { rows = rs, cols = cs }
+  Table { taRows = rs, taCols = cs }
   Tile { tiPos = (pc, pr), tiSpan = (sc, sr) } =
   Tile { tiPos = (px, py), tiSpan = (sx, sy) }
   where

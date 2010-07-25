@@ -7,9 +7,9 @@ import Declare.Statusbar
 import Types
 
 data Workspace = Workspace
-  { spLayout  :: Layout Pix
-  , status    :: Statusbar
-  , attracts  :: [(Attract, Maybe Name)]
-  , startTile :: Maybe Name
+  { spLayout    :: Layout Pix
+  , spStatus    :: Statusbar
+  , spAttracts  :: [(Attract, Maybe Name)]
+  , spStartTile :: Maybe Name
   } deriving (Eq, Ord, Show)
 

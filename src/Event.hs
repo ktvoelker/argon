@@ -3,6 +3,7 @@ module Event where
 
 import Action
 import Attract
+import Command
 import Debug
 import Declare
 import Fields

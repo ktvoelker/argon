@@ -45,6 +45,7 @@ data Command =
   | CFocusName  Name Bool
   | CFocusQuery Attract
   | CSpace      Name
+  | CExec       Exec
   | CSeq        [Command]
   deriving (Eq, Ord, Show)
 

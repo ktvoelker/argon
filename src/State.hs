@@ -79,10 +79,10 @@ emptyWorld c = World
 
 emptyWSpace :: Workspace -> WSpace
 emptyWSpace w = WSpace
-  { wsFocus  = maybe (Left Nothing) Right $ startTile w
+  { wsFocus  = maybe (Left Nothing) Right $ spStartTile w
   , wsTiles  = emptyWLayout empty $ spLayout w
   , wsFloats = empty
-  , wsStatus = emptyWLayout "" $ stLayout $ status w
+  , wsStatus = emptyWLayout "" $ stLayout $ spStatus w
   }
 
 emptyWLayout :: a -> Layout t -> Map Name a
