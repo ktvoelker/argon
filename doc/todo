@@ -4,6 +4,16 @@ TODO
 
 Test!
 
+See if the keyboard handler is working or not with some debug prints.
+
+Catch window closing events in order to set the correct new focus.
+
+Figure out why new windows were not appearing very quickly.
+  Perhaps debug mode caused the problem.
+  Make debug mode dynamically alterable via a Command.
+
+Make an external, socket-based interface for executing Commands.
+
 Move Collection stuff into a separate module re-exported by Types.
 
 Implement Command.runCommand.
