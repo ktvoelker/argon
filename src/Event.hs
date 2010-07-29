@@ -1,21 +1,19 @@
 
 module Event where
 
-import Action
-import Attract
-import Command
 import Debug
 import Declare
-import Fields
-import Layout
+import Event.Default
+import Event.Input
+import Event.Structure
 import State
+import Types
 import X11
 
 import Data.Bits
 import Foreign.Marshal.Alloc
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
-import Prelude hiding (span, filter)
 
 addStdEvents :: Window -> X11 ()
 addStdEvents win = do
@@ -68,61 +66,6 @@ handlers = fromList
   , (mapRequest,    mapRequestHandler)
   ]
 
-handler, defaultHandler,
-  keyReleaseHandler, buttonPressHandler,
-  resizeRequestHandler, mapRequestHandler
-  :: Config -> Event -> X11State ()
-
+handler :: EventHandler
 handler c e = findWithDefault defaultHandler (ev_event_type e) handlers c e
-
-defaultHandler _ _ = return ()
-
-keyReleaseHandler = defaultHandler
-
-buttonPressHandler = defaultHandler
-
--- TODO for floating windows, don't ignore
-resizeRequestHandler = defaultHandler
-
-mapRequestHandler c e = do
-  wo <- getWorld
-  -- Put the window where it belongs.
-  (wSpaceName, wTileName) <- attract win
-  case wTileName of
-    -- The new window is floating.
-    Nothing        -> do
-      -- Add the window to the top of the floating stack.
-      modifySpace wSpaceName $ $(upd 'wsFloats) $ insert win
-      -- Display the new window.
-      float wSpaceName
-    -- The new window is tiled.
-    Just wTileName -> do
-      -- Add the window to the front of the tile queue.
-      modifySpace wSpaceName $ $(upd 'wsTiles) $ adjust (insert win) wTileName
-      -- Display the new window.
-      act $ tile wSpaceName wTileName
-  -- Determine if the new window should now be focused.
-  let (focusSpace, focusTile) = wholeFocus wo
-  if focusSpace == wSpaceName
-     then case (wTileName, focusTile) of
-       -- A new floating window always gains the focus.
-       (Nothing, _) -> do
-         -- Record that the new window has the focus.
-         modifyFocusSpace (\s -> s { wsFocus = Left $ Just win })
-         -- Focus the new window.
-         act $ AFocus win
-       -- A new tiled window in the focused tile gains the focus.
-       (Just tn, Right ftn) | tn == ftn -> act $ AFocus win
-       -- Otherwise, leave the focus alone.
-       _ -> return ()
-     else return ()
-  where
-    win = ev_window e
-    -- TODO use the requested size of the window
-    float sn = act $ AShow win (posnXY 0 0) (spanXY 100 100)
-    tile sn tn = AShow win (realPos ta ti) (realSpan ta ti)
-      where
-        lay = layout $ cSpaces c ! sn
-        ti = (laTiles lay) ! tn
-        ta = laTable lay
 
