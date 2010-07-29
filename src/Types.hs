@@ -54,6 +54,10 @@ class Collection a where
   filter :: (Ord (Key a)) => (Entry a -> Bool) -> a -> a
   filter p = fromList . DL.filter p . toList
 
+maximumBy :: (Collection a)
+          => (Entry a -> Entry a -> Ordering) -> a -> Entry a
+maximumBy f = DL.maximumBy f . toList
+
 instance Collection [e] where
   type Entry [e] = e
   type Key [e] = e

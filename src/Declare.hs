@@ -5,8 +5,7 @@ module Declare (
     module Declare.Common,
     module Declare.Layout,
     module Declare.Statusbar,
-    module Declare.Workspace,
-    module Graphics.X11
+    module Declare.Workspace
   ) where
 
 import Declare.Attract
@@ -16,7 +15,6 @@ import Declare.Statusbar
 import Declare.Workspace
 
 import qualified Data.Map as Map
-import Graphics.X11 hiding (EventType)
 
 class HasLayout a t where
   layout :: a -> Layout t

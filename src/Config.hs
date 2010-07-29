@@ -3,8 +3,6 @@ module Config (config) where
 
 import Declare
 
-import Control.Monad.Reader
-
 config :: Reader XInfo Config
 config = do
   w <- asks width
@@ -26,5 +24,6 @@ config = do
           , spStartTile = Just "a"
           })
       ]
+    , cKeys = fromList [((controlMask .|. mod1Mask, xK_N), CFocusDir DRight)]
     }
 

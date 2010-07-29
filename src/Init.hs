@@ -6,6 +6,7 @@ import Declare
 import Event
 import X11
 
+import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
 getXInfo :: X11 XInfo

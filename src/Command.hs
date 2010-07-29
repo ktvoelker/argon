@@ -10,9 +10,8 @@ import State
 import Types
 import X11
 
-import Data.List hiding (span)
 import Data.Maybe
-import Prelude hiding (span)
+import Graphics.X11
 
 data LookDir = LookDir
   -- axis rearranges an (x,y) pair so that the coordinate on the axis
@@ -125,7 +124,7 @@ runCommand (CFocusDir dir) = do
           -- Pair each bordering tile with the length of its shared edge.
           $ map (\to -> (sharedEdge ld (laTable lay) from $ snd to, to))
           -- Pick out the bordering tiles.
-          $ Prelude.filter (borders ld from . snd)
+          $ filter (borders ld from . snd)
           -- Get all the tiles in the workspace.
           $ toList $ laTiles lay
       -- Record the newly-focused tile.

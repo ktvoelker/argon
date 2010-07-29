@@ -2,9 +2,11 @@
 TODO
 ====
 
-Implement Command.runCommand.
+Test!
 
-Implement keyReleaseHandler.
+Move Collection stuff into a separate module re-exported by Types.
+
+Implement Command.runCommand.
 
 Implement buttonPressHandler to set the focus and pass the button press
 through.
