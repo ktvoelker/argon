@@ -1,14 +1,14 @@
 
 module Event.Default where
 
-import Declare
 import State
+import Types
 
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
-type EventHandler = Config -> Event -> X11State ()
+type EventHandler = Event -> X11State ()
 
 defaultHandler :: EventHandler
-defaultHandler _ _ = return ()
+defaultHandler _ = return ()
 

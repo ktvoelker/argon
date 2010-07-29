@@ -48,7 +48,7 @@ eventLoop = do
     getDisplay >>= liftIO . flip nextEvent ptr
     -- Extract a safe event value from the event pointer and handle it.
     debug "Extract and handle event"
-    safely ptr (handler conf)
+    safely ptr handler
     -- Run the actions emitted by the handler.
     debug "Run actions"
     runActions
@@ -58,7 +58,7 @@ eventLoop = do
 safely :: XEventPtr -> (Event -> X11State a) -> X11State a
 safely ptr = ((lift . lift . lift) (getEvent ptr) >>=)
 
-handlers :: Map Graphics.X11.EventType (Config -> Event -> X11State ())
+handlers :: Map Graphics.X11.EventType (Event -> X11State ())
 handlers = fromList
   [ (keyRelease,    keyReleaseHandler)
   , (buttonPress,   buttonPressHandler)
@@ -67,5 +67,5 @@ handlers = fromList
   ]
 
 handler :: EventHandler
-handler c e = findWithDefault defaultHandler (ev_event_type e) handlers c e
+handler e = findWithDefault defaultHandler (ev_event_type e) handlers e
 

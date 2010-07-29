@@ -9,6 +9,7 @@ import Fields
 import Layout
 import State
 import Types
+import X11
 
 import Graphics.X11.Xlib.Extras
 
@@ -17,7 +18,7 @@ resizeRequestHandler, mapRequestHandler :: EventHandler
 -- TODO for floating windows, don't ignore
 resizeRequestHandler = defaultHandler
 
-mapRequestHandler c e = do
+mapRequestHandler e = do
   wo <- getWorld
   -- Put the window where it belongs.
   (wSpaceName, wTileName) <- attract win
@@ -33,7 +34,7 @@ mapRequestHandler c e = do
       -- Add the window to the front of the tile queue.
       modifySpace wSpaceName $ $(upd 'wsTiles) $ adjust (insert win) wTileName
       -- Display the new window.
-      act $ tile wSpaceName wTileName
+      tile wSpaceName wTileName
   -- Determine if the new window should now be focused.
   let (focusSpace, focusTile) = wholeFocus wo
   if focusSpace == wSpaceName
@@ -53,9 +54,11 @@ mapRequestHandler c e = do
     win = ev_window e
     -- TODO use the requested size of the window
     float sn = act $ AShow win (posnXY 0 0) (spanXY 100 100)
-    tile sn tn = AShow win (realPos ta ti) (realSpan ta ti)
-      where
+    tile sn tn = do
+      c <- getConfig
+      let
         lay = layout $ cSpaces c ! sn
-        ti = (laTiles lay) ! tn
-        ta = laTable lay
+        ti  = (laTiles lay) ! tn
+        ta  = laTable lay
+      act $ AShow win (realPos ta ti) (realSpan ta ti)
 
