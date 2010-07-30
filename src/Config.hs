@@ -24,6 +24,6 @@ config = do
           , spStartTile = Just "a"
           })
       ]
-    , cKeys = fromList [((controlMask .|. mod1Mask, xK_N), CFocusDir DRight)]
+    , cKeys = fromList [((anyModifier, xK_space), CFocusDir DRight)]
     }
 

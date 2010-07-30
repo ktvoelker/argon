@@ -1,5 +1,5 @@
 
-module Debug where
+module Debug (debug, dprint, dwprint) where
 
 import State
 import Types
@@ -29,4 +29,23 @@ instance Debug (ReaderT X11Env IO) where
 
 instance Debug (MaybeT (StateT World (ReaderT X11Env IO))) where
   debug = lift . lift . debug
+
+class Wrap u w | u -> w where
+  wrap   :: u -> w
+  unwrap :: w -> u
+
+wrapped :: (Wrap u w) => (w -> a) -> u -> a
+wrapped = (. wrap)
+
+dwprint :: (Wrap u w, Show w, Debug m) => u -> m ()
+dwprint = wrapped dprint
+
+newtype ShowKeySym = ShowKeySym KeySym
+
+instance Wrap KeySym ShowKeySym where
+  wrap = ShowKeySym
+  unwrap (ShowKeySym k) = k
+
+instance Show ShowKeySym where
+  show = keysymToString . unwrap
 

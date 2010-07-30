@@ -2,6 +2,7 @@
 module Event.Input where
 
 import Command
+import Debug
 import Declare
 import Event.Default
 import Types
@@ -17,6 +18,9 @@ keyReleaseHandler e = do
   let mod = ev_state e
   sym <- getDisplay
     >>= lift . lift . lift . \d -> keycodeToKeysym d (ev_keycode e) 0
+  debug "keyReleaseHandler"
+  dprint mod
+  dwprint sym
   getConfig >>=
     fromMaybe (return ()) . fmap runCommand . (lookup (mod, sym)) . cKeys
 

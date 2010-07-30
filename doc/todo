@@ -2,7 +2,7 @@
 TODO
 ====
 
-Test!
+Figure out why the keyboard handler seems to get duplicates of everything.
 
 See if the keyboard handler is working or not with some debug prints.
 

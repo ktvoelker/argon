@@ -5,6 +5,7 @@ import Action
 import Attract
 import Declare
 import Event.Default
+import Event.Listen
 import Fields
 import Layout
 import State
@@ -20,6 +21,8 @@ resizeRequestHandler = defaultHandler
 
 mapRequestHandler e = do
   wo <- getWorld
+  -- Add standard event handlers.
+  lift $ lift $ addStdEvents win
   -- Put the window where it belongs.
   (wSpaceName, wTileName) <- attract win
   case wTileName of
