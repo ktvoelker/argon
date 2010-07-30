@@ -5,17 +5,42 @@ module Maths.Unsafe where
 
 import Prelude
 
-data O
-data N
+data UPosn
+data USpan
+data UDiff
+data UFree
 
-data U posn span diff free
+class ShowType a where
+  showType :: a -> String
 
-type UPosn = U O N N N
-type USpan = U N O N N
-type UDiff = U N N O N
-type UFree = U N N N O
+showsType :: (ShowType a) => a -> ShowS
+showsType dum = (showType dum ++)
 
-newtype Qty u t x = Qty Int deriving (Enum, Eq, Ord, Show)
+instance ShowType UPosn where
+  showType _ = "posn"
+
+instance ShowType USpan where
+  showType _ = "span"
+
+instance ShowType UDiff where
+  showType _ = "diff"
+
+instance ShowType UFree where
+  showType _ = "free"
+
+newtype Qty u t x = Qty Int deriving (Enum, Eq, Ord)
+
+instance (ShowType u, ShowType t, ShowType x) => Show (Qty u t x) where
+  showsPrec p (Qty n) =
+    ('<' :)
+    . showsType (dum :: t) . spc
+    . showsType (dum :: x) . spc
+    . showsType (dum :: u) . spc
+    . showsPrec p n
+    . ('>' :)
+    where
+      spc = (' ' :)
+      dum = undefined
 
 class Add a b c | a b -> c
 class Sub a b c | a b -> c
@@ -119,6 +144,12 @@ type Free t x = Qty UFree t x
 data X
 data Y
 
+instance ShowType X where
+  showType _ = "x"
+
+instance ShowType Y where
+  showType _ = "y"
+
 type XY u t = (Qty u t X, Qty u t Y)
 type XYPosn t = XY UPosn t
 type XYSpan t = XY USpan t
@@ -136,7 +167,7 @@ spanXY x y = wrapXY (abs x) (abs y)
 diffXY :: Int -> Int -> XYDiff t
 diffXY = wrapXY
 
-instance Num (Free t x) where
+instance (ShowType t, ShowType x) => Num (Free t x) where
   (+) = fix2 (+)
   (*) = fix2 (*)
   (-) = fix2 (-)
@@ -144,10 +175,10 @@ instance Num (Free t x) where
   signum = fix1 signum
   fromInteger = wrap . fromInteger
 
-instance Real (Free t x) where
+instance (ShowType t, ShowType x) => Real (Free t x) where
   toRational = toRational . unwrap
 
-instance Integral (Free t x) where
+instance (ShowType t, ShowType x) => Integral (Free t x) where
   quotRem = fix22 quotRem
   divMod = fix22 divMod
   toInteger = toInteger . unwrap

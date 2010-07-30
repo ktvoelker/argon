@@ -5,7 +5,6 @@ module Declare.Common
   , module Control.Monad.Reader
   , module Data.Bits
   , module Graphics.X11.Types
-  , module Graphics.X11.Xlib.Extras
   ) where
 
 import Types
@@ -15,7 +14,6 @@ import Types
 import Control.Monad.Reader (asks, Reader)
 import Data.Bits ((.|.))
 import Graphics.X11.Types hiding (EventType)
-import Graphics.X11.Xlib.Extras (anyButton)
 
 data Table t = Table
   { taRows :: [Span t Y]
