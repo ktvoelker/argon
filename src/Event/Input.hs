@@ -8,21 +8,20 @@ import Event.Default
 import Types
 import X11
 
-import Data.Maybe
+import Data.Bits
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
 keyReleaseHandler, buttonPressHandler :: EventHandler
 
 keyReleaseHandler e = do
-  let mod = ev_state e
-  sym <- getDisplay
+  mask <- getConfig >>= return . (ev_state e .&.) . complement . cIgnoreMask
+  sym  <- getDisplay
     >>= lift . lift . lift . \d -> keycodeToKeysym d (ev_keycode e) 0
   debug "keyReleaseHandler"
-  dprint mod
+  dprint mask
   dwprint sym
-  getConfig >>=
-    fromMaybe (return ()) . fmap runCommand . (lookup (mod, sym)) . cKeys
+  getConfig >>= maybe (return ()) runCommand . (lookup (mask, sym)) . cKeys
 
 buttonPressHandler = defaultHandler
 

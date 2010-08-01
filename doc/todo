@@ -2,11 +2,10 @@
 TODO
 ====
 
-Figure out why the keyboard handler seems to get duplicates of everything.
-
-See if the keyboard handler is working or not with some debug prints.
-
 Catch window closing events in order to set the correct new focus.
+
+Figure out how to force redrawing of window contents after Xnest has been
+hidden.
 
 Figure out why new windows were not appearing very quickly.
   Perhaps debug mode caused the problem.

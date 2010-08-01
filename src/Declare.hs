@@ -31,8 +31,9 @@ data EventType =
 data Config = Config
   { cSpaces     :: Map Name Workspace
   , cStartSpace :: Name
-  , cFloatMod   :: Modifier
-  , cKeys       :: Map (Modifier, KeySym) Command
+  , cFloatMask  :: KeyMask
+  , cKeys       :: Map (KeyMask, KeySym) Command
+  , cIgnoreMask :: KeyMask
   , cEvents     :: Map EventType Command
   } deriving (Eq, Ord, Show)
 
@@ -58,8 +59,9 @@ emptyConfig :: Config
 emptyConfig = Config
   { cSpaces     = Map.empty
   , cStartSpace = error "No start space"
-  , cFloatMod   = mod1Mask
+  , cFloatMask  = mod1Mask
   , cKeys       = Map.empty
   , cEvents     = Map.empty
+  , cIgnoreMask = lockMask .|. mod2Mask .|. mod3Mask .|. mod5Mask
   }
 
