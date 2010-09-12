@@ -45,6 +45,7 @@ handlers = fromList
   , (buttonPress,   buttonPressHandler)
   , (resizeRequest, resizeRequestHandler)
   , (mapRequest,    mapRequestHandler)
+  , (destroyNotify, destroyWindowHandler)
   ]
 
 handler :: EventHandler

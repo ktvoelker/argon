@@ -14,7 +14,7 @@ import X11
 
 import Graphics.X11.Xlib.Extras
 
-resizeRequestHandler, mapRequestHandler :: EventHandler
+resizeRequestHandler, mapRequestHandler, destroyWindowHandler :: EventHandler
 
 -- TODO for floating windows, don't ignore
 resizeRequestHandler = defaultHandler
@@ -64,4 +64,15 @@ mapRequestHandler e = do
         ti  = (laTiles lay) ! tn
         ta  = laTable lay
       act $ AShow win (realPos ta ti) (realSpan ta ti)
+
+destroyWindowHandler e = do
+  wo <- getWorld
+  case findWindow wo $ ev_window e of
+    Nothing -> return ()
+    -- TODO remove the destroyed window from wherever it was
+    -- TODO determine the new window which deserves the focus
+    Just (ws, Nothing) -> do
+      return ()
+    Just (ws, Just frame) -> do
+      return ()
 

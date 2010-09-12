@@ -56,19 +56,29 @@ data WSpace = WSpace
   , wsStatus :: Map Name String
   } deriving (Show)
 
+-- Get the focused workspace.
 wFocusSpace :: World -> WSpace
 wFocusSpace w = wSpaces w ! wFocus w
 
+-- Modify a workspace.
 modifySpace :: Name -> (WSpace -> WSpace) -> X11State ()
 modifySpace n f =
   modifyWorld (\w ->
     $(upd 'wSpaces) (insert (n, f $ wSpaces w ! n)) w)
 
+-- Modify the focused workspace.
 modifyFocusSpace :: (WSpace -> WSpace) -> X11State ()
 modifyFocusSpace f = getWorld >>= flip modifySpace f . wFocus
 
+-- Get the name of the focused workspace and either the focused floating
+-- window or the focused tile.
 wholeFocus :: World -> (Name, Either (Maybe Window) Name)
 wholeFocus w = (wFocus w, wsFocus $ wSpaces w ! wFocus w)
+
+-- Get the workspace and frame names of the current location of a window.
+findWindow :: World -> Window -> Maybe (Name, Maybe Name)
+-- TODO
+findWindow _ _ = Nothing
 
 emptyWorld :: Config -> World
 emptyWorld c = World
