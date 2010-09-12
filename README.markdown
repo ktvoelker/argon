@@ -15,3 +15,6 @@ window manager to ever make that window appear in a different tile unless I
 manually move the window to that tile.
 * I want certain kinds of windows to always be placed in particular tiles.
 
+In summary, I want to minimize the work I have to do, both with the keyboard
+and with my mind. For me, minimizing mental work requires maximizing the
+predictability of the window manager's behavior.
