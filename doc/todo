@@ -2,34 +2,6 @@
 TODO
 ====
 
-Change the way floating windows are distinguished from tiled windows so that
-there is less duplication of code. Also, create uniform types for workspace
-and frame references. Frame references should always be fully qualified. The
-focus should be a single TileRef in the World.
-
-  Okay, so there will be these opaque types:
-    type SpaceRef = SpaceRef { srSpace :: String }
-    type TileRef = TileRef { trSpace :: String, trTile :: Maybe String }
-  There will be these conversions:
-    trSpaceRef :: TileRef -> SpaceRef
-  There will be these accessors:
-    getTileWindows :: World -> TileRef -> Queue Window
-    getSpace :: (RefSpace a) => World -> a -> WSpace
-    modifyTileWindows ::
-      (Queue Window -> Queue Window) -> TileRef -> X11State ()
-    getFocus :: World -> TileRef
-    setFocus :: World -> TileRef -> X11State ()
-    modifyFocusWindows ::
-      (Queue Window -> Queue Window) -> X11State ()
-  Classes:
-    class RefSpace a where
-      getSpaceRef :: a -> SpaceRef
-    instance RefSpace SpaceRef
-    instance RefSpace TileRef
-  We should no longer need:
-    wFocusSpace
-    modifyFocusSpace
-
 Catch window closing events in order to set the correct new focus.
 
 Figure out how to force redrawing of window contents after Xnest has been

@@ -6,8 +6,8 @@ import Declare.Layout
 import Types
 
 data Statusbar = Statusbar
-  { stLayout :: Layout Chr
-  , stExecs  :: Map Name (Exec, SecSpan)
+  { stLayout :: Layout Chr StatusRef
+  , stExecs  :: Map StatusRef (Exec, SecSpan)
   } deriving (Eq, Ord, Show)
 
 emptyStatusbar :: Statusbar

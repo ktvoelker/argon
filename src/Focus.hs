@@ -3,6 +3,7 @@ module Focus where
 
 import Action
 import Declare
+import Declare.Access
 import Fields
 import Layout
 import Maths.Unsafe
@@ -10,6 +11,7 @@ import State
 import Types
 import X11
 
+import Data.List (sortBy)
 import Data.Maybe
 import Graphics.X11
 
@@ -106,42 +108,41 @@ focusDir :: Dir -> X11State ()
 focusDir dir = do
   c  <- lift $ lift getConfig
   wo <- getWorld
-  case wholeFocus wo of
-    -- A floating window is focused.
-    (_, Left _)      -> return ()  -- TODO
-    -- A tile is focused.
-    (fsn, Right ftn) -> do
-      -- Determine the tile to focus.
-      let
-        ld    = lookDir ! dir
-        space = cSpaces c ! fsn
-        lay   = spLayout space
-        from  = laTiles lay ! ftn
-        bs    =
-          -- Pair each bordering tile with the length of its shared edge.
-          map (\to -> (sharedEdge ld (laTable lay) from $ snd to, to))
-          -- Pick out the bordering tiles.
-          $ filter (borders ld from . snd)
-          -- Get all the tiles in the workspace.
-          $ toList $ laTiles lay
-        b     =
-          if null bs
-             then Nothing
-             else -- Pick the bordering tile with the most shared edge.
-                  Just
-                  $ snd
-                  $ maximumBy (\a b -> compare (fst a) (fst b)) bs
-      case b of
-        -- Nowhere to move.
-        Nothing          -> return ()
-        -- Somewhere to move.
-        Just (ftn', ft') -> do
-          -- Record the newly-focused tile.
-          modifyFocusSpace $ $(upd 'wsFocus) $ const $ Right $ ftn'
-          -- Tell X to focus the window atop that tile.
-          disp <- getDisplay
-          act $ AFocus $ topWinOrRoot disp $ wsTiles (wFocusSpace wo) ! ftn'
-
-topWinOrRoot :: Display -> Queue Window -> Window
-topWinOrRoot disp coll = fromMaybe (defaultRootWindow disp) $ top coll
+  let tr = getFocusTile wo
+  if tileIsFloat tr
+     -- A floating window is focused.
+     -- TODO
+     then return ()
+     -- A tile is focused.
+     else do
+       let
+         ld    = lookDir ! dir
+         space = cSpace c tr
+         lay   = spLayout space
+         from  = laTiles lay ! tr
+         -- Choose the bordering tile with the most shared edge, if any.
+         b     = fmap snd
+           $ listToMaybe
+           -- Sort the bordering tiles in descending order by their amounts
+           -- of shared edge.
+           $ sortBy (\a b -> compare (fst b) (fst a))
+           -- Pair each bordering tile with the length of its shared edge.
+           $ map (\to -> (sharedEdge ld (laTable lay) from $ snd to, fst to))
+           -- Pick out the bordering tiles.
+           $ filter (borders ld from . snd)
+           -- Get all the tiles in the workspace.
+           $ toList $ laTiles lay
+       case b of
+         -- Nowhere to move.
+         Nothing  -> return ()
+         -- Somewhere to move.
+         Just tr' -> do
+           -- Record the newly-focused tile.
+           setFocusTile tr'
+           -- Tell X to focus the window atop that tile.
+           disp <- getDisplay
+           act
+             $ AFocus
+             $ fromMaybe (defaultRootWindow disp)
+             $ getFocusWindow wo
 

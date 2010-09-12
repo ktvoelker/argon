@@ -12,28 +12,22 @@ import Foreign.C.String
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
--- Determine the workspace and tile where a window should be placed.
-attract :: Window -> X11State (Name, Maybe Name)
+-- Determine where a window should be placed.
+attract :: Window -> X11State TileRef
 attract win = do
   c <- lift $ getConfig
   wo <- getWorld
-  atts <- lift $ lift $
-    fmap (filter (isJust . snd)) $
-    sequence $ map (\(n, io) -> fmap (n, ) io) $ toList $
-    fmap (attractInSpace win) $ cSpaces c
-  return $ case atts of
-      [(sn, Just tn)] -> (sn, tn)
-      _ -> case wholeFocus wo of
-        (sn, Left _)   -> (sn, Nothing)
-        (sn, Right tn) -> (sn, Just tn)
+  att <- lift $ lift $
+    -- Keep only the first result, if any.
+    fmap listToMaybe $
+    -- Check all attractions against the given window.
+    fmap (map snd) $ filterM (attractOne win . fst) $ cAttracts c
+  -- Return the attracted tile if one was found.
+  -- Otherwise, return the focused tile.
+  return $ fromMaybe (getFocusTile wo) att
 
--- Nothing means not this space.
--- Just Nothing means floating on this space.
--- Just (Just n) means the tile named n.
-attractInSpace :: Window -> Workspace -> X11 (Maybe (Maybe Name))
-attractInSpace win space =
-  fmap (listToMaybe . map snd) $
-  filterM (attractOne win . fst) $ spAttracts space
+attractOne :: Window -> Attract -> X11 Bool
+attractOne win att = anyM $ map (($ att) . ($ win)) ways
 
 -- TODO Don't assume the string encoding in the TP matches ours.
 stringWay :: Atom -> (a -> String -> Bool) -> Window -> a -> X11 Bool
@@ -62,7 +56,4 @@ anyM []       = return False
 anyM (x : xs) = do
   b <- x
   if b then return True else anyM xs
-
-attractOne :: Window -> Attract -> X11 Bool
-attractOne win att = anyM $ map (($ att) . ($ win)) ways
 

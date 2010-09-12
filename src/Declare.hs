@@ -1,11 +1,11 @@
 
-module Declare (
-    module Declare,
-    module Declare.Attract,
-    module Declare.Common,
-    module Declare.Layout,
-    module Declare.Statusbar,
-    module Declare.Workspace
+module Declare
+  ( module Declare
+  , module Declare.Attract
+  , module Declare.Common
+  , module Declare.Layout
+  , module Declare.Statusbar
+  , module Declare.Workspace
   ) where
 
 import Declare.Attract
@@ -16,34 +16,35 @@ import Declare.Workspace
 
 import qualified Data.Map as Map
 
-class HasLayout a t where
-  layout :: a -> Layout t
+class HasLayout a t r | a -> t r, t -> a r, r -> a t where
+  layout :: a -> Layout t r
 
-instance HasLayout Statusbar Chr where
+instance HasLayout Statusbar Chr StatusRef where
   layout = stLayout
 
-instance HasLayout Workspace Pix where
+instance HasLayout Workspace Pix TileRef where
   layout = spLayout
 
 data EventType =
   EReady | ECreate | EDestroy | ESpace | EFocus deriving (Enum, Eq, Ord, Show)
 
 data Config = Config
-  { cSpaces     :: Map Name Workspace
-  , cStartSpace :: Name
+  { cSpaces     :: Map SpaceRef Workspace
+  , cStartSpace :: SpaceRef
   , cFloatMask  :: KeyMask
   , cKeys       :: Map (KeyMask, KeySym) Command
   , cIgnoreMask :: KeyMask
   , cEvents     :: Map EventType Command
+  , cAttracts   :: [(Attract, TileRef)]
   } deriving (Eq, Ord, Show)
 
 data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
 
 data Command =
     CFocusDir   Dir
-  | CFocusName  Name Bool
+  | CFocusName  TileRef Bool
   | CFocusQuery Attract
-  | CSpace      Name
+  | CSpace      SpaceRef
   | CExec       Exec
   | CSeq        [Command]
   deriving (Eq, Ord, Show)
@@ -63,5 +64,6 @@ emptyConfig = Config
   , cKeys       = Map.empty
   , cEvents     = Map.empty
   , cIgnoreMask = lockMask .|. mod2Mask .|. mod3Mask .|. mod5Mask
+  , cAttracts   = []
   }
 

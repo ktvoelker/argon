@@ -12,18 +12,22 @@ config = do
       a = Tile { tiPos = (posnXY 0 0), tiSpan = (spanXY 1 1) }
       b = Tile { tiPos = (posnXY 1 0), tiSpan = (spanXY 1 1) }
   return emptyConfig
-    { cStartSpace = "main"
+    { cStartSpace = main
     , cSpaces = fromList
-      [ ("main", Workspace
+      [ (main, Workspace
           { spLayout = Layout
             { laTable = t
-            , laTiles = fromList [("a", a), ("b", b)]
+            , laTiles = fromList [(tileA, a), (tileB, b)]
             }
           , spStatus = emptyStatusbar
-          , spAttracts = []
-          , spStartTile = Just "a"
+          , spStartTile = tileA
           })
       ]
     , cKeys = fromList [((0, xK_space), CFocusDir DRight)]
+    , cAttracts = []
     }
+  where
+    main = mkSpaceRef "main"
+    tileA = mkTileRef main $ Just "a"
+    tileB = mkTileRef main $ Just "b"
 

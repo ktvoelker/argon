@@ -7,6 +7,7 @@ module Declare.Common
   , module Graphics.X11.Types
   ) where
 
+import qualified Ref
 import Types
 
 -- These are typically used by configurations. We want the user to only need
@@ -14,6 +15,15 @@ import Types
 import Control.Monad.Reader (asks, Reader)
 import Data.Bits ((.|.))
 import Graphics.X11.Types hiding (EventType)
+
+mkSpaceRef :: String -> SpaceRef
+mkSpaceRef = Ref.SpaceRef
+
+mkTileRef :: SpaceRef -> Maybe String -> TileRef
+mkTileRef = Ref.TileRef
+
+mkStatusRef :: SpaceRef -> String -> StatusRef
+mkStatusRef = Ref.StatusRef
 
 data Table t = Table
   { taRows :: [Span t Y]

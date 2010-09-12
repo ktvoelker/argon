@@ -1,16 +1,28 @@
 
-module Types (
-    module Types,
-    module Maths,
-    module Data.Map,
-    module Data.Queue.Class,
-    module Data.Queue.PQueue,
-    module Data.Queue.Queue,
-    module Data.Queue.Stack,
-    module Prelude
+module Types
+  ( module Types
+  , module Maths
+  , module Ref
+  , module Data.Map
+  , module Data.Queue.Class
+  , module Data.Queue.PQueue
+  , module Data.Queue.Queue
+  , module Data.Queue.Stack
+  , module Prelude
   ) where
 
 import Maths
+
+import Ref
+  ( SpaceRef()
+  , TileRef()
+  , StatusRef()
+  , RefSpace(..)
+  )
+
+import qualified Ref
+
+import Data.Maybe
 
 import Data.Map hiding (
     keys, null, empty, fromList, insert, singleton, size, toList, map, filter
@@ -31,7 +43,8 @@ import Prelude hiding (filter, lookup, null, span)
 impossible :: a
 impossible = error "Impossible!"
 
-type Name = String
+tileIsFloat :: TileRef -> Bool
+tileIsFloat = isJust . Ref.trTile
 
 class Collection a where
   type Entry a

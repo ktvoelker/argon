@@ -3,6 +3,7 @@ module State where
 
 import Action
 import Declare
+import Declare.Access
 import Fields
 import Types
 import X11
@@ -44,57 +45,67 @@ act :: Action -> X11State ()
 act a = modifyWorld $ $(upd 'wActions) $ insert a
 
 data World = World
-  { wSpaces  :: Map Name WSpace
-  , wFocus   :: Name
+  { wSpaces  :: Map SpaceRef WSpace
+  , wFocus   :: TileRef
   , wActions :: Queue Action
   } deriving (Show)
 
 data WSpace = WSpace
-  { wsFocus  :: Either (Maybe Window) Name
-  , wsTiles  :: Map Name (Queue Window)
-  , wsFloats :: Stack Window
-  , wsStatus :: Map Name String
+  { wsFocus  :: TileRef
+  , wsTiles  :: Map TileRef (Queue Window)
+  , wsStatus :: Map StatusRef String
   } deriving (Show)
 
--- Get the focused workspace.
-wFocusSpace :: World -> WSpace
-wFocusSpace w = wSpaces w ! wFocus w
+getSpace :: (RefSpace a) => World -> a -> WSpace
+getSpace wo sr = wSpaces wo ! getSpaceRef sr
 
--- Modify a workspace.
-modifySpace :: Name -> (WSpace -> WSpace) -> X11State ()
-modifySpace n f =
-  modifyWorld (\w ->
-    $(upd 'wSpaces) (insert (n, f $ wSpaces w ! n)) w)
+modifySpace :: (RefSpace a) => (WSpace -> WSpace) -> a -> X11State ()
+modifySpace f sr =
+  modifyWorld $ $(upd 'wSpaces) $ adjust f $ getSpaceRef sr
 
--- Modify the focused workspace.
 modifyFocusSpace :: (WSpace -> WSpace) -> X11State ()
-modifyFocusSpace f = getWorld >>= flip modifySpace f . wFocus
+modifyFocusSpace f = getWorld >>= modifySpace f . getFocusTile
 
--- Get the name of the focused workspace and either the focused floating
--- window or the focused tile.
-wholeFocus :: World -> (Name, Either (Maybe Window) Name)
-wholeFocus w = (wFocus w, wsFocus $ wSpaces w ! wFocus w)
+getFocusTile :: World -> TileRef
+getFocusTile = wFocus
 
--- Get the workspace and frame names of the current location of a window.
-findWindow :: World -> Window -> Maybe (Name, Maybe Name)
+setFocusTile :: TileRef -> X11State ()
+setFocusTile tr = do
+  modifyWorld ($(upd 'wFocus) ctr)
+  modifySpace ($(upd 'wsFocus) ctr) tr
+  where
+    ctr = const tr
+
+getFocusWindow :: World -> Maybe Window
+getFocusWindow w = top $ getTileWindows w $ getFocusTile w
+
+getTileWindows :: World -> TileRef -> Queue Window
+getTileWindows w tr = wsTiles (getSpace w tr) ! tr
+
+modifyTileWindows :: (Queue Window -> Queue Window) -> TileRef -> X11State ()
+modifyTileWindows f tr = modifySpace ($(upd 'wsTiles) $ adjust f tr) tr
+
+modifyFocusWindows :: (Queue Window -> Queue Window) -> X11State ()
+modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
+
+findWindow :: World -> Window -> Maybe TileRef
 -- TODO
 findWindow _ _ = Nothing
 
 emptyWorld :: Config -> World
 emptyWorld c = World
   { wSpaces  = fmap emptyWSpace $ cSpaces c
-  , wFocus   = cStartSpace c
+  , wFocus   = spStartTile $ cSpace c $ cStartSpace c
   , wActions = empty
   }
 
 emptyWSpace :: Workspace -> WSpace
 emptyWSpace w = WSpace
-  { wsFocus  = maybe (Left Nothing) Right $ spStartTile w
+  { wsFocus  = spStartTile w
   , wsTiles  = emptyWLayout empty $ spLayout w
-  , wsFloats = empty
   , wsStatus = emptyWLayout "" $ stLayout $ spStatus w
   }
 
-emptyWLayout :: a -> Layout t -> Map Name a
+emptyWLayout :: a -> Layout t r -> Map r a
 emptyWLayout e x = fmap (const e) $ laTiles x
 

@@ -9,12 +9,12 @@ data Tile t = Tile
   , tiSpan     :: XYSpan t
   } deriving (Eq, Ord, Show)
 
-data Layout t = Layout
+data Layout t r = Layout
   { laTable     :: Table t
-  , laTiles     :: Map Name (Tile Cel)
+  , laTiles     :: Map r (Tile Cel)
   } deriving (Eq, Ord, Show)
 
-emptyLayout :: Layout t
+emptyLayout :: Layout t r
 emptyLayout = Layout
   { laTable = Table { taRows = [], taCols = [] }
   , laTiles = empty
