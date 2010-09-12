@@ -18,3 +18,14 @@ manually move the window to that tile.
 In summary, I want to minimize the work I have to do, both with the keyboard
 and with my mind. For me, minimizing mental work requires maximizing the
 predictability of the window manager's behavior.
+
+Does it work yet?
+-----------------
+It runs and displays new windows, and you can move the focus between the tiles
+on the default workspace. However, most of the user commands have not been
+implemented, and closing a window causes trouble.
+
+If you want to help, feel free, but keep in mind that I'm definitely not
+going to accept any features I wouldn't want to use. In the future, once the
+code is more functional and stable, I will accept patches which add general
+extensibility mechanisms even if I don't think I will use those mechanisms.
