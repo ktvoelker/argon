@@ -44,7 +44,7 @@ impossible :: a
 impossible = error "Impossible!"
 
 tileIsFloat :: TileRef -> Bool
-tileIsFloat = isJust . Ref.trTile
+tileIsFloat = not . isJust . Ref.trTile
 
 class Collection a where
   type Entry a
