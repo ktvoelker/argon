@@ -11,6 +11,8 @@ import X11
 import Control.Monad.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
+import Data.Maybe
+import Graphics.X11
 
 -- The MaybeT determines whether or not the user has asked the program to
 -- terminate.
@@ -76,8 +78,15 @@ setFocusTile tr = do
   where
     ctr = const tr
 
-getFocusWindow :: World -> Maybe Window
-getFocusWindow w = top $ getTileWindows w $ getFocusTile w
+getFocusWindow :: X11State Window
+getFocusWindow = do
+  d <- getDisplay
+  w <- getWorld
+  return
+    $ fromMaybe (defaultRootWindow d)
+    $ top
+    $ getTileWindows w
+    $ getFocusTile w
 
 getTileWindows :: World -> TileRef -> Queue Window
 getTileWindows w tr = wsTiles (getSpace w tr) ! tr

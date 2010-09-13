@@ -2,7 +2,7 @@
 TODO
 ====
 
-Catch window closing events in order to set the correct new focus.
+Implement State.findWindow.
 
 Figure out how to force redrawing of window contents after Xnest has been
 hidden.

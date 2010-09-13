@@ -8,6 +8,7 @@ import Declare.Access
 import Event.Default
 import Event.Listen
 import Fields
+import Focus
 import Layout
 import State
 import Types
@@ -58,9 +59,13 @@ mapRequestHandler e = do
 
 destroyWindowHandler e = do
   wo <- getWorld
-  case findWindow wo $ ev_window e of
+  case findWindow wo win of
     Nothing -> return ()
-    -- TODO remove the destroyed window from wherever it was
-    -- TODO determine the new window which deserves the focus
-    Just tr -> return ()
+    Just tr -> do
+      -- Remove the destroyed window
+      modifyTileWindows (filter (/= win)) tr
+      -- Focus the correct window
+      updateX11Focus
+  where
+    win = ev_window e
 

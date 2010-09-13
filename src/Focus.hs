@@ -140,9 +140,8 @@ focusDir dir = do
            -- Record the newly-focused tile.
            setFocusTile tr'
            -- Tell X to focus the window atop that tile.
-           disp <- getDisplay
-           act
-             $ AFocus
-             $ fromMaybe (defaultRootWindow disp)
-             $ getFocusWindow wo
+           updateX11Focus
+
+updateX11Focus :: X11State ()
+updateX11Focus = getFocusWindow >>= act . AFocus
 
