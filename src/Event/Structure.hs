@@ -58,14 +58,10 @@ mapRequestHandler e = do
       act $ AShow win (realPos ta ti) (realSpan ta ti)
 
 destroyWindowHandler e = do
-  wo <- getWorld
-  case findWindow wo win of
-    Nothing -> return ()
-    Just tr -> do
-      -- Remove the destroyed window
-      modifyTileWindows (filter (/= win)) tr
-      -- Focus the correct window
-      updateX11Focus
+  -- Remove the destroyed window
+  modifyAllTileWindows $ const $ filter (/= win)
+  -- Focus the correct window
+  updateX11Focus
   where
     win = ev_window e
 

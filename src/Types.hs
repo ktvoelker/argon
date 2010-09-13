@@ -25,7 +25,7 @@ import qualified Ref
 import Data.Maybe
 
 import Data.Map hiding (
-    keys, null, empty, fromList, insert, singleton, size, toList, map, filter
+    null, empty, fromList, insert, singleton, size, toList, map, filter
   )
 import Data.Queue.Class hiding (
     null, delete, empty, fromList, insert, singleton, size, toList

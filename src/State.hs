@@ -87,12 +87,12 @@ getTileWindows w = (wTiles w !)
 modifyTileWindows :: (Queue Window -> Queue Window) -> TileRef -> X11State ()
 modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
 
+modifyAllTileWindows
+  :: (TileRef -> Queue Window -> Queue Window) -> X11State ()
+modifyAllTileWindows = modifyWorld . $(upd 'wTiles) . mapWithKey
+
 modifyFocusWindows :: (Queue Window -> Queue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
-
-findWindow :: World -> Window -> Maybe TileRef
--- TODO
-findWindow wo win = Nothing
 
 emptyWorld :: Config -> World
 emptyWorld c = World
