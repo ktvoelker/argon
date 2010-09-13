@@ -2,6 +2,12 @@
 TODO
 ====
 
+Use XGrabKey on the root window for each configured keyboard command key.
+  It shouldn't be necessary to grab keys or select any keyboard input at all
+  on other windows.
+
+Figure out why the Spacebar command isn't getting run.
+
 Figure out how to force redrawing of window contents after Xnest has been
 hidden.
 
@@ -39,4 +45,31 @@ Write a Config module that reads a file containing a simpler config format.
 
 Make floating workspaces keep a history of most-recently-focused windows and
 allow that history to be accessed by commands.
+
+Change the Debug module to support heirarchical debug logging.
+  The fundamental debug function would be:
+    debug :: (MonadIO m) => DebugLevel -> String -> m a -> m a
+  This would create a new log node n named after the given String.
+  Any log node output by the monadic action would be a child of n.
+  The node would also be annotated with its DebugLevel, so unimportant nodes
+    could later be filtered out.
+  The log would be in a format such as XML which can be written before the
+    entire tree is known. This is important both for memory consumption and
+    for interactive debugging.
+  The system should have an X11 error handler which cleans up the debug log
+    by closing all open nodes, if using XML. If using a format in which nodes
+    require no explicit closure, this is not a problem. However, XML would
+    probably be the easiest format to work with, given the wide availability
+    of XPath tools.
+  It should be relatively easy to ensure that the output is safe XML. The
+    element names will be static, so only attribute and text content will be
+    generated from input to the debugging system. There are very few
+    characters which need to be escaped: just & and > in text, and just
+    &, >, and " in attributes. In fact, attributes may never require escaping
+    if they are only used in statically-known ways as well, which is likely
+    to be the case.
+  We could get fancier by using SYB/reflection to output structured data
+    values more nicely. But this could be dangerous with infinite values,
+    and it would be a lot of work, so let's just use the Show implementation
+    for now.
 
