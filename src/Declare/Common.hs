@@ -19,8 +19,11 @@ import Graphics.X11.Types hiding (EventType)
 mkSpaceRef :: String -> SpaceRef
 mkSpaceRef = Ref.SpaceRef
 
-mkTileRef :: SpaceRef -> Maybe String -> TileRef
-mkTileRef = Ref.TileRef
+mkTileRef :: SpaceRef -> String -> TileRef
+mkTileRef sr = Ref.TileRef sr . Just
+
+mkFloatRef :: SpaceRef -> TileRef
+mkFloatRef sr = Ref.TileRef sr Nothing
 
 mkStatusRef :: SpaceRef -> String -> StatusRef
 mkStatusRef = Ref.StatusRef

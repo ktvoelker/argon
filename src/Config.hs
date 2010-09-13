@@ -28,6 +28,6 @@ config = do
     }
   where
     main = mkSpaceRef "main"
-    tileA = mkTileRef main $ Just "a"
-    tileB = mkTileRef main $ Just "b"
+    tileA = mkTileRef main "a"
+    tileB = mkTileRef main "b"
 
