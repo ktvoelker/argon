@@ -47,26 +47,19 @@ act :: Action -> X11State ()
 act a = modifyWorld $ $(upd 'wActions) $ insert a
 
 data World = World
-  { wSpaces  :: Map SpaceRef WSpace
-  , wFocus   :: TileRef
+  { wFocus   :: TileRef
   , wActions :: Queue Action
+  , wFocuses :: Map SpaceRef TileRef
+  , wTiles   :: Map TileRef (Queue Window)
+  , wStatus  :: Map StatusRef String
   } deriving (Show)
 
-data WSpace = WSpace
-  { wsFocus  :: TileRef
-  , wsTiles  :: Map TileRef (Queue Window)
-  , wsStatus :: Map StatusRef String
-  } deriving (Show)
+getLocalFocus :: (RefSpace a) => World -> a -> TileRef
+getLocalFocus w sr = wFocuses w ! getSpaceRef sr
 
-getSpace :: (RefSpace a) => World -> a -> WSpace
-getSpace wo sr = wSpaces wo ! getSpaceRef sr
-
-modifySpace :: (RefSpace a) => (WSpace -> WSpace) -> a -> X11State ()
-modifySpace f sr =
-  modifyWorld $ $(upd 'wSpaces) $ adjust f $ getSpaceRef sr
-
-modifyFocusSpace :: (WSpace -> WSpace) -> X11State ()
-modifyFocusSpace f = getWorld >>= modifySpace f . getFocusTile
+modifyLocalFocus :: (RefSpace a) => (TileRef -> TileRef) -> a -> X11State ()
+modifyLocalFocus f sr =
+  modifyWorld $ $(upd 'wFocuses) $ adjust f $ getSpaceRef sr
 
 getFocusTile :: World -> TileRef
 getFocusTile = wFocus
@@ -74,7 +67,7 @@ getFocusTile = wFocus
 setFocusTile :: TileRef -> X11State ()
 setFocusTile tr = do
   modifyWorld ($(upd 'wFocus) ctr)
-  modifySpace ($(upd 'wsFocus) ctr) tr
+  modifyLocalFocus ctr tr
   where
     ctr = const tr
 
@@ -89,32 +82,35 @@ getFocusWindow = do
     $ getFocusTile w
 
 getTileWindows :: World -> TileRef -> Queue Window
-getTileWindows w tr = wsTiles (getSpace w tr) ! tr
+getTileWindows w = (wTiles w !)
 
 modifyTileWindows :: (Queue Window -> Queue Window) -> TileRef -> X11State ()
-modifyTileWindows f tr = modifySpace ($(upd 'wsTiles) $ adjust f tr) tr
+modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
 
 modifyFocusWindows :: (Queue Window -> Queue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
 
 findWindow :: World -> Window -> Maybe TileRef
 -- TODO
-findWindow _ _ = Nothing
+findWindow wo win = Nothing
 
 emptyWorld :: Config -> World
 emptyWorld c = World
-  { wSpaces  = fmap emptyWSpace $ cSpaces c
+  { wFocuses = fmap spStartTile $ cSpaces c
   , wFocus   = spStartTile $ cSpace c $ cStartSpace c
   , wActions = empty
+  , wTiles   = emptyWLayout empty spLayout spacesList
+  , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
   }
+  where
+    spacesList = elems $ cSpaces c
 
-emptyWSpace :: Workspace -> WSpace
-emptyWSpace w = WSpace
-  { wsFocus  = spStartTile w
-  , wsTiles  = emptyWLayout empty $ spLayout w
-  , wsStatus = emptyWLayout "" $ stLayout $ spStatus w
-  }
-
-emptyWLayout :: a -> Layout t r -> Map r a
-emptyWLayout e x = fmap (const e) $ laTiles x
+-- Create an empty state for some things which have layouts.
+emptyWLayout
+  :: (Ord r)
+  => a                  -- Empty value to associate with each tile.
+  -> (b -> Layout t r)  -- Accessor to retrieve layout from each thing.
+  -> [b]                -- Some things which have layouts.
+  -> Map r a            -- A map from each tile to the empty value.
+emptyWLayout e f = unions . map (fmap (const e) . laTiles . f)
 
