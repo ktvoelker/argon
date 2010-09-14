@@ -17,23 +17,17 @@ debugEnabled = True
 syncEnabled :: Bool
 syncEnabled = False
 
-class Debug m where
-  debug :: String -> m ()
+debug :: (MonadIO m, MonadReader X11Env m) => String -> m ()
+debug xs = do
+  if syncEnabled
+     then getDisplay >>= liftIO . flip sync False
+     else return ()
+  if debugEnabled
+     then liftIO $ putStrLn xs
+     else return ()
 
-dprint :: (Debug m, Show a) => a -> m ()
+dprint :: (MonadIO m, MonadReader X11Env m, Show a) => a -> m ()
 dprint = debug . show
-
-instance Debug (ReaderT X11Env IO) where
-  debug xs = do
-    if syncEnabled
-       then getDisplay >>= liftIO . flip sync False
-       else return ()
-    if debugEnabled
-       then liftIO $ putStrLn xs
-       else return ()
-
-instance Debug (MaybeT (StateT World (ReaderT X11Env IO))) where
-  debug = lift . lift . debug
 
 class Wrap u w | u -> w where
   wrap   :: u -> w
@@ -42,7 +36,7 @@ class Wrap u w | u -> w where
 wrapped :: (Wrap u w) => (w -> a) -> u -> a
 wrapped = (. wrap)
 
-dwprint :: (Wrap u w, Show w, Debug m) => u -> m ()
+dwprint :: (Wrap u w, Show w, MonadIO m, MonadReader X11Env m) => u -> m ()
 dwprint = wrapped dprint
 
 newtype ShowKeySym = ShowKeySym KeySym
