@@ -1,19 +1,21 @@
 
-TODO
-====
+PROBLEMS
+========
 
-Use XGrabKey on the root window for each configured keyboard command key.
-  It shouldn't be necessary to grab keys or select any keyboard input at all
-  on other windows.
+CFocusDir Right doesn't work properly.
+  New windows continue to appear in the left tile
 
-Figure out why the Spacebar command isn't getting run.
+Window contents are not immediately redrawn when Xnest is hidden and then
+revealed.
 
-Figure out how to force redrawing of window contents after Xnest has been
-hidden.
+New windows take a long time to appear.
+  Perhaps debug mode causes the problem.
 
-Figure out why new windows were not appearing very quickly.
-  Perhaps debug mode caused the problem.
-  Make debug mode dynamically alterable via a Command.
+
+FEATURES
+========
+
+Make debug mode dynamically alterable via a Command.
 
 Make an external, socket-based interface for executing Commands.
 
