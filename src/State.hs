@@ -73,7 +73,7 @@ setFocusTile tr = do
 
 getFocusWindow :: X11State Window
 getFocusWindow = do
-  d <- getDisplay
+  d <- lift $ lift $ getDisplay
   w <- getWorld
   return
     $ fromMaybe (defaultRootWindow d)
