@@ -15,7 +15,7 @@ debugEnabled :: Bool
 debugEnabled = True
 
 syncEnabled :: Bool
-syncEnabled = False
+syncEnabled = True
 
 debug :: (MonadIO m, MonadReader X11Env m) => String -> m ()
 debug xs = do
