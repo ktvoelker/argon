@@ -19,9 +19,14 @@ keyReleaseHandler e = do
   sym  <- getDisplay
     >>= lift . lift . lift . \d -> keycodeToKeysym d (ev_keycode e) 0
   debug "keyReleaseHandler"
-  dprint mask
-  dwprint sym
-  getConfig >>= maybe (return ()) runCommand . (lookup (mask, sym)) . cKeys
+  if sym /= 0
+     then do
+       dprint mask
+       dprint sym
+       dwprint sym
+       getConfig
+         >>= maybe (return ()) runCommand . (lookup (mask, sym)) . cKeys
+     else debug "Keysym 0!"
 
 buttonPressHandler = defaultHandler
 
