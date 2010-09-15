@@ -5,6 +5,7 @@ import Action
 import Attract
 import Declare
 import Declare.Access
+import Debug
 import Event.Default
 import Event.Listen
 import Fields
@@ -22,11 +23,14 @@ resizeRequestHandler, mapRequestHandler, destroyWindowHandler :: EventHandler
 resizeRequestHandler = defaultHandler
 
 mapRequestHandler e = do
+  debug "Map request!"
   wo <- getWorld
   -- Add standard event handlers.
   lift $ lift $ addStdEvents win
   -- Put the window where it belongs.
   tr <- attract win
+  debug "Destination tile:"
+  dprint tr
   modifyTileWindows (insert win) tr
   -- Check if the tile is the floating tile.
   let isFloat = tileIsFloat tr
@@ -55,6 +59,9 @@ mapRequestHandler e = do
         lay = layout $ cSpace c tr
         ti  = (laTiles lay) ! tr
         ta  = laTable lay
+      debug "Tiling layout (pos, span):"
+      dprint $ realPos ta ti
+      dprint $ realSpan ta ti
       act $ AShow win (realPos ta ti) (realSpan ta ti)
 
 destroyWindowHandler e = do

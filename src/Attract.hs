@@ -2,6 +2,7 @@
 module Attract (attract) where
 
 import Declare
+import Debug
 import State
 import Types
 import X11
@@ -24,6 +25,8 @@ attract win = do
     fmap (map snd) $ filterM (attractOne win . fst) $ cAttracts c
   -- Return the attracted tile if one was found.
   -- Otherwise, return the focused tile.
+  debug "Attracted tile:"
+  dprint att
   return $ fromMaybe (getFocusTile wo) att
 
 attractOne :: Window -> Attract -> X11 Bool

@@ -25,13 +25,13 @@ eventLoop = do
   debug "Start looping"
   runX11State world $ sequence_ $ repeat $ do
     -- Get the next event from the server.
-    debug "Get next event"
+    -- debug "Get next event"
     getDisplay >>= liftIO . flip nextEvent ptr
     -- Extract a safe event value from the event pointer and handle it.
-    debug "Extract and handle event"
+    -- debug "Extract and handle event"
     safely ptr handler
     -- Run the actions emitted by the handler.
-    debug "Run actions"
+    -- debug "Run actions"
     runActions
   debug "Free event pointer"
   lift $ Foreign.Marshal.Alloc.free ptr
