@@ -4,6 +4,7 @@ PROBLEMS
 
 CFocusDir Right doesn't work properly.
   New windows continue to appear in the left tile
+  Actually, this may not be the case now that tileIsFloat has been fixed.
 
 Window contents are not immediately redrawn when Xnest is hidden and then
 revealed.
