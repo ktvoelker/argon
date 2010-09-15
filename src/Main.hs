@@ -16,14 +16,17 @@ xMain :: X11 ()
 xMain = do
   debug "Get X info"
   xi <- getXInfo
-  debug "Init events"
-  initEvents
+  dprint xi
   debug "Run config"
-  let config' = runReader config xi in do
-    dprint config'
+  let config' = runReader config xi
+  dprint config'
+  debug "Use config"
+  localConfig (const config') $ do
+    debug "Init events"
+    initEvents
     debug "Event loop"
-    localConfig (const config') eventLoop
-    debug "Done"
+    eventLoop
+  debug "Done"
 
 main :: IO ()
 main = do
