@@ -47,6 +47,9 @@ data Command =
   | CSpace      SpaceRef
   | CExec       Exec
   | CSeq        [Command]
+  | CNextWin
+  | CPrevWin
+  | CKillWin
   deriving (Eq, Ord, Show)
 
 data XInfo = XInfo

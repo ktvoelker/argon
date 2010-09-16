@@ -12,6 +12,11 @@ revealed.
 CORE FUNCTIONALITY
 ==================
 Command.runCommand
+  CSpace
+  CSeq
+  CNextWin
+  CPrevWin
+  CKillWin
 buttonPressHandler
 Config.config (as a parser of an external configuration file)
 
