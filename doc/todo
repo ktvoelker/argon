@@ -13,7 +13,6 @@ CORE FUNCTIONALITY
 ==================
 Command.runCommand
   CSpace
-  CSeq
   CNextWin
   CPrevWin
   CKillWin
