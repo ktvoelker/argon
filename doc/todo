@@ -1,6 +1,18 @@
 
+TODO
+====
+
+Once the "PROBLEMS" and "CORE FUNCTIONALITY" sections have been completed,
+an initial release will be made, including:
+
+1. A Cabal package
+2. A website
+3. A post on bloggish.net
+4. User documentation
+
+
 PROBLEMS
-========
+--------
 
 New windows take a long time to appear.
   Perhaps debug mode causes the problem.
@@ -10,30 +22,37 @@ revealed.
 
 
 CORE FUNCTIONALITY
-==================
+------------------
 Command.runCommand
   CSpace
+    Figure out how normal window managers make windows appear and disappear
   CKillWin
+    Figure out how normal window managers do this
+
 buttonPressHandler
+
 Config.config (as a parser of an external configuration file)
+
+Cabal-based build system (try doing it from scratch, and use ghc --make's
+output to determine exactly what package versions to require if it doesn't
+seem to work).
 
 
 FLOATING FUNCTIONALITY
-======================
+----------------------
 mapRequestHandler
+
 resizeRequestHandler
+
 focusDir
+
 Move and resize modes
   Commands for setting what keyboard modifiers active these modes
   Command for setting Drag Mode versus Two-Click Mode
 
 
 FEATURES
-========
-
-Cabal-based build system (try doing it from scratch, and use ghc --make's
-output to determine exactly what package versions to require if it doesn't
-seem to work).
+--------
 
 Tabs on tiles showing what windows are present
 
@@ -57,4 +76,6 @@ Implement user-defined event-handling support.
 
 Keep a per-tile history of most-recently-focused windows and allow that
 history to be accessed by commands.
+
+Visually indicate the focus, perhaps by a colored border.
 
