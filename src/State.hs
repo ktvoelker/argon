@@ -48,9 +48,9 @@ act a = modifyWorld $ $(upd 'wActions) $ insert a
 
 data World = World
   { wFocus   :: TileRef
-  , wActions :: Queue Action
+  , wActions :: Dequeue Action
   , wFocuses :: Map SpaceRef TileRef
-  , wTiles   :: Map TileRef (Queue Window)
+  , wTiles   :: Map TileRef (Dequeue Window)
   , wStatus  :: Map StatusRef String
   } deriving (Show)
 
@@ -84,17 +84,18 @@ getFocusWindow = do
     $ getTileWindows w
     $ getFocusTile w
 
-getTileWindows :: World -> TileRef -> Queue Window
+getTileWindows :: World -> TileRef -> Dequeue Window
 getTileWindows w = (wTiles w !)
 
-modifyTileWindows :: (Queue Window -> Queue Window) -> TileRef -> X11State ()
+modifyTileWindows
+  :: (Dequeue Window -> Dequeue Window) -> TileRef -> X11State ()
 modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
 
 modifyAllTileWindows
-  :: (TileRef -> Queue Window -> Queue Window) -> X11State ()
+  :: (TileRef -> Dequeue Window -> Dequeue Window) -> X11State ()
 modifyAllTileWindows = modifyWorld . $(upd 'wTiles) . mapWithKey
 
-modifyFocusWindows :: (Queue Window -> Queue Window) -> X11State ()
+modifyFocusWindows :: (Dequeue Window -> Dequeue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
 
 emptyWorld :: Config -> World

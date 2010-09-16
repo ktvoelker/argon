@@ -3,6 +3,7 @@ module Types
   ( module Types
   , module Maths
   , module Ref
+  , module Data.Dequeue
   , module Data.Map
   , module Data.Queue.Class
   , module Data.Queue.PQueue
@@ -22,18 +23,21 @@ import Ref
 
 import qualified Ref
 
-import Data.Maybe
-
-import Data.Map hiding (
+import Data.Dequeue hiding (null, empty, fromList)
+import Data.Map hiding
+  (
     null, empty, fromList, insert, singleton, size, toList, map, filter
   )
-import Data.Queue.Class hiding (
+import Data.Maybe
+import Data.Queue.Class hiding
+  (
     null, delete, empty, fromList, insert, singleton, size, toList
   )
 import Data.Queue.PQueue
 import Data.Queue.Queue
 import Data.Queue.Stack
 
+import qualified Data.Dequeue as DD
 import qualified Data.List as DL
 import qualified Data.Map as DM
 import qualified Data.Queue.Class as DQ
@@ -95,6 +99,19 @@ instance Collection (Map k v) where
   toList = DM.toList
   filter = DM.filterWithKey . curry
  
+instance (Ord e) => Collection (Dequeue e) where
+  type Entry (Dequeue e) = e
+  type Key (Dequeue e) = e
+  null = DD.null
+  empty = DD.empty
+  fromList = DD.fromList
+  insert = DD.pushFront
+  singleton = pushFront empty
+  size = DD.length
+  toList q = case popFront q of
+    (Nothing, _) -> []
+    (Just x, q') -> x : toList q'
+
 instance (Ord e) => Collection (PQueue e) where
   type Entry (PQueue e) = e
   type Key (PQueue e) = e

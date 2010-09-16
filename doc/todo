@@ -14,6 +14,11 @@ an initial release will be made, including:
 PROBLEMS
 --------
 
+With GHC 6.12.3, there have been mysterious dependency issues among packages
+on which we rely. One way to diagnose such a problem is to run:
+  ghci -v -package NAME
+This will print out an error saying what dependencies are missing.
+
 New windows take a long time to appear.
   Perhaps debug mode causes the problem.
 
