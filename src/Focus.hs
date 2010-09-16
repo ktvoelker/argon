@@ -4,6 +4,7 @@ module Focus where
 import Action
 import Declare
 import Declare.Access
+import Debug
 import Fields
 import Layout
 import Maths.Unsafe
@@ -33,7 +34,7 @@ data LookDir = LookDir
 --
 -- fromSide, given the position and size (along the axis of movement) of the
 -- origin of the gaze, returns the coordinate of the side of that tile which
--- the gaze will encounter first.
+-- the gaze will encounter.
 --
 -- Note that a coordinate value always denotes a row or column of the
 -- layout table, whereas a tile side is conceptually between two rows or
@@ -61,7 +62,7 @@ perPS ld tile = (snd $ axis ld $ tiPos tile, snd $ axis ld $ tiSpan tile)
 borders :: LookDir -> Tile t -> Tile t -> Bool
 borders ld from to = 
   fromSide s fromPS == toSide s toPS
-  && compare (fst fromPS) (fst toPS) == s
+  && compare (fst toPS) (fst fromPS) == s
   where
     fromPS = parPS ld from
     toPS   = parPS ld to
@@ -106,9 +107,14 @@ sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
 
 focusDir :: Dir -> X11State ()
 focusDir dir = do
+  debug "Focus dir:"
+  dprint dir
   c  <- lift $ lift getConfig
   wo <- getWorld
   let tr = getFocusTile wo
+  debug "From tile:"
+  dprint tr
+  dprint $ tileIsFloat tr
   if tileIsFloat tr
      -- A floating window is focused.
      -- TODO
@@ -137,6 +143,8 @@ focusDir dir = do
          Nothing  -> return ()
          -- Somewhere to move.
          Just tr' -> do
+           debug "Move focus to tile:"
+           dprint tr'
            -- Record the newly-focused tile.
            setFocusTile tr'
            -- Tell X to focus the window atop that tile.
