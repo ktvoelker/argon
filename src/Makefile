@@ -25,7 +25,7 @@ WARNINGS=                  \
 all: kdwm
 
 kdwm: *.hs */*.hs
-	ghc $(OPTIONS) $(WARNINGS) -o kdwm --make Main.hs
+	ghc -O $(OPTIONS) $(WARNINGS) -o kdwm --make Main.hs
 
 clean:
 	-rm */*.hi */*.o *.hi *.o kdwm
