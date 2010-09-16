@@ -25,11 +25,14 @@ addRootEvents win = do
   disp <- getDisplay
   debug "Root is:"
   dprint win
-  debug "Select resize redir on root"
-  liftIO $ selectInput disp win resizeRedirectMask
-  debug "Select substruct redir on root"
-  liftIO $ selectInput disp win substructureRedirectMask
+  debug "Select inputs on root"
+  liftIO $ selectInput disp win 
+    (   resizeRedirectMask
+    .|. substructureRedirectMask
+    .|. substructureNotifyMask
+    )
   c <- getConfig
+  debug "Grab command keys on root"
   liftIO $ mapM_ (uncurry $ g disp) $ keys $ cKeys c
   where
     g disp mod sym = do

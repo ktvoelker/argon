@@ -65,10 +65,10 @@ mapRequestHandler e = do
       act $ AShow win (realPos ta ti) (realSpan ta ti)
 
 destroyWindowHandler e = do
+  debug "Window destroyed:"
+  dprint $ ev_window e
   -- Remove the destroyed window
-  modifyAllTileWindows $ const $ filter (/= win)
+  modifyAllTileWindows $ const $ filter (/= ev_window e)
   -- Focus the correct window
   updateX11Focus
-  where
-    win = ev_window e
 
