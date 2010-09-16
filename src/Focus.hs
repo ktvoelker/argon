@@ -151,5 +151,9 @@ focusDir dir = do
            updateX11Focus
 
 updateX11Focus :: X11State ()
-updateX11Focus = getFocusWindow >>= act . AFocus
+updateX11Focus = do
+  win <- getFocusWindow
+  debug "Focusing window:"
+  dprint win
+  act $ AFocus win
 
