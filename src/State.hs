@@ -61,6 +61,9 @@ modifyLocalFocus :: (RefSpace a) => (TileRef -> TileRef) -> a -> X11State ()
 modifyLocalFocus f sr =
   modifyWorld $ $(upd 'wFocuses) $ adjust f $ getSpaceRef sr
 
+getFocusTileM :: X11State TileRef
+getFocusTileM = getWorld >>= return . getFocusTile
+
 getFocusTile :: World -> TileRef
 getFocusTile = wFocus
 
