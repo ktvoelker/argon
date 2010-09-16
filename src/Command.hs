@@ -6,6 +6,7 @@ import Declare
 import Exec
 import Focus
 import State
+import Tile
 import Types
 
 runCommand :: Command -> X11State ()
@@ -16,5 +17,7 @@ runCommand cmd = do
     (CSeq xs)       -> mapM_ runCommand xs
     (CFocusDir dir) -> focusDir dir
     (CExec x)       -> exec x
+    CNextWin        -> getFocusTileM >>= nextWin
+    CPrevWin        -> getFocusTileM >>= prevWin
     _               -> return ()
 
