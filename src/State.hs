@@ -13,6 +13,7 @@ import Control.Monad.Reader
 import Control.Monad.State
 import Data.Maybe
 import Graphics.X11
+import Graphics.X11.Xlib.Extras
 
 -- The MaybeT determines whether or not the user has asked the program to
 -- terminate.
@@ -88,14 +89,34 @@ getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)
 
 modifyTileWindows
-  :: (BankersDequeue Window -> BankersDequeue Window) -> TileRef -> X11State ()
-modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
+  :: (BankersDequeue Window -> BankersDequeue Window)
+  -> TileRef
+  -> X11State ()
+modifyTileWindows f tr = do
+  d  <- getDisplay
+  wo <- getWorld
+  let tiles  = wTiles wo ! tr
+  let tiles' = f tiles
+  put $ $(upd 'wTiles) (insert (tr, tiles')) wo
+  liftIO $ if tileIsFloat tr
+     then restackWindows d $ toList tiles'
+     else do
+       let hidden = first tiles
+       let shown  = first tiles'
+       if hidden == shown
+          then return ()
+          else do
+            maybe (return ()) (unmapWindow d) hidden
+            maybe (return ()) (mapWindow d) shown
 
 modifyAllTileWindows
-  :: (TileRef -> BankersDequeue Window -> BankersDequeue Window) -> X11State ()
-modifyAllTileWindows = modifyWorld . $(upd 'wTiles) . mapWithKey
+  :: (TileRef -> BankersDequeue Window -> BankersDequeue Window)
+  -> X11State ()
+modifyAllTileWindows f =
+  getWorld >>= mapM_ (\k -> modifyTileWindows (f k) k) . keys . wTiles
 
-modifyFocusWindows :: (BankersDequeue Window -> BankersDequeue Window) -> X11State ()
+modifyFocusWindows
+  :: (BankersDequeue Window -> BankersDequeue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
 
 emptyWorld :: Config -> World

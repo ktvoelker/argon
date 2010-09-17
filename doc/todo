@@ -14,11 +14,6 @@ an initial release will be made, including:
 PROBLEMS
 --------
 
-With GHC 6.12.3, there have been mysterious dependency issues among packages
-on which we rely. One way to diagnose such a problem is to run:
-  ghci -v -package NAME
-This will print out an error saying what dependencies are missing.
-
 New windows take a long time to appear.
   Perhaps debug mode causes the problem.
 
@@ -28,31 +23,6 @@ revealed.
 
 CORE FUNCTIONALITY
 ------------------
-Unmap a window whenever it is no longer atop a tile.
-  Replace the window queues with double-ended queues. Find a more efficient
-  IO-based queue type. Wrap that queue type in another type, and implement
-  the four main operations (insert_front, insert_back, extract_front,
-  extract_back) in the X11State monad. So, instead of ever touching the queue
-  itself, the program can simply provide the TileRef.
-
-  Then, these functions can correctly (and efficiently) ensure that windows
-  are mapped and unmapped according to whether or not they are at the front of
-  the queue.
-
-  The queue will need to also know whether or not it is tiling. In the floating
-  case, a change in queue ordering doesn't mean any windows should be mapped
-  or unmapped; rather, it means that all the windows need to be restacked.
-
-  The queue also needs a way to be signalled that its workspace has just been
-  activated, in which case it must map the top window or restack all the
-  windows.
-
-  XUnmapWindow(disp, win)
-  XMapWindow(disp, win)
-
-  Let's implement the queue ourselves, as an exercise in using whatever the
-  appropriate construct is for this.
-
 Command.runCommand
   CSpace
   CKillWin
@@ -78,6 +48,10 @@ focusDir
 Move and resize modes
   Commands for setting what keyboard modifiers active these modes
   Command for setting Drag Mode versus Two-Click Mode
+
+A command for switching between the floating and tiling worlds.
+  We will probably end up wanting to have a special "last focused tile"
+  that is reserved for a non-floating tile.
 
 
 FEATURES
