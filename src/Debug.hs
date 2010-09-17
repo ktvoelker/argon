@@ -1,7 +1,6 @@
 
 module Debug (debug, dprint, dwprint) where
 
-import State
 import Types
 import X11
 

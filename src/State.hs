@@ -2,6 +2,7 @@
 module State where
 
 import Action
+import Debug
 import Declare
 import Declare.Access
 import Fields
@@ -87,7 +88,12 @@ getFocusWindow = do
     $ getFocusTile w
 
 updateX11Focus :: X11State ()
-updateX11Focus = getFocusWindow >>= act . AFocus
+updateX11Focus = do
+  win <- getFocusWindow
+  debug "Update X11 focus:"
+  dprint win
+  getDisplay >>= dprint . defaultRootWindow
+  act $ AFocus win
 
 getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)
@@ -102,8 +108,8 @@ modifyTileWindows f tr = do
   let tiles  = wTiles wo ! tr
   let tiles' = f tiles
   put $ $(upd 'wTiles) (insert (tr, tiles')) wo
-  liftIO $ if tileIsFloat tr
-     then restackWindows d $ toList tiles'
+  if tileIsFloat tr
+     then liftIO $ restackWindows d $ toList tiles'
      else do
        let hidden = first tiles
        let shown  = first tiles'
@@ -111,9 +117,14 @@ modifyTileWindows f tr = do
           then return ()
           else do
             let j = justIfLive wo
-            maybe (return ()) (unmapWindow d) $ (hidden >>= j)
-            maybe (return ()) (mapWindow d) $ (shown >>= j)
-  updateX11Focus
+            debug "Unmapping hidden window:"
+            dprint hidden
+            dprint (hidden >>= j)
+            maybe (return ()) (liftIO . unmapWindow d) $ (hidden >>= j)
+            debug "Mapping exposed window:"
+            dprint shown
+            dprint (shown >>= j)
+            maybe (return ()) (liftIO . mapWindow d) $ (shown >>= j)
 
 justIfLive :: World -> Window -> Maybe Window
 justIfLive wo win = if member win $ wWindows wo then Just win else Nothing

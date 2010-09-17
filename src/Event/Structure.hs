@@ -28,10 +28,11 @@ mapRequestHandler e = do
   insertLiveWindow win
   -- Add standard event handlers.
   lift $ lift $ addStdEvents win
-  -- Put the window where it belongs.
+  -- Find out where the window belongs.
   tr <- attract win
   debug "Destination tile:"
   dprint tr
+  -- Add the window to the tile queue.
   modifyTileWindows (insert win) tr
   -- Check if the tile is the floating tile.
   let isFloat = tileIsFloat tr
@@ -48,7 +49,7 @@ mapRequestHandler e = do
   if sameSpace tr trFocus && (isFloat || tr == trFocus)
      then do
        setFocusTile tr
-       act $ AFocus win
+       updateX11Focus
      else return ()
   where
     win = ev_window e

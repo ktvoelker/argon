@@ -1,6 +1,7 @@
 
 module Action where
 
+import Debug
 import Maths.Unsafe
 import Types
 import X11
@@ -28,6 +29,8 @@ runAction (AShow w (px, py) (dw, dh)) = do
 
 runAction (AStack ws) = getDisplay >>= liftIO . flip restackWindows ws
 
-runAction (AFocus w) =
-  getDisplay >>= \d -> liftIO $ setInputFocus d w revertToNone 0
+runAction (AFocus w) = do
+  debug "In runAction AFocus:"
+  dprint w
+  getDisplay >>= \d -> liftIO $ setInputFocus d w revertToPointerRoot 0
 
