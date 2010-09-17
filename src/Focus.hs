@@ -150,10 +150,3 @@ focusDir dir = do
            -- Tell X to focus the window atop that tile.
            updateX11Focus
 
-updateX11Focus :: X11State ()
-updateX11Focus = do
-  win <- getFocusWindow
-  debug "Focusing window:"
-  dprint win
-  act $ AFocus win
-

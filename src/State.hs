@@ -53,6 +53,7 @@ data World = World
   , wFocuses :: Map SpaceRef TileRef
   , wTiles   :: Map TileRef (BankersDequeue Window)
   , wStatus  :: Map StatusRef String
+  , wWindows :: Set Window
   } deriving (Show)
 
 getLocalFocus :: (RefSpace a) => World -> a -> TileRef
@@ -85,6 +86,9 @@ getFocusWindow = do
     $ getTileWindows w
     $ getFocusTile w
 
+updateX11Focus :: X11State ()
+updateX11Focus = getFocusWindow >>= act . AFocus
+
 getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)
 
@@ -106,8 +110,13 @@ modifyTileWindows f tr = do
        if hidden == shown
           then return ()
           else do
-            maybe (return ()) (unmapWindow d) hidden
-            maybe (return ()) (mapWindow d) shown
+            let j = justIfLive wo
+            maybe (return ()) (unmapWindow d) $ (hidden >>= j)
+            maybe (return ()) (mapWindow d) $ (shown >>= j)
+  updateX11Focus
+
+justIfLive :: World -> Window -> Maybe Window
+justIfLive wo win = if member win $ wWindows wo then Just win else Nothing
 
 modifyAllTileWindows
   :: (TileRef -> BankersDequeue Window -> BankersDequeue Window)
@@ -119,6 +128,12 @@ modifyFocusWindows
   :: (BankersDequeue Window -> BankersDequeue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
 
+insertLiveWindow :: Window -> X11State ()
+insertLiveWindow = modifyWorld . $(upd 'wWindows) . insert
+
+deleteDeadWindow :: Window -> X11State ()
+deleteDeadWindow = modifyWorld . $(upd 'wWindows) . delete
+
 emptyWorld :: Config -> World
 emptyWorld c = World
   { wFocuses = fmap spStartTile $ cSpaces c
@@ -126,6 +141,7 @@ emptyWorld c = World
   , wActions = empty
   , wTiles   = emptyWLayout empty spLayout spacesList
   , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
+  , wWindows = empty
   }
   where
     spacesList = elems $ cSpaces c

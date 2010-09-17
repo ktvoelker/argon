@@ -9,7 +9,6 @@ import Debug
 import Event.Default
 import Event.Listen
 import Fields
-import Focus
 import Layout
 import State
 import Types
@@ -25,6 +24,8 @@ resizeRequestHandler = defaultHandler
 mapRequestHandler e = do
   debug "Map request!"
   wo <- getWorld
+  -- Add to the list of live windows.
+  insertLiveWindow win
   -- Add standard event handlers.
   lift $ lift $ addStdEvents win
   -- Put the window where it belongs.
@@ -66,9 +67,13 @@ mapRequestHandler e = do
 
 destroyWindowHandler e = do
   debug "Window destroyed:"
-  dprint $ ev_window e
-  -- Remove the destroyed window
-  modifyAllTileWindows $ const $ filter (/= ev_window e)
-  -- Focus the correct window
+  dprint $ win
+  -- Remove the window from the list of live windows
+  deleteDeadWindow win
+  -- Remove the window from its tile
+  modifyAllTileWindows $ const $ filter (/= win)
+  -- Update the focus
   updateX11Focus
+  where
+    win = ev_window e
 

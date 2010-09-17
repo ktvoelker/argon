@@ -9,6 +9,7 @@ module Types
   , module Data.Queue.PQueue
   , module Data.Queue.Queue
   , module Data.Queue.Stack
+  , module Data.Set
   , module Prelude
   ) where
 
@@ -24,23 +25,23 @@ import Ref
 import qualified Ref
 
 import Data.Dequeue hiding (null, empty, fromList, length, last)
-import Data.Map hiding
-  (
-    null, empty, fromList, insert, singleton, size, toList, map, filter
+import Data.Map
+  ( Map, (!), keys, elems, adjust, unions, lookup, findWithDefault
   )
 import Data.Maybe
 import Data.Queue.Class hiding
-  (
-    null, delete, empty, fromList, insert, singleton, size, toList
+  ( null, delete, empty, fromList, insert, singleton, size, toList
   )
 import Data.Queue.PQueue
 import Data.Queue.Queue
 import Data.Queue.Stack
+import Data.Set (Set, delete, member)
 
 import qualified Data.Dequeue as DD
 import qualified Data.List as DL
 import qualified Data.Map as DM
 import qualified Data.Queue.Class as DQ
+import qualified Data.Set as DS
 
 import Prelude hiding (filter, lookup, null, span, length, last)
 
@@ -98,6 +99,18 @@ instance Collection (Map k v) where
   size = DM.size
   toList = DM.toList
   filter = DM.filterWithKey . curry
+
+instance Collection (Set e) where
+  type Entry (Set e) = e
+  type Key (Set e) = e
+  null = DS.null
+  empty = DS.empty
+  fromList = DS.fromList
+  insert = DS.insert
+  singleton = DS.singleton
+  size = DS.size
+  toList = DS.toList
+  filter = DS.filter
  
 instance (Ord e) => Collection (BankersDequeue e) where
   type Entry (BankersDequeue e) = e

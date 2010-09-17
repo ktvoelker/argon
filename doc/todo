@@ -82,3 +82,6 @@ history to be accessed by commands.
 
 Visually indicate the focus, perhaps by a colored border.
 
+Do something better with windows that exist when the window manager starts.
+Right now, we attach standard events to them and then forget that they exist.
+
