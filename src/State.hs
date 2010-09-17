@@ -48,9 +48,9 @@ act a = modifyWorld $ $(upd 'wActions) $ insert a
 
 data World = World
   { wFocus   :: TileRef
-  , wActions :: Dequeue Action
+  , wActions :: Queue Action
   , wFocuses :: Map SpaceRef TileRef
-  , wTiles   :: Map TileRef (Dequeue Window)
+  , wTiles   :: Map TileRef (BankersDequeue Window)
   , wStatus  :: Map StatusRef String
   } deriving (Show)
 
@@ -80,22 +80,22 @@ getFocusWindow = do
   w <- getWorld
   return
     $ fromMaybe (defaultRootWindow d)
-    $ top
+    $ first
     $ getTileWindows w
     $ getFocusTile w
 
-getTileWindows :: World -> TileRef -> Dequeue Window
+getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)
 
 modifyTileWindows
-  :: (Dequeue Window -> Dequeue Window) -> TileRef -> X11State ()
+  :: (BankersDequeue Window -> BankersDequeue Window) -> TileRef -> X11State ()
 modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
 
 modifyAllTileWindows
-  :: (TileRef -> Dequeue Window -> Dequeue Window) -> X11State ()
+  :: (TileRef -> BankersDequeue Window -> BankersDequeue Window) -> X11State ()
 modifyAllTileWindows = modifyWorld . $(upd 'wTiles) . mapWithKey
 
-modifyFocusWindows :: (Dequeue Window -> Dequeue Window) -> X11State ()
+modifyFocusWindows :: (BankersDequeue Window -> BankersDequeue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
 
 emptyWorld :: Config -> World

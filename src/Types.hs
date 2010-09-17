@@ -23,7 +23,7 @@ import Ref
 
 import qualified Ref
 
-import Data.Dequeue hiding (null, empty, fromList)
+import Data.Dequeue hiding (null, empty, fromList, length, last)
 import Data.Map hiding
   (
     null, empty, fromList, insert, singleton, size, toList, map, filter
@@ -42,7 +42,7 @@ import qualified Data.List as DL
 import qualified Data.Map as DM
 import qualified Data.Queue.Class as DQ
 
-import Prelude hiding (filter, lookup, null, span)
+import Prelude hiding (filter, lookup, null, span, length, last)
 
 impossible :: a
 impossible = error "Impossible!"
@@ -66,7 +66,7 @@ class Collection a where
   insert v = fromList . (v :) . toList
 
   size :: a -> Int
-  size = length . toList
+  size = DL.length . toList
 
   filter :: (Ord (Key a)) => (Entry a -> Bool) -> a -> a
   filter p = fromList . DL.filter p . toList
@@ -83,7 +83,7 @@ instance Collection [e] where
   fromList = id
   insert = (:)
   singleton = (: [])
-  size = length
+  size = DL.length
   toList = id
   filter = DL.filter
 
@@ -99,13 +99,13 @@ instance Collection (Map k v) where
   toList = DM.toList
   filter = DM.filterWithKey . curry
  
-instance (Ord e) => Collection (Dequeue e) where
-  type Entry (Dequeue e) = e
-  type Key (Dequeue e) = e
+instance (Ord e) => Collection (BankersDequeue e) where
+  type Entry (BankersDequeue e) = e
+  type Key (BankersDequeue e) = e
   null = DD.null
   empty = DD.empty
   fromList = DD.fromList
-  insert = DD.pushFront
+  insert = flip DD.pushFront
   singleton = pushFront empty
   size = DD.length
   toList q = case popFront q of
