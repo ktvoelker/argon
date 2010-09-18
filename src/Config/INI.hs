@@ -2,11 +2,30 @@
 module Config.INI (config) where
 
 import Declare
+import Maths.Unsafe
 
+import Control.Monad
 import Control.Monad.Error
 import Control.Monad.Reader
 import Data.ConfigFile
 import System.Environment
+
+defaultFile :: FilePath
+defaultFile = ".kdwmrc"
+
+optStart, optTable, optRows, optCols :: OptionSpec
+optStart = "start"
+optTable = "table"
+optRows  = "rows"
+optCols  = "cols"
+
+sectTable, sectSpace :: String
+sectTable = "table"
+sectSpace = "space"
+
+sectGlobal, sectKeys :: SectionSpec
+sectGlobal = "global"
+sectKeys = "keys"
 
 configFile :: ConfigM FilePath
 configFile = liftIO $ do
@@ -15,7 +34,7 @@ configFile = liftIO $ do
     (file : _) -> return file
     _          -> do
       home <- getEnv "HOME"
-      return (home ++ "/.kdwmrc")
+      return (home ++ "/" ++ defaultFile)
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
 mapFst f (a, c) = (f a, c)
@@ -44,22 +63,82 @@ config = do
   mapErrorT (>>= return . either (Left . show) Right) $ do
     input <- eInput
     let sectionNames = map (\n -> (words n, n)) $ sections input
-    tableNames <- findSections "table" sectionNames
-    spaceNames <- findSections "space" sectionNames
+    tableNames <- findSections sectTable sectionNames
+    spaceNames <- findSections sectSpace sectionNames
     tables <- mapM (mapSndM $ getTable input) tableNames
-    spaces <- mapM (mapSndM $ getSpace input tables) spaceNames
-    ni
+    let tableMap = fromList tables
+    spaces <-
+      mapM
+        (\(n, s) -> getSpace input tableMap n s >>= return . (n, ))
+        spaceNames
+    keys <- options input sectKeys >>= mapM (getKey input)
+    start <- get input sectGlobal optStart
+    return emptyConfig
+      { cSpaces = fromList $ map (mapFst mkSpaceRef) spaces
+      , cKeys = fromList keys
+      , cStartSpace = mkSpaceRef start
+      }
 
 ni :: ConfigM' a
 ni = throwError (OtherProblem "Not implemented", "")
 
+readM :: (Read a) => String -> String -> ConfigM' a
+readM want xs = case reads xs of
+  ((x, _) : _) -> return x
+  _            -> parseError ("Expected " ++ want)
+
+returnJust :: String -> Maybe a -> ConfigM' a
+returnJust err Nothing  = parseError err
+returnJust _   (Just x) = return x
+
 type ConfigM' a = ErrorT CPError (ReaderT XInfo IO) a
 
-getTable :: ConfigParser -> String -> ConfigM' (Table t)
-getTable cp sect = do
-  opts <- options cp sect
-  ni
+parseIntegerList :: String -> ConfigM' [Int]
+parseIntegerList = mapM (readM "integer") . words
 
-getSpace :: ConfigParser -> [(String, Table t)] -> String -> ConfigM' Workspace
-getSpace _ _ _ = ni
+getTable :: ConfigParser -> SectionSpec -> ConfigM' (Table t)
+getTable cp sect = do
+  rows <- f optRows
+  cols <- f optCols
+  return Table
+    { taRows = map (convert . free) rows
+    , taCols = map (convert . free) cols
+    }
+  where
+    f opt = get cp sect opt >>= parseIntegerList
+
+getSpace
+  :: ConfigParser
+  -> Map String (Table Pix)
+  -> String
+  -> SectionSpec
+  -> ConfigM' Workspace
+getSpace cp tables name sect = do
+  table <- get cp sect optTable >>= returnJust "table" . flip lookup tables
+  start <- get cp sect optStart >>= return . ref
+  tileNames <- options cp sect >>= return . filter (/= optTable)
+  tiles <- mapM (\n -> getTile cp sect n >>= return . (ref n, )) tileNames
+  return Workspace
+    { spLayout = Layout
+      { laTable = table
+      , laTiles = fromList tiles
+      }
+    , spStatus = emptyStatusbar
+    , spStartTile = start
+    }
+  where
+    ref = mkTileRef $ mkSpaceRef name
+
+getTile :: ConfigParser -> SectionSpec -> OptionSpec -> ConfigM' (Tile a)
+getTile cp sect opt = do
+  nums <- get cp sect opt >>= parseIntegerList
+  case nums of
+    [px, py, sx, sy] -> return Tile
+      { tiPos  = posnXY px py
+      , tiSpan = spanXY sx sy
+      }
+    _                -> parseError "Expected four integers"
+
+getKey :: ConfigParser -> OptionSpec -> ConfigM' ((KeyMask, KeySym), Command)
+getKey _ _ = ni
 

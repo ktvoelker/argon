@@ -98,3 +98,5 @@ Figure out why Xnest segfaults when killing it after the WM has quit.
 Figure out why xev got an unending stream of zero keypresses.
   Perhaps this has something to do with Xnest?
 
+Add support for expressions in INI config files.
+
