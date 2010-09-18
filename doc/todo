@@ -2,7 +2,7 @@
 TODO
 ====
 
-Once the "PROBLEMS" and "CORE FUNCTIONALITY" sections have been completed,
+Once the "CORE FUNCTIONALITY" section has been completed,
 an initial release will be made, including:
 
 1. A Cabal package
@@ -13,12 +13,6 @@ an initial release will be made, including:
 
 PROBLEMS
 --------
-New windows take a long time to appear.
-  Perhaps the ridiculous stream of unexplained keypress events with keycode
-  zero are to blame?
-  Why does xterm take a long time, whereas xmessage doesn't?
-  Do any other windows appear quickly or slowly?
-
 Window contents are not immediately redrawn when Xnest is hidden and then
 revealed.
 
@@ -96,4 +90,7 @@ Right now, we attach standard events to them and then forget that they exist.
 Check for invalid space and tile refs in runCommand.
 
 Figure out why Xnest segfaults when killing it after the WM has quit.
+
+Figure out why xev got an unending stream of zero keypresses.
+  Perhaps this has something to do with Xnest?
 
