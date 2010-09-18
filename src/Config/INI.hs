@@ -8,6 +8,7 @@ import Control.Monad
 import Control.Monad.Error
 import Control.Monad.Reader
 import Data.ConfigFile
+import Graphics.X11
 import System.Environment
 
 defaultFile :: FilePath
@@ -26,6 +27,18 @@ sectSpace = "space"
 sectGlobal, sectKeys :: SectionSpec
 sectGlobal = "global"
 sectKeys = "keys"
+
+masks :: Map String KeyMask
+masks = fromList
+  [ ("S", shiftMask)
+  , ("L", lockMask)
+  , ("C", controlMask)
+  , ("1", mod1Mask)
+  , ("2", mod2Mask)
+  , ("3", mod3Mask)
+  , ("4", mod4Mask)
+  , ("5", mod5Mask)
+  ]
 
 configFile :: ConfigM FilePath
 configFile = liftIO $ do
@@ -140,5 +153,16 @@ getTile cp sect opt = do
     _                -> parseError "Expected four integers"
 
 getKey :: ConfigParser -> OptionSpec -> ConfigM' ((KeyMask, KeySym), Command)
-getKey _ _ = ni
+getKey cp opt = do
+  str <- get cp sectKeys opt
+  case reverse $ words opt of
+    []         -> parseError "Invalid key"
+    sym : mods -> do
+      let sym' = stringToKeysym sym
+      mods' <- mapM (returnJust "mask" . flip lookup masks) mods
+      cmd <- getCommand str
+      return ((foldr (.|.) 0 mods', sym'), cmd)
+
+getCommand :: String -> ConfigM' Command
+getCommand _ = ni
 
