@@ -72,7 +72,7 @@ findSections kind sections = do
 
 config :: ConfigM Config
 config = do
-  eInput <- configFile >>= liftIO . readfile emptyCP
+  eInput <- configFile >>= liftIO . readfile emptyCP { optionxform = id }
   mapErrorT (>>= return . either (Left . show) Right) $ do
     input <- eInput
     let sectionNames = map (\n -> (words n, n)) $ sections input
