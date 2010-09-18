@@ -129,7 +129,8 @@ getSpace
 getSpace cp tables name sect = do
   table <- get cp sect optTable >>= returnJust "table" . flip lookup tables
   start <- get cp sect optStart >>= return . ref
-  tileNames <- options cp sect >>= return . filter (/= optTable)
+  tileNames <-
+    options cp sect >>= return . filter (not . (`elem` [optStart, optTable]))
   tiles <- mapM (\n -> getTile cp sect n >>= return . (ref n, )) tileNames
   return Workspace
     { spLayout = Layout
