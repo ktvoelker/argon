@@ -14,6 +14,7 @@ import Declare.Layout
 import Declare.Statusbar
 import Declare.Workspace
 
+import Control.Monad.Reader
 import qualified Data.Map as Map
 
 class HasLayout a t r | a -> t r, t -> a r, r -> a t where
@@ -60,6 +61,8 @@ data XInfo = XInfo
   , fontWidth  :: PixSpan X
   , fontHeight :: PixSpan Y
   } deriving (Eq, Ord, Show)
+
+type ConfigM = ReaderT XInfo IO Config
 
 emptyConfig :: Config
 emptyConfig = Config

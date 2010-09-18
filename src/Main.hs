@@ -18,7 +18,7 @@ xMain = do
   xi <- getXInfo
   dprint xi
   debug "Run config"
-  let config' = runReader config xi
+  config' <- liftIO $ runReaderT config xi
   dprint config'
   debug "Use config"
   localConfig (const config') $ do
