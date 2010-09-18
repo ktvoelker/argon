@@ -19,5 +19,12 @@ runCommand cmd = do
     (CExec x)       -> exec x
     CNextWin        -> getFocusTileM >>= nextWin
     CPrevWin        -> getFocusTileM >>= prevWin
+    (CSpace sr)     -> do
+      wo <- getWorld
+      let old = getFocusTile wo
+      let new = getLocalFocus wo sr
+      setFocusTile new
+      refreshSpace old
+      refreshSpace new
     _               -> return ()
 

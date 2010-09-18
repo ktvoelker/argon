@@ -16,7 +16,7 @@ config = do
       d = Tile { tiPos = (posnXY 1 1), tiSpan = (spanXY 1 1) }
       e = Tile { tiPos = (posnXY 0 0), tiSpan = (spanXY 1 1) }
       f = Tile { tiPos = (posnXY 1 0), tiSpan = (spanXY 1 1) }
-      g = Tile { tiPos = (posnXY 0 1), tiSpan = (spanXY 1 2) }
+      g = Tile { tiPos = (posnXY 0 1), tiSpan = (spanXY 2 1) }
   return emptyConfig
     { cStartSpace = main
     , cSpaces = fromList
@@ -41,7 +41,7 @@ config = do
                   ["e", "f", "g"] [e, f, g]
             }
           , spStatus = emptyStatusbar
-          , spStartTile = mkTileRef main "g"
+          , spStartTile = mkTileRef two "g"
           }
         )
       ]
@@ -50,6 +50,8 @@ config = do
       , ((0, xK_KP_Up), CFocusDir DUp)
       , ((0, xK_KP_Left), CFocusDir DLeft)
       , ((0, xK_KP_Down), CFocusDir DDown)
+      , ((0, xK_1), CSpace main)
+      , ((0, xK_2), CSpace two)
       ]
     , cAttracts = []
     }
