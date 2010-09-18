@@ -94,6 +94,20 @@ updateX11Focus = do
   getDisplay >>= dprint . defaultRootWindow
   act $ AFocus win
 
+findWindow :: World -> Window -> Maybe TileRef
+findWindow wo win = listToMaybe $ keys $ filter (member win . snd) $ wTiles wo
+
+raiseAndFocusWindow :: Window -> X11State ()
+raiseAndFocusWindow win = do
+  wo <- getWorld
+  let tr = findWindow wo win
+  case tr of
+    Nothing -> return ()
+    Just tr -> do
+      modifyTileWindows (flip pushFront win . filter (/= win)) tr
+      setFocusTile tr
+      refreshSpace tr
+
 getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)
 

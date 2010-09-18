@@ -37,7 +37,7 @@ import Data.Queue.Class hiding
 import Data.Queue.PQueue
 import Data.Queue.Queue
 import Data.Queue.Stack
-import Data.Set (Set, delete, member)
+import Data.Set (Set, delete)
 
 import qualified Data.Dequeue as DD
 import qualified Data.List as DL
@@ -74,6 +74,9 @@ class Collection a where
   filter :: (Ord (Key a)) => (Entry a -> Bool) -> a -> a
   filter p = fromList . DL.filter p . toList
 
+  member :: (Ord (Key a), Eq (Entry a)) => Entry a -> a -> Bool
+  member x = not . null . filter (== x)
+
 maximumBy :: (Collection a)
           => (Entry a -> Entry a -> Ordering) -> a -> Entry a
 maximumBy f = DL.maximumBy f . toList
@@ -89,6 +92,7 @@ instance Collection [e] where
   size = DL.length
   toList = id
   filter = DL.filter
+  member = DL.elem
 
 instance Collection (Map k v) where
   type Entry (Map k v) = (k, v)
@@ -113,6 +117,7 @@ instance Collection (Set e) where
   size = DS.size
   toList = DS.toList
   filter = DS.filter
+  member = DS.member
  
 instance (Ord e) => Collection (BankersDequeue e) where
   type Entry (BankersDequeue e) = e

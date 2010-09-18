@@ -13,9 +13,11 @@ an initial release will be made, including:
 
 PROBLEMS
 --------
-
 New windows take a long time to appear.
-  Perhaps debug mode causes the problem.
+  Perhaps the ridiculous stream of unexplained keypress events with keycode
+  zero are to blame?
+  Why does xterm take a long time, whereas xmessage doesn't?
+  Do any other windows appear quickly or slowly?
 
 Window contents are not immediately redrawn when Xnest is hidden and then
 revealed.
@@ -23,8 +25,6 @@ revealed.
 
 CORE FUNCTIONALITY
 ------------------
-buttonPressHandler
-
 Config.config (as a parser of an external configuration file)
 
 Cabal-based build system (try doing it from scratch, and use ghc --make's
@@ -51,6 +51,8 @@ A command for switching between the floating and tiling worlds.
 
 LATER DETAILS
 -------------
+When a button press event hits the root window, determine which tile it is
+within and focus that tile.
 
 Decide whether the Action system is worth keeping. It isn't used consistently,
 and a lot of our X11 calls (like mapWindow, et cetera) are fairly simple and

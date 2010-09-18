@@ -5,6 +5,7 @@ import Command
 import Debug
 import Declare
 import Event.Default
+import State
 import Types
 import X11
 
@@ -28,5 +29,10 @@ keyReleaseHandler e = do
          >>= maybe (return ()) runCommand . (lookup (mask, sym)) . cKeys
      else debug "Keysym 0!"
 
-buttonPressHandler = defaultHandler
+buttonPressHandler e = do
+  debug "Button press handler:"
+  dprint $ ev_window e
+  raiseAndFocusWindow $ ev_window e
+  d <- getDisplay
+  liftIO $ allowEvents d replayPointer $ ev_time e
 
