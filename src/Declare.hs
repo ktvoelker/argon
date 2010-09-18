@@ -14,7 +14,9 @@ import Declare.Layout
 import Declare.Statusbar
 import Declare.Workspace
 
+import Control.Monad.Error
 import Control.Monad.Reader
+
 import qualified Data.Map as Map
 
 class HasLayout a t r | a -> t r, t -> a r, r -> a t where
@@ -62,10 +64,7 @@ data XInfo = XInfo
   , fontHeight :: PixSpan Y
   } deriving (Eq, Ord, Show)
 
-type ConfigM a = ReaderT XInfo IO a
-
-configError :: ConfigM Config
-configError = error "Error in configuration"
+type ConfigM a = ErrorT String (ReaderT XInfo IO) a
 
 emptyConfig :: Config
 emptyConfig = Config
