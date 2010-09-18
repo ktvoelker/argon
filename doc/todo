@@ -23,11 +23,6 @@ revealed.
 
 CORE FUNCTIONALITY
 ------------------
-Command.runCommand
-  CKillWin
-    XDestroyWindow(disp, win)
-  CQuit
-
 buttonPressHandler
 
 Config.config (as a parser of an external configuration file)
@@ -54,8 +49,8 @@ A command for switching between the floating and tiling worlds.
   that is reserved for a non-floating tile.
 
 
-FEATURES
---------
+LATER DETAILS
+-------------
 
 Decide whether the Action system is worth keeping. It isn't used consistently,
 and a lot of our X11 calls (like mapWindow, et cetera) are fairly simple and
@@ -97,4 +92,6 @@ Do something better with windows that exist when the window manager starts.
 Right now, we attach standard events to them and then forget that they exist.
 
 Check for invalid space and tile refs in runCommand.
+
+Figure out why Xnest segfaults when killing it after the WM has quit.
 

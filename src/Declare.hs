@@ -47,6 +47,8 @@ data Command =
   | CSpace      SpaceRef
   | CExec       Exec
   | CSeq        [Command]
+  | CQuit
+  | CKill
   | CNextWin
   | CPrevWin
   | CKillWin

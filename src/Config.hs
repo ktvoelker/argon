@@ -52,6 +52,8 @@ config = do
       , ((0, xK_KP_Down), CFocusDir DDown)
       , ((0, xK_1), CSpace main)
       , ((0, xK_2), CSpace two)
+      , ((0, xK_q), CQuit)
+      , ((0, xK_x), CKill)
       ]
     , cAttracts = []
     }
