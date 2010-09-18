@@ -19,8 +19,6 @@ revealed.
 
 CORE FUNCTIONALITY
 ------------------
-Config.config (as a parser of an external configuration file)
-
 Cabal-based build system (try doing it from scratch, and use ghc --make's
 output to determine exactly what package versions to require if it doesn't
 seem to work).

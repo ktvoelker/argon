@@ -54,7 +54,6 @@ data Command =
   | CKill
   | CNextWin
   | CPrevWin
-  | CKillWin
   deriving (Eq, Ord, Show)
 
 data XInfo = XInfo

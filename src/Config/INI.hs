@@ -164,5 +164,54 @@ getKey cp opt = do
       return ((foldr (.|.) 0 mods', sym'), cmd)
 
 getCommand :: String -> ConfigM' Command
-getCommand _ = ni
+getCommand = getCommand' . words
+
+getCommand' :: [String] -> ConfigM' Command
+getCommand' xs = case xs of
+  (cmd : args) -> returnJust "command" (lookup cmd commands) >>= ($ args)
+  _            -> parseError "Expected command"
+
+commands :: Map String ([String] -> ConfigM' Command)
+commands = fromList
+  [ ("focus_dir", cmdFocusDir)
+  , ("space",     cmdSpace)
+  , ("exec",      cmdExec)
+  , ("seq",       cmdSeq)
+  , ("quit",      constCmd CQuit)
+  , ("kill",      constCmd CKill)
+  , ("next_win",  constCmd CNextWin)
+  , ("prev_win",  constCmd CPrevWin)
+  ]
+
+cmdFocusDir, cmdSpace, cmdExec, cmdSeq :: [String] -> ConfigM' Command
+
+cmdFocusDir [dir] =
+  returnJust "direction" (lookup dir dirs) >>= return . CFocusDir
+cmdFocusDir _ = parseError "`focus_dir' expects one direction"
+
+dirs :: Map String Dir
+dirs = fromList
+  [ ("up",    DUp)
+  , ("down",  DDown)
+  , ("left",  DLeft)
+  , ("right", DRight)
+  ]
+
+cmdSpace [space] = return $ CSpace $ mkSpaceRef space
+cmdSpace _       = parseError "`space' expects one argument"
+
+cmdExec (prog : args) = return $ CExec Exec { exProg = prog, exArgs = args }
+cmdExec _             = parseError "`exec' expects at least one argument"
+
+cmdSeq = f >=> return . CSeq
+  where
+    f args = do
+      x'  <- getCommand' x
+      xs' <- f xs
+      return (x' : xs')
+      where
+        (x, xs) = break (== ";") args
+
+constCmd :: Command -> a -> ConfigM' Command
+constCmd cmd = const $ return cmd
 
