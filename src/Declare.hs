@@ -62,7 +62,10 @@ data XInfo = XInfo
   , fontHeight :: PixSpan Y
   } deriving (Eq, Ord, Show)
 
-type ConfigM = ReaderT XInfo IO Config
+type ConfigM a = ReaderT XInfo IO a
+
+configError :: ConfigM Config
+configError = error "Error in configuration"
 
 emptyConfig :: Config
 emptyConfig = Config

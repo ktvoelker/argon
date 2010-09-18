@@ -11,10 +11,10 @@ data ConfigMode =
   | ConfigYaml
   deriving (Eq, Ord, Show)
 
-config :: ConfigM
-config = chooseConfig ConfigManual
+config :: ConfigM Config
+config = chooseConfig ConfigYaml
 
-chooseConfig :: ConfigMode -> ConfigM
+chooseConfig :: ConfigMode -> ConfigM Config
 chooseConfig ConfigManual = CM.config
 chooseConfig ConfigYaml   = CY.config
 

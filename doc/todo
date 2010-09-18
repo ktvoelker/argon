@@ -45,6 +45,10 @@ A command for switching between the floating and tiling worlds.
 
 LATER DETAILS
 -------------
+Add attraction support to YAML configuration parser.
+
+Improve the handling of errors in the configuration.
+
 When a button press event hits the root window, determine which tile it is
 within and focus that tile.
 

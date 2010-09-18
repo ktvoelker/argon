@@ -3,7 +3,7 @@ module Config.Manual (config) where
 
 import Declare
 
-config :: ConfigM
+config :: ConfigM Config
 config = do
   w <- asks width
   h <- asks height
