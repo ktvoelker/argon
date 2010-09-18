@@ -54,7 +54,6 @@ data World = World
   , wFocuses :: Map SpaceRef TileRef
   , wTiles   :: Map TileRef (BankersDequeue Window)
   , wStatus  :: Map StatusRef String
-  , wWindows :: Set Window
   } deriving (Show)
 
 getLocalFocus :: (RefSpace a) => World -> a -> TileRef
@@ -98,64 +97,75 @@ updateX11Focus = do
 getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)
 
+-- Return all the windows of a space, partitioned into visible and invisible
+-- windows, with visible windows listed from top to bottom.
+partitionSpace :: (RefSpace a) => a -> X11State ([Window], [Window])
+partitionSpace sr = do
+  wo <- getWorld
+  let
+  { (tilesV, tilesH) = unzip
+    $ elems
+    $ fmap popFront
+    $ filterWithKey (\tr _ -> not (tileIsFloat tr) && sameSpace sr tr)
+    $ wTiles wo
+  ; floats = toList $ getTileWindows wo $ getFloatRef sr
+  ; tilesV' = catMaybes tilesV
+  ; tilesH' = concatMap toList tilesH
+  }
+  return (floats ++ tilesV', tilesH')
+
+spaceWindows :: (RefSpace a) => a -> X11State [Window]
+spaceWindows sr = do
+  wo <- getWorld
+  return
+    $ concatMap toList
+    $ elems
+    $ filterWithKey (\tr _ -> sameSpace sr tr)
+    $ wTiles wo
+
+refreshSpace :: (RefSpace a) => a -> X11State ()
+refreshSpace sr = do
+  wo <- getWorld
+  d  <- getDisplay
+  if sameSpace sr $ wFocus wo
+     then do
+       (v, h) <- partitionSpace sr
+       liftIO $ do
+         restackWindows d v
+         mapM_ (unmapWindow d) h
+         mapM_ (mapWindow d) v
+       updateX11Focus
+     else spaceWindows sr >>= liftIO . mapM_ (unmapWindow d)
+
+refreshFocusSpace :: X11State ()
+refreshFocusSpace = getFocusTileM >>= refreshSpace
+
 modifyTileWindows
   :: (BankersDequeue Window -> BankersDequeue Window)
   -> TileRef
   -> X11State ()
-modifyTileWindows f tr = do
-  d  <- getDisplay
-  wo <- getWorld
-  let tiles  = wTiles wo ! tr
-  let tiles' = f tiles
-  put $ $(upd 'wTiles) (insert (tr, tiles')) wo
-  if tileIsFloat tr
-     then liftIO $ restackWindows d $ toList tiles'
-     else do
-       let hidden = first tiles
-       let shown  = first tiles'
-       if hidden == shown
-          then return ()
-          else do
-            let j = justIfLive wo
-            debug "Unmapping hidden window:"
-            dprint hidden
-            dprint (hidden >>= j)
-            maybe (return ()) (liftIO . unmapWindow d) $ (hidden >>= j)
-            debug "Mapping exposed window:"
-            dprint shown
-            dprint (shown >>= j)
-            maybe (return ()) (liftIO . mapWindow d) $ (shown >>= j)
-
-justIfLive :: World -> Window -> Maybe Window
-justIfLive wo win = if member win $ wWindows wo then Just win else Nothing
+modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
 
 modifyAllTileWindows
   :: (TileRef -> BankersDequeue Window -> BankersDequeue Window)
   -> X11State ()
-modifyAllTileWindows f =
-  getWorld >>= mapM_ (\k -> modifyTileWindows (f k) k) . keys . wTiles
+modifyAllTileWindows = modifyWorld . $(upd 'wTiles) . mapWithKey
 
 modifyFocusWindows
   :: (BankersDequeue Window -> BankersDequeue Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
-
-insertLiveWindow :: Window -> X11State ()
-insertLiveWindow = modifyWorld . $(upd 'wWindows) . insert
-
-deleteDeadWindow :: Window -> X11State ()
-deleteDeadWindow = modifyWorld . $(upd 'wWindows) . delete
 
 emptyWorld :: Config -> World
 emptyWorld c = World
   { wFocuses = fmap spStartTile $ cSpaces c
   , wFocus   = spStartTile $ cSpace c $ cStartSpace c
   , wActions = empty
-  , wTiles   = emptyWLayout empty spLayout spacesList
+  , wTiles   = union floats $ emptyWLayout empty spLayout spacesList
   , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
-  , wWindows = empty
   }
   where
     spacesList = elems $ cSpaces c
+    floats     = mapKeys getFloatRef $ fmap (const empty) $ cSpaces c
 
 -- Create an empty state for some things which have layouts.
 emptyWLayout

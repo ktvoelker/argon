@@ -57,6 +57,17 @@ A command for switching between the floating and tiling worlds.
 FEATURES
 --------
 
+Decide whether the Action system is worth keeping. It isn't used consistently,
+and a lot of our X11 calls (like mapWindow, et cetera) are fairly simple and
+probably don't deserve the overhead of constructing an Action and putting it
+in the queue.
+  
+  A mixture of using Actions and not using them is bad because X11 calls may
+  not be carried out in the intended order, since all calls made through
+  Actions will happen last. Perhaps, instead of the heavyweight Actions
+  system, we should just have a uniform module which abstracts over X11 with
+  a direct, simple API?
+
 Tabs on tiles showing what windows are present
 
 Make an external, socket-based interface for executing Commands.

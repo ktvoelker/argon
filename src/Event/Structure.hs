@@ -24,8 +24,6 @@ resizeRequestHandler = defaultHandler
 mapRequestHandler e = do
   debug "Map request!"
   wo <- getWorld
-  -- Add to the list of live windows.
-  insertLiveWindow win
   -- Add standard event handlers.
   lift $ lift $ addStdEvents win
   -- Find out where the window belongs.
@@ -36,21 +34,16 @@ mapRequestHandler e = do
   modifyTileWindows (insert win) tr
   -- Check if the tile is the floating tile.
   let isFloat = tileIsFloat tr
-  -- Display the window.
+  -- Position the window.
   if isFloat
      then float tr
      else tile tr
-  -- Determine if the new window should now be focused.
-  let trFocus = getFocusTile wo
-  -- A new window on a non-focused space never gains the focus.
-  -- Otherwise:
-  --   A new floating window gains the focus.
-  --   A new tiled window in the focused tile gains the focus.
-  if sameSpace tr trFocus && (isFloat || tr == trFocus)
-     then do
-       setFocusTile tr
-       updateX11Focus
+  -- If the new window is floating on the focused space, focus it.
+  if isFloat && sameSpace tr (getFocusTile wo)
+     then setFocusTile tr
      else return ()
+  -- Refresh the display.
+  refreshSpace tr
   where
     win = ev_window e
     -- TODO use the requested size of the window
@@ -69,12 +62,10 @@ mapRequestHandler e = do
 destroyWindowHandler e = do
   debug "Window destroyed:"
   dprint $ win
-  -- Remove the window from the list of live windows
-  deleteDeadWindow win
   -- Remove the window from its tile
   modifyAllTileWindows $ const $ filter (/= win)
-  -- Update the focus
-  updateX11Focus
+  -- Refresh the display
+  refreshFocusSpace
   where
     win = ev_window e
 

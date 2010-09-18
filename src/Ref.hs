@@ -1,7 +1,7 @@
 
 module Ref where
 
-import Prelude (Eq(), Ord(), Show(), Maybe(), String, id)
+import Prelude (Eq(), Ord(), Show(), Maybe(Nothing), String, id)
 
 newtype SpaceRef = SpaceRef
   { srSpace :: String
@@ -28,4 +28,7 @@ instance RefSpace TileRef where
 
 instance RefSpace StatusRef where
   getSpaceRef = strSpace
+
+getFloatRef :: (RefSpace a) => a -> TileRef
+getFloatRef sr = TileRef { trSpace = getSpaceRef sr, trTile = Nothing }
 
