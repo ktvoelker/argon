@@ -9,6 +9,7 @@ import State
 import Types
 import X11
 
+import Control.Monad.Error
 import Control.Monad.Reader
 import System.Environment
 
@@ -18,14 +19,16 @@ xMain = do
   xi <- getXInfo
   dprint xi
   debug "Run config"
-  config' <- liftIO $ runReaderT config xi
+  config' <- liftIO $ runReaderT (runErrorT config) xi
   dprint config'
   debug "Use config"
-  localConfig (const config') $ do
-    debug "Init events"
-    initEvents
-    debug "Event loop"
-    eventLoop
+  case config' of
+    Left err      -> liftIO $ putStrLn err
+    Right config' -> localConfig (const config') $ do
+      debug "Init events"
+      initEvents
+      debug "Event loop"
+      eventLoop
   debug "Done"
 
 main :: IO ()
