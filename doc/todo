@@ -32,6 +32,8 @@ Add commands for moving windows.
 
 Low Priority Features
 ---------------------
+Add support for setting cIgnoreMask from INI config files.
+
 Floating support in focusDir
 
 Improve the handling of errors in the configuration.
