@@ -60,7 +60,7 @@ beginMouseMode
   -> MouseMode
   -> X11State ()
 beginMouseMode win mask btn mode = do
-  -- TODO check if this is a root window, and ignore
+  -- TODO check if this is not a floating window, and ignore
   disp <- getDisplay
   modifyWorld $ $(upd 'wMode) $ const MMouse
     { mMode  = mode
