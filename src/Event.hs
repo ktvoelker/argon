@@ -6,6 +6,7 @@ import Declare
 import Event.Default
 import Event.Input
 import Event.Listen
+import Event.MouseMode
 import Event.Structure
 import State
 import Types
@@ -45,6 +46,8 @@ handlers = fromList
   , (buttonPress,   buttonPressHandler)
   , (mapRequest,    mapRequestHandler)
   , (destroyNotify, destroyWindowHandler)
+  , (buttonRelease, buttonReleaseHandler)
+  , (motionNotify,  motionNotifyHandler)
   ]
 
 handler :: EventHandler

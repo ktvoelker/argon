@@ -60,6 +60,11 @@ mapRequestHandler e = do
 destroyWindowHandler e = do
   debug "Window destroyed:"
   dprint $ win
+  -- If we were doing a mouse mode operation on this window, end it.
+  wo <- getWorld
+  case wMode wo of
+    m@MMouse {} | mWin m == win -> mAbort m
+    _                        -> return ()
   -- Remove the window from its tile
   modifyAllTileWindows $ const $ filter (/= win)
   -- Refresh the display

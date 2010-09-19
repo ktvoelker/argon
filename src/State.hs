@@ -56,7 +56,23 @@ data World = World
   , wTiles   :: Map TileRef (BankersDequeue Window)
   , wStatus  :: Map StatusRef String
   , wHistory :: History TileRef
+  , wMode    :: Mode
   } deriving (Show)
+
+data Mode =
+    MNormal
+  | MMouse
+    { mMode  :: MouseMode
+    , mWin   :: Window
+    , mPosn  :: XYPosn Pix
+    , mDone  :: X11State ()
+    , mAbort :: X11State ()
+    } deriving (Show)
+
+instance Show (X11State a) where
+  show _ = "<X11State>"
+
+data MouseMode = MMMove | MMResize deriving (Eq, Ord, Show)
 
 getLocalFocus :: (RefSpace a) => World -> a -> TileRef
 getLocalFocus w sr = wFocuses w ! getSpaceRef sr

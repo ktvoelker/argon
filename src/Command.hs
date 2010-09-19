@@ -1,5 +1,5 @@
 
-module Command where
+module Command (runCommand) where
 
 import Debug
 import Declare
@@ -13,9 +13,15 @@ import X11
 
 import Graphics.X11.Xlib.Extras
 
-runCommand :: Command -> X11State ()
+runCommand, runCommand' :: Command -> X11State ()
 
 runCommand cmd = do
+  wo <- getWorld
+  case wMode wo of
+    MNormal -> runCommand' cmd
+    _       -> return ()
+
+runCommand' cmd = do
   dprint cmd
   case cmd of
     CQuit           -> quitState
