@@ -174,14 +174,17 @@ getCommand' xs = case xs of
 
 commands :: Map String ([String] -> ConfigM' Command)
 commands = fromList
-  [ ("focus_dir", cmdFocusDir)
-  , ("space",     cmdSpace)
-  , ("exec",      cmdExec)
-  , ("seq",       cmdSeq)
-  , ("quit",      constCmd CQuit)
-  , ("kill",      constCmd CKill)
-  , ("next_win",  constCmd CNextWin)
-  , ("prev_win",  constCmd CPrevWin)
+  [ ("focus_dir",   cmdFocusDir)
+  , ("space",       cmdSpace)
+  , ("exec",        cmdExec)
+  , ("seq",         cmdSeq)
+  , ("quit",        constCmd CQuit)
+  , ("kill",        constCmd CKill)
+  , ("next_win",    constCmd CNextWin)
+  , ("prev_win",    constCmd CPrevWin)
+  , ("hist_back",   constCmd CHistBack)
+  , ("hist_fwd",    constCmd CHistFwd)
+  , ("focus_float", constCmd CFocusFloat)
   ]
 
 cmdFocusDir, cmdSpace, cmdExec, cmdSeq :: [String] -> ConfigM' Command
