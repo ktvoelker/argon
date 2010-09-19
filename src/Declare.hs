@@ -56,6 +56,7 @@ data Command =
   | CPrevWin
   | CHistBack
   | CHistFwd
+  | CFocusFloat
   deriving (Eq, Ord, Show)
 
 data XInfo = XInfo

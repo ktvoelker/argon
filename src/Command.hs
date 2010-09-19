@@ -38,5 +38,6 @@ runCommand cmd = do
       refreshSpace new
     CHistBack       -> tileHistBack
     CHistFwd        -> tileHistFwd
+    CFocusFloat     -> getFocusTileM >>= setFocusTile . getFloatRef
     _               -> return ()
 
