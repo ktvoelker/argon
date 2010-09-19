@@ -27,10 +27,7 @@ addRootEvents win = do
   dprint win
   debug "Select inputs on root"
   liftIO $ selectInput disp win 
-    (   resizeRedirectMask
-    .|. substructureRedirectMask
-    .|. substructureNotifyMask
-    )
+    (substructureRedirectMask .|. substructureNotifyMask)
   c <- getConfig
   debug "Grab command keys on root"
   liftIO $ mapM_ (uncurry $ g disp) $ keys $ cKeys c

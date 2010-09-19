@@ -14,12 +14,10 @@ import State
 import Types
 import X11
 
+import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
-resizeRequestHandler, mapRequestHandler, destroyWindowHandler :: EventHandler
-
--- TODO for floating windows, don't ignore
-resizeRequestHandler = defaultHandler
+mapRequestHandler, destroyWindowHandler :: EventHandler
 
 mapRequestHandler e = do
   debug "Map request!"
@@ -46,8 +44,7 @@ mapRequestHandler e = do
   refreshSpace tr
   where
     win = ev_window e
-    -- TODO use the requested size of the window
-    float tr = act $ AShow win (posnXY 0 0) (spanXY 100 100)
+    float _ = getDisplay >>= liftIO . flip mapWindow win
     tile tr = do
       c <- getConfig
       let

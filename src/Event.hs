@@ -43,7 +43,6 @@ handlers :: Map Graphics.X11.EventType (Event -> X11State ())
 handlers = fromList
   [ (keyRelease,    keyReleaseHandler)
   , (buttonPress,   buttonPressHandler)
-  , (resizeRequest, resizeRequestHandler)
   , (mapRequest,    mapRequestHandler)
   , (destroyNotify, destroyWindowHandler)
   ]

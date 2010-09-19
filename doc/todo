@@ -7,19 +7,20 @@ High-Priority Bugs
 
 Floating Functionality (High-Priority)
 --------------------------------------
-mapRequestHandler
-
-resizeRequestHandler
-
-focusDir
-
 Move and resize modes
   Commands for setting what keyboard modifiers active these modes
   Command for setting Drag Mode versus Two-Click Mode
 
-A command for switching between the floating and tiling worlds.
-  We will probably end up wanting to have a special "last focused tile"
-  that is reserved for a non-floating tile.
+Keep a global history of most-recently-focused tiles.
+  Create a generic module for tracking a history.
+    Operations are:
+      Go back
+      Go forward
+      Go to X (destroys forward history)
+    Implement using two lists, one looking back and one looking forward.
+  Add CHistBack and CHistFwd commands.
+
+Add a CFocusFloat command.
 
 
 Medium Priority
@@ -36,9 +37,14 @@ Implement a timer system.
 
 Implement statusbar support.
 
+Add commands for moving windows.
+  This includes moving between floating and a tile, and vice-versa.
+
 
 Low Priority Features
 ---------------------
+Floating support in focusDir
+
 Improve the handling of errors in the configuration.
 
 When a button press event hits the root window, determine which tile it is
@@ -48,8 +54,7 @@ Make an external, socket-based interface for executing Commands.
 
 Implement user-defined event-handling support.
 
-Keep a per-tile history of most-recently-focused windows and allow that
-history to be accessed by commands.
+Keep a per-tile history of most-recently-focused windows.
 
 Visually indicate the focus, perhaps by a colored border.
 
