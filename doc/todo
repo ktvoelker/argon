@@ -2,15 +2,6 @@
 TODO
 ====
 
-Once the "CORE FUNCTIONALITY" section has been completed,
-an initial release will be made, including:
-
-1. A Cabal package
-2. A website
-3. A post on bloggish.net
-4. User documentation
-
-
 PROBLEMS
 --------
 Window contents are not immediately redrawn when Xnest is hidden and then
