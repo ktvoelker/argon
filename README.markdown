@@ -19,13 +19,36 @@ In summary, I want to minimize the work I have to do, both with the keyboard
 and with my mind. For me, minimizing mental work requires maximizing the
 predictability of the window manager's behavior.
 
-Does it work yet?
------------------
-It runs and displays new windows, and you can move the focus between the tiles
-on the default workspace. However, most of the user commands have not been
-implemented, and closing a window causes trouble.
+Building KDWM
+-------------
+The official method of building KDWM is with `cabal` tool which is included
+in the `cabal-install` package available from
+http://www.haskell.org/cabal/download.html. To build, run:
 
-If you want to help, feel free, but keep in mind that I'm definitely not
-going to accept any features I wouldn't want to use. In the future, once the
-code is more functional and stable, I will accept patches which add general
-extensibility mechanisms even if I don't think I will use those mechanisms.
+    cabal configure
+    cabal build
+
+The executable will be found at `dist/build/kdwm/kdwm`.
+
+Running KDWM
+------------
+KDWM needs two pieces of information to get started: the X display to connect
+to and the configuration file to read. There are defaults for both.
+
+To specify a particular X display, set the `DISPLAY` variable in the
+environment in which you execute `kdwm`. The default display is `:0.0`.
+
+To specify a particular configuration file, pass its name as the first
+command-line argument to `kdwm`. The default configuration file is `.kdwmrc`
+in the directory given by the `HOME` environment variable.
+
+The Configuration File
+----------------------
+The KDWM configuration file is roughly a traditional INI file. For more detail
+about the low-level syntax of the file, you can read about the library which
+is used to parse it at
+http://hackage.haskell.org/package/ConfigFile.
+
+Take a look at the example configuration in the repository, `src/kdwm.ini`,
+for more detail about what is expected in the file.
+
