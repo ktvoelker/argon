@@ -54,14 +54,7 @@ Tabs on tiles showing what windows are present
 Make an external, socket-based interface for executing Commands.
 
 Move Collection stuff into a separate module re-exported by Types.
-
-Add Commands for entering and leaving the move and resize modes for floating
-windows.
-
-Expand the key-handling system to also support handling mouse clicks (with the
-same modifier support). It should be possible to bind separately on press and
-release, so that the user can either do drag-based move and resize or
-two-click move and resize.
+  Make the Collection interface into multiple, better interfaces.
 
 Implement a timer system.
 
@@ -85,4 +78,5 @@ Figure out why xev got an unending stream of zero keypresses.
   Perhaps this has something to do with Xnest?
 
 Add support for expressions in INI config files.
+  In expressions, allow variable references to anything in XInfo.
 
