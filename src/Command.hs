@@ -5,6 +5,7 @@ import Debug
 import Declare
 import Exec
 import Focus
+import History.Tile
 import State
 import Tile
 import Types
@@ -35,5 +36,7 @@ runCommand cmd = do
       setFocusTile new
       refreshSpace old
       refreshSpace new
+    CHistBack       -> tileHistBack
+    CHistFwd        -> tileHistFwd
     _               -> return ()
 

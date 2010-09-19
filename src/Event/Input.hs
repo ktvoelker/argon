@@ -5,6 +5,7 @@ import Command
 import Debug
 import Declare
 import Event.Default
+import History.Tile
 import State
 import Types
 import X11
@@ -35,4 +36,15 @@ buttonPressHandler e = do
   raiseAndFocusWindow $ ev_window e
   d <- getDisplay
   liftIO $ allowEvents d replayPointer $ ev_time e
+
+raiseAndFocusWindow :: Window -> X11State ()
+raiseAndFocusWindow win = do
+  wo <- getWorld
+  let tr = findWindow wo win
+  case tr of
+    Nothing -> return ()
+    Just tr -> do
+      modifyTileWindows (flip pushFront win . filter (/= win)) tr
+      setFocusTile tr
+      refreshSpace tr
 

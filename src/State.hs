@@ -71,13 +71,6 @@ getFocusTileM = getWorld >>= return . getFocusTile
 getFocusTile :: World -> TileRef
 getFocusTile = wFocus
 
-setFocusTile :: TileRef -> X11State ()
-setFocusTile tr = do
-  modifyWorld ($(upd 'wFocus) ctr)
-  modifyLocalFocus ctr tr
-  where
-    ctr = const tr
-
 getFocusWindow :: X11State Window
 getFocusWindow = do
   d <- lift $ lift $ getDisplay
@@ -98,17 +91,6 @@ updateX11Focus = do
 
 findWindow :: World -> Window -> Maybe TileRef
 findWindow wo win = listToMaybe $ keys $ filter (member win . snd) $ wTiles wo
-
-raiseAndFocusWindow :: Window -> X11State ()
-raiseAndFocusWindow win = do
-  wo <- getWorld
-  let tr = findWindow wo win
-  case tr of
-    Nothing -> return ()
-    Just tr -> do
-      modifyTileWindows (flip pushFront win . filter (/= win)) tr
-      setFocusTile tr
-      refreshSpace tr
 
 getTileWindows :: World -> TileRef -> BankersDequeue Window
 getTileWindows w = (wTiles w !)

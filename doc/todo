@@ -11,15 +11,6 @@ Move and resize modes
   Commands for setting what keyboard modifiers active these modes
   Command for setting Drag Mode versus Two-Click Mode
 
-Keep a global history of most-recently-focused tiles.
-  Create a generic module for tracking a history.
-    Operations are:
-      Go back
-      Go forward
-      Go to X (destroys forward history)
-    Implement using two lists, one looking back and one looking forward.
-  Add CHistBack and CHistFwd commands.
-
 Add a CFocusFloat command.
 
 
