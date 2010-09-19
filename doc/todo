@@ -2,18 +2,11 @@
 TODO
 ====
 
-PROBLEMS
---------
-Window contents are not immediately redrawn when Xnest is hidden and then
-revealed.
-
-
-CORE FUNCTIONALITY
+High-Priority Bugs
 ------------------
 
-
-FLOATING FUNCTIONALITY
-----------------------
+Floating Functionality (High-Priority)
+--------------------------------------
 mapRequestHandler
 
 resizeRequestHandler
@@ -29,15 +22,42 @@ A command for switching between the floating and tiling worlds.
   that is reserved for a non-floating tile.
 
 
-LATER DETAILS
--------------
-Add attraction support to YAML configuration parser.
+Medium Priority
+---------------
+Add attraction support to INI configuration parser.
 
+Implement CFocusName command
+
+Implement CFocusQuery command
+
+Tabs on tiles showing what windows are present
+
+Implement a timer system.
+
+Implement statusbar support.
+
+
+Low Priority Features
+---------------------
 Improve the handling of errors in the configuration.
 
 When a button press event hits the root window, determine which tile it is
 within and focus that tile.
 
+Make an external, socket-based interface for executing Commands.
+
+Implement user-defined event-handling support.
+
+Keep a per-tile history of most-recently-focused windows and allow that
+history to be accessed by commands.
+
+Visually indicate the focus, perhaps by a colored border.
+
+Check for invalid space and tile refs in runCommand.
+
+
+Low Priority Refactoring
+------------------------
 Decide whether the Action system is worth keeping. It isn't used consistently,
 and a lot of our X11 calls (like mapWindow, et cetera) are fairly simple and
 probably don't deserve the overhead of constructing an Action and putting it
@@ -49,28 +69,14 @@ in the queue.
   system, we should just have a uniform module which abstracts over X11 with
   a direct, simple API?
 
-Tabs on tiles showing what windows are present
-
-Make an external, socket-based interface for executing Commands.
-
 Move Collection stuff into a separate module re-exported by Types.
   Make the Collection interface into multiple, better interfaces.
 
-Implement a timer system.
 
-Implement statusbar support.
-
-Implement user-defined event-handling support.
-
-Keep a per-tile history of most-recently-focused windows and allow that
-history to be accessed by commands.
-
-Visually indicate the focus, perhaps by a colored border.
-
+Low Priority Bugs and Mysteries
+-------------------------------
 Do something better with windows that exist when the window manager starts.
-Right now, we attach standard events to them and then forget that they exist.
-
-Check for invalid space and tile refs in runCommand.
+  Right now, we attach standard events to them and then forget that they exist.
 
 Figure out why Xnest segfaults when killing it after the WM has quit.
 
