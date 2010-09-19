@@ -6,6 +6,7 @@ import Debug
 import Declare
 import Declare.Access
 import Fields
+import History
 import Types
 import X11
 
@@ -54,6 +55,7 @@ data World = World
   , wFocuses :: Map SpaceRef TileRef
   , wTiles   :: Map TileRef (BankersDequeue Window)
   , wStatus  :: Map StatusRef String
+  , wHistory :: History TileRef
   } deriving (Show)
 
 getLocalFocus :: (RefSpace a) => World -> a -> TileRef
@@ -176,6 +178,7 @@ emptyWorld c = World
   , wActions = empty
   , wTiles   = union floats $ emptyWLayout empty spLayout spacesList
   , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
+  , wHistory = emptyHist
   }
   where
     spacesList = elems $ cSpaces c
