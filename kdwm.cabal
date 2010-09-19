@@ -1,0 +1,46 @@
+
+name: kdwm
+version: 0.1.0
+description: Karl's Window Manager
+license: GPL
+license-file: LICENSE
+author: Karl Voelker
+maintainer: ktvoelker@gmail.com
+build-type: Simple
+cabal-version: >= 1.8
+
+executable kdwm
+  build-depends:
+    base >= 4,
+    containers >= 0.3,
+    template-haskell,
+    queuelike,
+    dequeue,
+    ConfigFile,
+    X11 >= 1.5,
+    MaybeT,
+    mtl,
+    unix >= 2.4
+  hs-source-dirs: src
+  main-is: Main.hs
+  extensions:
+    DisambiguateRecordFields
+    RecordWildCards
+    TemplateHaskell
+    EmptyDataDecls
+    LiberalTypeSynonyms
+    FlexibleContexts
+    NoImplicitPrelude
+  ghc-options:
+    -O
+    -fglasgow-exts
+    -XTupleSections
+    -Werror
+    -Wall
+    -fno-warn-orphans
+    -fno-warn-unused-imports
+    -fno-warn-unused-binds
+    -fno-warn-unused-matches
+    -fno-warn-unused-do-bind
+    -fno-warn-name-shadowing
+

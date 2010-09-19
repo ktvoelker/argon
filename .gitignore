@@ -1,4 +1,2 @@
 .*.sw*
-*.hi
-*.o
-kdwm
+dist
