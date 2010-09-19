@@ -1,7 +1,9 @@
 
 name: kdwm
 version: 0.1.0
-description: Karl's Window Manager
+category: system
+synopsis: A window manager that does what I want.
+description: A window manager that does what I want.
 license: GPL
 license-file: LICENSE
 author: Karl Voelker
@@ -32,10 +34,8 @@ executable kdwm
     FlexibleContexts
     NoImplicitPrelude
   ghc-options:
-    -O
     -fglasgow-exts
     -XTupleSections
-    -Werror
     -Wall
     -fno-warn-orphans
     -fno-warn-unused-imports
