@@ -12,6 +12,10 @@ Move and resize modes
 
 Medium Priority
 ---------------
+Add support for modal keybindings.
+  Add a third element to the key tuple which identifies a binding.
+  Add a CKeyMode command which switches modes.
+
 Add attraction support to INI configuration parser.
 
 Implement CFocusName command
