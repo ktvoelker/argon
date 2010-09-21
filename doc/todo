@@ -5,9 +5,20 @@ TODO
 High-Priority Bugs
 ------------------
 
-Floating Functionality (High-Priority)
---------------------------------------
-Move and resize modes
+
+High-Priority Features (Floating Functionality)
+-----------------------------------------------
+Resize mode
+
+
+High-Priority Testing
+---------------------
+Move mode
+CNextWin
+CPrevWin
+CHistBack
+CHistFwd
+CFocusFloat
 
 
 Medium Priority

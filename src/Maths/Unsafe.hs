@@ -77,26 +77,26 @@ instance Div USpan USpan UFree
 instance Div USpan UFree USpan
 instance Div UFree UFree UFree
 
-wrap :: Int -> Qty u t x
-wrap = Qty
+wrap :: (Integral i) => i -> Qty u t x
+wrap = Qty . fromIntegral
 
-posn :: Int -> Qty UPosn t x
-posn = wrap
+posn :: (Integral i) => i -> Qty UPosn t x
+posn = wrap . fromIntegral
 
-span :: Int -> Qty USpan t x
-span n = if n < 0 then error "Negative span" else wrap n
+span :: (Integral i) => i -> Qty USpan t x
+span n = if n < 0 then error "Negative span" else wrap $ fromIntegral n
 
-diff :: Int -> Qty UDiff t x
+diff :: (Integral i) => i -> Qty UDiff t x
 diff = wrap
 
-free :: Int -> Qty UFree t x
+free :: (Integral i) => i -> Qty UFree t x
 free = wrap
 
-unwrap :: Qty u t x -> Int
-unwrap (Qty n) = n
+unwrap :: (Num n) => Qty u t x -> n
+unwrap (Qty n) = fromIntegral n
 
 convert :: Qty u1 t1 x1 -> Qty u2 t2 x2
-convert = wrap . unwrap
+convert = fix1 id
 
 fix1 :: (Int -> Int) -> Qty u1 t1 x1 -> Qty u2 t2 x2
 fix1 f = wrap . f . unwrap
@@ -155,16 +155,16 @@ type XYPosn t = XY UPosn t
 type XYSpan t = XY USpan t
 type XYDiff t = XY UDiff t
 
-wrapXY :: Int -> Int -> XY u t
+wrapXY :: (Integral i) => i -> i -> XY u t
 wrapXY x y = (wrap x, wrap y)
 
-posnXY :: Int -> Int -> XYPosn t
+posnXY :: (Integral i) => i -> i -> XYPosn t
 posnXY = wrapXY
 
-spanXY :: Int -> Int -> XYSpan t
+spanXY :: (Integral i) => i -> i -> XYSpan t
 spanXY x y = wrapXY (abs x) (abs y)
 
-diffXY :: Int -> Int -> XYDiff t
+diffXY :: (Integral i) => i -> i -> XYDiff t
 diffXY = wrapXY
 
 instance (ShowType t, ShowType x) => Num (Free t x) where

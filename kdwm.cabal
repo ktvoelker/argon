@@ -43,4 +43,5 @@ executable kdwm
     -fno-warn-unused-matches
     -fno-warn-unused-do-bind
     -fno-warn-name-shadowing
+    -fno-warn-type-defaults
 

@@ -11,6 +11,7 @@ import State
 import Types
 import X11
 
+import Control.Monad
 import Data.Bits
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
@@ -39,7 +40,7 @@ buttonPressHandler e = do
   dprint win
   mask <- eventMask e
   conf <- getConfig
-  let f = beginMouseMode win mask btn
+  let f = beginMouseMode e win mask btn
   if mask == cFloatMask conf
      then
        if btn == button1
@@ -54,26 +55,29 @@ buttonPressHandler e = do
     btn = ev_button e
 
 beginMouseMode
-  :: Window
+  :: Event
+  -> Window
   -> KeyMask
   -> Button
   -> MouseMode
   -> X11State ()
-beginMouseMode win mask btn mode = do
-  -- TODO check if this is not a floating window, and ignore
-  disp <- getDisplay
-  modifyWorld $ $(upd 'wMode) $ const MMouse
-    { mMode  = mode
-    , mWin   = win
-    , mPosn  = undefined -- TODO
-    , mDone  = done
-    , mAbort = abort
-    }
-  liftIO $ do
-    grabButton
-      disp btn mask win True
-      buttonReleaseMask grabModeSync grabModeAsync none none
-    selectInput disp win pointerMotionMask
+beginMouseMode e win mask btn mode = do
+  wo <- getWorld
+  let tr = findWindow wo win
+  when (maybe False tileIsFloat tr) $ do
+    disp <- getDisplay
+    modifyWorld $ $(upd 'wMode) $ const MMouse
+      { mMode  = mode
+      , mWin   = win
+      , mPosn  = posnXY (ev_x e) (ev_y e)
+      , mDone  = done
+      , mAbort = abort
+      }
+    liftIO $ do
+      grabButton
+        disp btn mask win True
+        buttonReleaseMask grabModeSync grabModeAsync none none
+      selectInput disp win pointerMotionMask
   where
     abort = modifyWorld $ $(upd 'wMode) $ const MNormal
     done  = do

@@ -177,6 +177,7 @@ emptyWorld c = World
   , wTiles   = union floats $ emptyWLayout empty spLayout spacesList
   , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
   , wHistory = emptyHist
+  , wMode    = MNormal
   }
   where
     spacesList = elems $ cSpaces c
