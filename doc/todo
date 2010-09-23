@@ -6,10 +6,6 @@ High-Priority Bugs
 ------------------
 
 
-High-Priority Features
-----------------------
-
-
 High-Priority Testing
 ---------------------
 Move mode
@@ -21,29 +17,31 @@ CHistFwd
 CFocusFloat
 
 
-Medium Priority
----------------
-Add support for modal keybindings.
-  Add a third element to the key tuple which identifies a binding.
-  Add a CKeyMode command which switches modes.
+High-Priority Features
+----------------------
+Add support for heirarchically modal keybindings.
+  cKeys :: Map ModeRef ([ModeRef], Map (KeyMask, KeySym) Command)
+  Add a (CKeyMode ModeRef) command which switches modes.
 
 Add attraction support to INI configuration parser.
-
-Implement CFocusName command
-
-Implement CFocusQuery command
-
-Tabs on tiles showing what windows are present
-
-Implement a timer system.
-
-Implement statusbar support.
 
 Add commands for moving windows.
   This includes moving between floating and a tile, and vice-versa.
 
 Implement user-defined event-handling support.
   Most important is a "ready" event.
+
+
+Medium Priority
+---------------
+Implement CFocusName command
+
+Implement CFocusQuery command
+
+Tabs on tiles showing what windows are present
+
+Implement statusbar support.
+  This requires a timer system.
 
 
 Low Priority Features
