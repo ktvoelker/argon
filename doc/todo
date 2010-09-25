@@ -5,15 +5,10 @@ TODO
 
 High-Priority Bugs
 ------------------
-Button presses are almost certainly not ignored correctly in move/resize mode.
-
-The button press grab might need to be restored after move/resize mode.
 
 
 High-Priority Testing
 ---------------------
-Move mode
-Resize mode
 
 
 High-Priority Features
@@ -29,6 +24,33 @@ Add commands for moving windows.
 
 Implement user-defined event-handling support.
   Most important is a "ready" event.
+
+Change the INI config file format to separate layouts from spaces.
+
+  Ensure that tiles in different spaces can have the same name.
+    As long as the TileRefs are correctly constructed during config parsing,
+    this should be the case.
+
+  Allow a layout to define the default start tile.
+
+  Allow a space to override the default start tile given by its layout.
+
+  The use of a start tile specification in the DEFAULT section will not work
+  as might be expected. This is because Data.ConfigFile will apply the
+  defaults to both layouts and spaces, so that in this case:
+    [DEFAULT]
+    start=a
+    [layout x]
+    start=b
+    [space y]
+    layout=x
+  "space y" will have "start=a", not "start=b".
+  However, the use of DEFAULT for this purpose is not likely to be as useful
+  as simply a per-layout default, since only spaces with the same layout will
+  necessarily have a tile by a particular name to start in. It doesn't
+  seem likely that DEFAULT would be useful for anything else, either, so let's
+  simply take the use of DEFAULT out of the example config and not encourage
+  its use.
 
 
 Medium Priority
