@@ -14,12 +14,13 @@ import System.Environment
 defaultFile :: FilePath
 defaultFile = ".kdwmrc"
 
-optStart, optTable, optRows, optCols, optParents :: OptionSpec
-optStart   = "start"
-optTable   = "table"
-optRows    = "rows"
-optCols    = "cols"
-optParents = "parents"
+optStart, optStartKeys, optTable, optRows, optCols, optParents :: OptionSpec
+optStart     = "start"
+optStartKeys = "start_keys"
+optTable     = "table"
+optRows      = "rows"
+optCols      = "cols"
+optParents   = "parents"
 
 sectTable, sectSpace, sectKeys :: String
 sectTable = "table"
@@ -88,10 +89,12 @@ config = do
         spaceNames
     keys <- mapM (mapSndM (getKeys input) . mapFst mkModeRef) modeNames
     start <- get input sectGlobal optStart
+    startKeys <- get input sectGlobal optStartKeys
     return emptyConfig
-      { cSpaces = fromList $ map (mapFst mkSpaceRef) spaces
-      , cKeys = mkKeyHeir $ fromList keys
+      { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces
+      , cKeys       = mkKeyHeir $ fromList keys
       , cStartSpace = mkSpaceRef start
+      , cStartMode  = mkModeRef startKeys
       }
 
 ni :: ConfigM' a
