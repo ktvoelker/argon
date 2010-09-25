@@ -27,11 +27,15 @@ Come up with a new name that doesn't end with "wm".
 
 Add attraction support to INI configuration parser.
 
-Add commands for moving windows.
-  This includes moving between floating and a tile, and vice-versa.
+Add commands for moving windows:
+  CPutFloat
+  CPutDir Dir
+  CPutBack
+  CPutFwd
 
 Implement user-defined event-handling support.
-  Most important is a "ready" event.
+  under [global], "on ready"
+  under [space x], "on enter"
 
 Change the INI config file format to separate layouts from spaces.
 
