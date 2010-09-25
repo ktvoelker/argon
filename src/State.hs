@@ -53,7 +53,7 @@ data World = World
   { wFocus   :: TileRef
   , wActions :: Queue Action
   , wFocuses :: Map SpaceRef TileRef
-  , wTiles   :: Map TileRef (BankersDequeue Window)
+  , wTiles   :: Map TileRef (DQ Window)
   , wStatus  :: Map StatusRef String
   , wHistory :: History TileRef
   , wMode    :: Mode
@@ -108,7 +108,7 @@ updateX11Focus = do
 findWindow :: World -> Window -> Maybe TileRef
 findWindow wo win = listToMaybe $ keys $ filter (member win . snd) $ wTiles wo
 
-getTileWindows :: World -> TileRef -> BankersDequeue Window
+getTileWindows :: World -> TileRef -> DQ Window
 getTileWindows w = (wTiles w !)
 
 -- Return all the windows of a space, partitioned into visible and invisible
@@ -154,19 +154,13 @@ refreshSpace sr = do
 refreshFocusSpace :: X11State ()
 refreshFocusSpace = getFocusTileM >>= refreshSpace
 
-modifyTileWindows
-  :: (BankersDequeue Window -> BankersDequeue Window)
-  -> TileRef
-  -> X11State ()
+modifyTileWindows :: (DQ Window -> DQ Window) -> TileRef -> X11State ()
 modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f
 
-modifyAllTileWindows
-  :: (TileRef -> BankersDequeue Window -> BankersDequeue Window)
-  -> X11State ()
+modifyAllTileWindows :: (TileRef -> DQ Window -> DQ Window) -> X11State ()
 modifyAllTileWindows = modifyWorld . $(upd 'wTiles) . mapWithKey
 
-modifyFocusWindows
-  :: (BankersDequeue Window -> BankersDequeue Window) -> X11State ()
+modifyFocusWindows :: (DQ Window -> DQ Window) -> X11State ()
 modifyFocusWindows f = getWorld >>= modifyTileWindows f . getFocusTile
 
 emptyWorld :: Config -> World

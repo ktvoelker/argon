@@ -118,6 +118,8 @@ instance Collection (Set e) where
   toList = DS.toList
   filter = DS.filter
   member = DS.member
+
+type DQ e = BankersDequeue e
  
 instance (Ord e) => Collection (BankersDequeue e) where
   type Entry (BankersDequeue e) = e
