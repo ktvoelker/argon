@@ -12,7 +12,7 @@ type TileHistory = History TileRef
 
 setFocusTile :: TileRef -> X11State ()
 setFocusTile tr = do
-  modifyWorld $ $(upd 'wHistory) $ histGo tr
+  getFocusTileM >>= modifyWorld . $(upd 'wHistory) . histGo
   setFocusTile' tr
 
 setFocusTile' :: TileRef -> X11State ()
@@ -26,12 +26,15 @@ tileHistBack, tileHistFwd :: X11State ()
 tileHistBack = tileHistMove histBack
 tileHistFwd  = tileHistMove histFwd
 
-tileHistMove :: (TileHistory -> (Maybe TileRef, TileHistory)) -> X11State ()
+tileHistMove
+  :: (TileRef -> TileHistory -> (Maybe TileRef, TileHistory))
+  -> X11State ()
 tileHistMove f = do
   wo <- getWorld
+  let tr = getFocusTile wo
   let h = wHistory wo
-  let (tr, h') = f h
+  let (tr', h') = f tr h
   putWorld wo { wHistory = h' }
-  maybe (return ()) setFocusTile' tr
+  maybe (return ()) setFocusTile' tr'
   updateX11Focus
 
