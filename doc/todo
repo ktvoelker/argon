@@ -25,12 +25,6 @@ Come up with a new name that doesn't end with "wm".
   argon (Noble gas => unchanging => declarative)
   xenon (same rationale as argon)
 
-Add support for heirarchically modal keybindings.
-  cKeys :: Map ModeRef ([ModeRef], Map (KeyMask, KeySym) Command)
-  Add a (CKeyMode ModeRef) command which switches modes.
-  Add cStartKeyMode :: ModeRef to the Config.
-  Add wKeyMode :: ModeRef to the World.
-
 Add attraction support to INI configuration parser.
 
 Add commands for moving windows.

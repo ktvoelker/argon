@@ -57,6 +57,7 @@ data World = World
   , wStatus  :: Map StatusRef String
   , wHistory :: History TileRef
   , wMode    :: Mode
+  , wKeyMode :: ModeRef
   } deriving (Show)
 
 data Mode =
@@ -73,6 +74,12 @@ instance Show (X11State a) where
   show _ = "<X11State>"
 
 data MouseMode = MMMove | MMResize deriving (Eq, Ord, Show)
+
+getKeys :: X11State KeyMap
+getKeys = do
+  wo <- getWorld
+  c  <- getConfig
+  return $ heirLookup (wKeyMode wo) (cKeys c)
 
 getLocalFocus :: (RefSpace a) => World -> a -> TileRef
 getLocalFocus w sr = wFocuses w ! getSpaceRef sr
@@ -172,6 +179,7 @@ emptyWorld c = World
   , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
   , wHistory = emptyHist
   , wMode    = MNormal
+  , wKeyMode = cStartMode c
   }
   where
     spacesList = elems $ cSpaces c

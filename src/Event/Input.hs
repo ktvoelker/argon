@@ -31,8 +31,7 @@ keyReleaseHandler e = do
        dprint mask
        dprint sym
        dwprint sym
-       getConfig
-         >>= maybe (return ()) runCommand . (lookup (mask, sym)) . cKeys
+       getKeys >>= maybe (return ()) runCommand . (lookup (mask, sym))
      else debug "Keysym 0!"
 
 buttonPressHandler e = do

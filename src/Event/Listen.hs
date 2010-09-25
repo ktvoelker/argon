@@ -20,21 +20,37 @@ addStdEvents win = do
       disp anyButton anyModifier win True
       buttonPressMask grabModeSync grabModeAsync none none
 
-addRootEvents :: Window -> X11 ()
-addRootEvents win = do
+addRootEvents :: X11 ()
+addRootEvents = do
   disp <- getDisplay
+  root <- getRoot
   debug "Root is:"
-  dprint win
+  dprint root
   debug "Select inputs on root"
-  liftIO $ selectInput disp win 
+  liftIO $ selectInput disp root 
     (substructureRedirectMask .|. substructureNotifyMask)
   c <- getConfig
   debug "Grab command keys on root"
-  liftIO $ mapM_ (uncurry $ g disp) $ keys $ cKeys c
+  grabKeyMap $ cStartKeys c
+
+grabKeyMap :: KeyMap -> X11 ()
+grabKeyMap =
+  grabUngrabKeyMap
+    $ \d m c w -> grabKey d m c w False grabModeAsync grabModeAsync
+
+ungrabKeyMap :: KeyMap -> X11 ()
+ungrabKeyMap = grabUngrabKeyMap ungrabKey
+
+grabUngrabKeyMap
+  :: (Display -> KeyCode -> KeyMask -> Window -> IO ())
+  -> KeyMap
+  -> X11 ()
+grabUngrabKeyMap f km = do
+  disp <- getDisplay
+  root <- getRoot
+  liftIO $ mapM_ (uncurry $ g disp root) $ keys km
   where
-    g disp mod sym = do
+    g disp root mod sym = do
       code <- keysymToKeycode disp sym
-      grabKey
-        disp code mod win
-        False grabModeAsync grabModeAsync
+      f disp code mod root
 

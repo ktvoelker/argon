@@ -17,6 +17,10 @@ data StatusRef = StatusRef
   , strTile  :: String
   } deriving (Eq, Ord, Show)
 
+newtype ModeRef = ModeRef
+  { mrMode :: String
+  } deriving (Eq, Ord, Show)
+
 class RefSpace a where
   getSpaceRef :: a -> SpaceRef
 

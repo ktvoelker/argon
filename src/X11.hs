@@ -17,7 +17,7 @@ type X11 a = ReaderT X11Env IO a
 data X11Env = X11Env
   { xeDisplay :: Display
   , xeConfig :: Config
-  } deriving (Eq, Ord, Show)
+  } deriving (Show)
 
 getDisplay :: (MonadReader X11Env m) => m Display
 getDisplay = asks xeDisplay

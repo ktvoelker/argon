@@ -14,19 +14,20 @@ import System.Environment
 defaultFile :: FilePath
 defaultFile = ".kdwmrc"
 
-optStart, optTable, optRows, optCols :: OptionSpec
-optStart = "start"
-optTable = "table"
-optRows  = "rows"
-optCols  = "cols"
+optStart, optTable, optRows, optCols, optParents :: OptionSpec
+optStart   = "start"
+optTable   = "table"
+optRows    = "rows"
+optCols    = "cols"
+optParents = "parents"
 
-sectTable, sectSpace :: String
+sectTable, sectSpace, sectKeys :: String
 sectTable = "table"
 sectSpace = "space"
+sectKeys  = "keys"
 
-sectGlobal, sectKeys :: SectionSpec
+sectGlobal :: SectionSpec
 sectGlobal = "global"
-sectKeys = "keys"
 
 masks :: Map String KeyMask
 masks = fromList
@@ -78,17 +79,18 @@ config = do
     let sectionNames = map (\n -> (words n, n)) $ sections input
     tableNames <- findSections sectTable sectionNames
     spaceNames <- findSections sectSpace sectionNames
+    modeNames  <- findSections sectKeys  sectionNames
     tables <- mapM (mapSndM $ getTable input) tableNames
     let tableMap = fromList tables
     spaces <-
       mapM
         (\(n, s) -> getSpace input tableMap n s >>= return . (n, ))
         spaceNames
-    keys <- options input sectKeys >>= mapM (getKey input)
+    keys <- mapM (mapSndM (getKeys input) . mapFst mkModeRef) modeNames
     start <- get input sectGlobal optStart
     return emptyConfig
       { cSpaces = fromList $ map (mapFst mkSpaceRef) spaces
-      , cKeys = fromList keys
+      , cKeys = mkKeyHeir $ fromList keys
       , cStartSpace = mkSpaceRef start
       }
 
@@ -153,9 +155,23 @@ getTile cp sect opt = do
       }
     _                -> parseError "Expected four integers"
 
-getKey :: ConfigParser -> OptionSpec -> ConfigM' ((KeyMask, KeySym), Command)
-getKey cp opt = do
-  str <- get cp sectKeys opt
+getKeys :: ConfigParser -> SectionSpec -> ConfigM' ([ModeRef], KeyMap)
+getKeys cp sect = do
+  parents <-
+    if has_option cp sect optParents
+       then get cp sect optParents >>= return . words
+       else return []
+  let parentRefs = map mkModeRef parents
+  keys <- options cp sect >>= mapM (getKey cp sect) . filter (/= optParents)
+  return (parentRefs, fromList keys)
+
+getKey
+  :: ConfigParser
+  -> SectionSpec
+  -> OptionSpec
+  -> ConfigM' ((KeyMask, KeySym), Command)
+getKey cp sect opt = do
+  str <- get cp sect opt
   case reverse $ words opt of
     []         -> parseError "Invalid key"
     sym : mods -> do
@@ -178,6 +194,7 @@ commands = fromList
   , ("space",       cmdSpace)
   , ("exec",        cmdExec)
   , ("seq",         cmdSeq)
+  , ("key_mode",    cmdKeyMode)
   , ("quit",        constCmd CQuit)
   , ("kill",        constCmd CKill)
   , ("next_win",    constCmd CNextWin)
@@ -187,7 +204,8 @@ commands = fromList
   , ("focus_float", constCmd CFocusFloat)
   ]
 
-cmdFocusDir, cmdSpace, cmdExec, cmdSeq :: [String] -> ConfigM' Command
+cmdFocusDir, cmdSpace, cmdExec, cmdSeq, cmdKeyMode
+  :: [String] -> ConfigM' Command
 
 cmdFocusDir [dir] =
   returnJust "direction" (lookup dir dirs) >>= return . CFocusDir
@@ -215,6 +233,9 @@ cmdSeq = f >=> return . CSeq
       return (x' : xs')
       where
         (x, xs) = break (== ";") args
+
+cmdKeyMode [m] = return $ CKeyMode $ mkModeRef m
+cmdKeyMode _   = parseError "`key_mode' expects one argument"
 
 constCmd :: Command -> a -> ConfigM' Command
 constCmd cmd = const $ return cmd

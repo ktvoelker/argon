@@ -4,6 +4,7 @@ module Command (runCommand) where
 import Debug
 import Declare
 import Exec
+import Fields
 import Focus
 import History.Tile
 import State
@@ -45,5 +46,6 @@ runCommand' cmd = do
     CHistBack       -> tileHistBack
     CHistFwd        -> tileHistFwd
     CFocusFloat     -> getFocusTileM >>= setFocusTile . getFloatRef
+    CKeyMode mr     -> modifyWorld $ $(upd 'wKeyMode) $ const mr
     _               -> return ()
 

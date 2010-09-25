@@ -19,6 +19,7 @@ import Ref
   ( SpaceRef()
   , TileRef()
   , StatusRef()
+  , ModeRef()
   , RefSpace(..)
   , getFloatRef
   )
@@ -28,7 +29,7 @@ import qualified Ref
 import Data.Dequeue hiding (null, empty, fromList, length, last)
 import Data.Map
   ( Map, (!), keys, elems, adjust, unions, lookup, findWithDefault
-  , filterWithKey, mapWithKey, union, mapKeys
+  , filterWithKey, mapWithKey, union, mapKeys, unionWith
   )
 import Data.Maybe
 import Data.Queue.Class hiding

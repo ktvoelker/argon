@@ -1,12 +1,14 @@
 
 module Declare.Common
   ( module Declare.Common
+  , module Heir
   , module Types
   , module Control.Monad.Reader
   , module Data.Bits
   , module Graphics.X11.Types
   ) where
 
+import Heir
 import qualified Ref
 import Types
 
@@ -27,6 +29,9 @@ mkFloatRef sr = Ref.TileRef sr Nothing
 
 mkStatusRef :: SpaceRef -> String -> StatusRef
 mkStatusRef = Ref.StatusRef
+
+mkModeRef :: String -> ModeRef
+mkModeRef = Ref.ModeRef
 
 data Table t = Table
   { taRows :: [Span t Y]

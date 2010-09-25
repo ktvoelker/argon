@@ -31,15 +31,24 @@ instance HasLayout Workspace Pix TileRef where
 data EventType =
   EReady | ECreate | EDestroy | ESpace | EFocus deriving (Enum, Eq, Ord, Show)
 
+type KeyMap = Map (KeyMask, KeySym) Command
+
+mkKeyHeir :: Map ModeRef ([ModeRef], KeyMap) -> Heir ModeRef KeyMap KeyMap
+mkKeyHeir h = mkHeir h empty $ unionWith $ \a b -> CSeq [a, b]
+
+cStartKeys :: Config -> KeyMap
+cStartKeys c = heirLookup (cStartMode c) (cKeys c)
+
 data Config = Config
   { cSpaces     :: Map SpaceRef Workspace
   , cStartSpace :: SpaceRef
   , cFloatMask  :: KeyMask
-  , cKeys       :: Map (KeyMask, KeySym) Command
+  , cKeys       :: Heir ModeRef KeyMap KeyMap
+  , cStartMode  :: ModeRef
   , cIgnoreMask :: KeyMask
   , cEvents     :: Map EventType Command
   , cAttracts   :: [(Attract, TileRef)]
-  } deriving (Eq, Ord, Show)
+  } deriving (Show)
 
 data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
 
@@ -50,6 +59,7 @@ data Command =
   | CSpace      SpaceRef
   | CExec       Exec
   | CSeq        [Command]
+  | CKeyMode    ModeRef
   | CQuit
   | CKill
   | CNextWin
@@ -73,7 +83,8 @@ emptyConfig = Config
   { cSpaces     = Map.empty
   , cStartSpace = error "No start space"
   , cFloatMask  = mod1Mask
-  , cKeys       = Map.empty
+  , cKeys       = mkKeyHeir Map.empty
+  , cStartMode  = error "No start mode"
   , cEvents     = Map.empty
   , cIgnoreMask = lockMask .|. mod2Mask .|. mod3Mask .|. mod5Mask
   , cAttracts   = []

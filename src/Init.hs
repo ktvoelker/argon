@@ -21,11 +21,10 @@ getXInfo = do
 
 initEvents :: X11 ()
 initEvents = do
-  debug "Get root window"
-  root <- getRoot
   debug "Add root events"
-  addRootEvents root
+  addRootEvents
   debug "Query window tree"
+  root <- getRoot
   dprint root
   (_, _, wins) <- getDisplay >>= liftIO . flip queryTree root
   mapM_ addStdEvents wins
