@@ -38,21 +38,32 @@ keyReleaseHandler e = do
 buttonPressHandler e = do
   debug "Button press handler:"
   dprint win
+  debug "Raising and focusing window..."
+  raiseAndFocusWindow win
+  debug "Checking for mouse mode mask..."
   mask <- eventMask e
   conf <- getConfig
   let f = beginMouseMode e win mask btn
+  debug "Mouse mode mask is:"
+  dprint $ cFloatMask conf
+  debug "Input mask is:"
+  dprint mask
   if mask == cFloatMask conf
      then
        if btn == button1
           then f MMMove
           else
-            if btn == button2
+            if btn == button3
                then f MMResize
-               else raiseAndFocusWindow e
-     else raiseAndFocusWindow e
+               else replay
+     else replay
   where
     win = ev_window e
     btn = ev_button e
+    replay = do
+      debug "Replaying pointer event..."
+      d <- getDisplay
+      liftIO $ allowEvents d replayPointer $ ev_time e
 
 beginMouseMode
   :: Event
@@ -73,22 +84,21 @@ beginMouseMode e win mask btn mode = do
       , mDone  = done
       , mAbort = abort
       }
-    liftIO $ do
-      grabButton
-        disp btn mask win True
-        buttonReleaseMask grabModeSync grabModeAsync none none
-      selectInput disp win pointerMotionMask
+    debug "Grabbing button release and pointer motion:"
+    _ <- liftIO $ do
+      grabPointer
+        disp win True (buttonReleaseMask .|. pointerMotionMask)
+        grabModeAsync grabModeAsync none none currentTime
+    return ()
   where
     abort = modifyWorld $ $(upd 'wMode) $ const MNormal
     done  = do
       disp <- getDisplay
-      liftIO $ do
-        selectInput disp win 0
-        ungrabButton disp btn mask win
+      liftIO $ ungrabPointer disp currentTime
       abort
 
-raiseAndFocusWindow :: Event -> X11State ()
-raiseAndFocusWindow e = do
+raiseAndFocusWindow :: Window -> X11State ()
+raiseAndFocusWindow win = do
   wo <- getWorld
   let tr = findWindow wo win
   case tr of
@@ -97,8 +107,4 @@ raiseAndFocusWindow e = do
       modifyTileWindows (flip pushFront win . filter (/= win)) tr
       setFocusTile tr
       refreshSpace tr
-  d <- getDisplay
-  liftIO $ allowEvents d replayPointer $ ev_time e
-  where
-    win = ev_window e
 

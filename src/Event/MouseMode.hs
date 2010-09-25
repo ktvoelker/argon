@@ -1,6 +1,7 @@
  
 module Event.MouseMode where
 
+import Debug
 import Event.Default
 import Fields
 import Maths.Unsafe
@@ -14,10 +15,13 @@ import Graphics.X11.Xlib.Extras
 buttonReleaseHandler, motionNotifyHandler :: EventHandler
 
 buttonReleaseHandler _ = do
+  debug "buttonReleaseHandler"
   wo <- getWorld
   case wMode wo of
     MNormal     -> return () -- impossible!
-    m@MMouse {} -> mDone m
+    m@MMouse {} -> do
+      debug "Ending move/resize mode"
+      mDone m
 
 motionNotifyHandler e = do
   wo <- getWorld

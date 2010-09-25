@@ -2,8 +2,12 @@
 TODO
 ====
 
+
 High-Priority Bugs
 ------------------
+Button presses are almost certainly not ignored correctly in move/resize mode.
+
+The button press grab might need to be restored after move/resize mode.
 
 
 High-Priority Testing
@@ -42,6 +46,12 @@ Tabs on tiles showing what windows are present
 
 Implement statusbar support.
   This requires a timer system.
+
+
+Low Priority Bugs
+-----------------
+The window doesn't move or resize as fast as the mouse is moving in
+move/resize mode. This might be caused by debug mode or Xnest.
 
 
 Low Priority Features

@@ -3,6 +3,7 @@ module X11
   ( asks, lift, liftIO, liftM, liftM2
   , X11, X11Env, getDisplay, getConfig
   , dispScr, withDispScr, localConfig, runX11
+  , getRoot
   ) where
 
 import Declare
@@ -30,6 +31,9 @@ dispScr = getDisplay >>= \d -> return (d, defaultScreen d)
 withDispScr :: (MonadReader X11Env m)
             => (Display -> ScreenNumber -> m a) -> m a
 withDispScr f = dispScr >>= uncurry f
+
+getRoot :: (MonadReader X11Env m, MonadIO m) => m Window
+getRoot = dispScr >>= liftIO . uncurry rootWindow
 
 localConfig :: (MonadReader X11Env m) => (Config -> Config) -> m a -> m a
 localConfig f = local ($(upd 'xeConfig) f)

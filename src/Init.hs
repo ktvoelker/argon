@@ -22,7 +22,7 @@ getXInfo = do
 initEvents :: X11 ()
 initEvents = do
   debug "Get root window"
-  root <- dispScr >>= liftIO . uncurry rootWindow
+  root <- getRoot
   debug "Add root events"
   addRootEvents root
   debug "Query window tree"
