@@ -14,6 +14,39 @@ CPut
 
 High-Priority Features
 ----------------------
+Clean up the mess of movement commands
+
+  data TileQuery
+    Absolute TileRef
+    Relative String
+    Current
+    History Int
+    Direction Dir
+    Attraction {...}
+    Disjunction [TileQuery]
+      Eliminates duplicates, keeping the provenance of the first appearance.
+    Emptiest TileQuery
+      Stably sorts the list according to emptiness.
+
+  type TileQueryResult = [(TileRef, Provenance)]
+  data Provenance = NotHistory | Back | Forward
+
+  Commands:
+
+    move From To Breadth Depth
+      Last two arguments have defaults (marked by *).
+      data Breadth = FirstTile* | AllTiles
+      data Depth = TopWindow* | AllWindows
+
+    focus To
+      Remove the destination from the back/forward list if the provenance
+      says to do so.
+
+      Otherwise, tell the history about the jump.
+
+      But don't tell the history anything if the destination is the same as
+      the current focus.
+
 Add attraction support to INI configuration parser.
 
 Add commands to show and hide the floating layer.
