@@ -1,9 +1,9 @@
 
-name: kdwm
+name: argon
 version: 0.1.0
 category: system
-synopsis: A window manager that does what I want.
-description: A window manager that does what I want.
+synopsis: A declarative window manager that does what I want.
+description: A declarative window manager that does what I want.
 license: GPL
 license-file: LICENSE
 author: Karl Voelker
@@ -11,7 +11,7 @@ maintainer: ktvoelker@gmail.com
 build-type: Simple
 cabal-version: >= 1.8
 
-executable kdwm
+executable argon
   build-depends:
     base >= 4,
     containers >= 0.3,

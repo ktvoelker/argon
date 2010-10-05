@@ -1,6 +1,6 @@
 
-kdwm: Karl's Declarative Window Manager
-=======================================
+Argon: A Declarative Window Manager
+===================================
 
 This is what is now referred to as a "manual tiling window manager". However,
 unlike any window manager I have seen, as much of the tile management as

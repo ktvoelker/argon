@@ -14,18 +14,6 @@ CPut
 
 High-Priority Features
 ----------------------
-Come up with a new name that doesn't end with "wm".
-
-  Requirements:
-  1. Neat sound
-  2. Easily spelled
-  3. Not too long
-  4. Some clever rationale
-
-  Candidates:
-  argon (Noble gas => unchanging => declarative)
-  xenon (same rationale as argon)
-
 Add attraction support to INI configuration parser.
 
 Add commands to show and hide the floating layer.

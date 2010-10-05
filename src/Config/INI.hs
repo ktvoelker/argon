@@ -12,7 +12,7 @@ import Graphics.X11
 import System.Environment
 
 defaultFile :: FilePath
-defaultFile = ".kdwmrc"
+defaultFile = ".argonrc"
 
 optStart, optStartKeys, optTable, optRows, optCols, optParents :: OptionSpec
 optStart     = "start"
