@@ -47,6 +47,8 @@ Clean up the mess of movement commands
       But don't tell the history anything if the destination is the same as
       the current focus.
 
+  Change attraction to use a TileQuery instead of a TileRef.
+
 Add attraction support to INI configuration parser.
 
 Add commands to show and hide the floating layer.
