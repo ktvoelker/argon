@@ -1,5 +1,5 @@
 
-module Tile (nextWin, prevWin) where
+module Tile (nextWin, prevWin, removeWin, addWin) where
 
 import Focus
 import State
@@ -25,4 +25,14 @@ rotateWin pop push tr = do
     f q = case pop q of
       (Nothing, _) -> q
       (Just x, q') -> push q' x
+
+removeWin :: TileRef -> X11State (Maybe Window)
+removeWin tr = do
+  wo <- getWorld
+  let win = first $ getTileWindows wo tr
+  modifyTileWindows (snd . popFront) tr
+  return win
+
+addWin :: TileRef -> Window -> X11State ()
+addWin tr win = modifyTileWindows (flip pushFront win) tr
 

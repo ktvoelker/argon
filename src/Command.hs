@@ -47,5 +47,10 @@ runCommand' cmd = do
     CHistFwd        -> tileHistFwd
     CFocusFloat     -> getFocusTileM >>= setFocusTile . getFloatRef
     CKeyMode mr     -> modifyWorld $ $(upd 'wKeyMode) $ const mr
+    CPut cmd        -> do
+      from <- getFocusTileM
+      runCommand cmd
+      to <- getFocusTileM
+      removeWin from >>= maybe (return ()) (addWin to)
     _               -> return ()
 

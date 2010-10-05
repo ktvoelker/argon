@@ -9,6 +9,7 @@ High-Priority Bugs
 
 High-Priority Testing
 ---------------------
+CPut
 
 
 High-Priority Features
@@ -27,11 +28,10 @@ Come up with a new name that doesn't end with "wm".
 
 Add attraction support to INI configuration parser.
 
-Add commands for moving windows:
-  CPutFloat
-  CPutDir Dir
-  CPutBack
-  CPutFwd
+Add commands to show and hide the floating layer.
+  Maintain this state per-workspace.
+  CShowFloat
+  CHideFloat
 
 Implement user-defined event-handling support.
   under [global], "on ready"

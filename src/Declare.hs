@@ -60,6 +60,9 @@ data Command =
   | CExec       Exec
   | CSeq        [Command]
   | CKeyMode    ModeRef
+  -- Remember the focused tile, execute a command, and then move the top
+  -- window from the remembered tile to the current tile.
+  | CPut        Command
   | CQuit
   | CKill
   | CNextWin

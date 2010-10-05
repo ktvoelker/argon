@@ -198,6 +198,7 @@ commands = fromList
   , ("exec",        cmdExec)
   , ("seq",         cmdSeq)
   , ("key_mode",    cmdKeyMode)
+  , ("put",         cmdPut)
   , ("quit",        constCmd CQuit)
   , ("kill",        constCmd CKill)
   , ("next_win",    constCmd CNextWin)
@@ -207,7 +208,7 @@ commands = fromList
   , ("focus_float", constCmd CFocusFloat)
   ]
 
-cmdFocusDir, cmdSpace, cmdExec, cmdSeq, cmdKeyMode
+cmdFocusDir, cmdSpace, cmdExec, cmdSeq, cmdKeyMode, cmdPut
   :: [String] -> ConfigM' Command
 
 cmdFocusDir [dir] =
@@ -239,6 +240,8 @@ cmdSeq = f >=> return . CSeq
 
 cmdKeyMode [m] = return $ CKeyMode $ mkModeRef m
 cmdKeyMode _   = parseError "`key_mode' expects one argument"
+
+cmdPut = getCommand' >=> return . CPut
 
 constCmd :: Command -> a -> ConfigM' Command
 constCmd cmd = const $ return cmd
