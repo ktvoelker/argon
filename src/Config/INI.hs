@@ -2,6 +2,7 @@
 module Config.INI (config) where
 
 import Declare
+import Fields
 import Maths.Unsafe
 
 import Control.Monad
@@ -14,18 +15,21 @@ import System.Environment
 defaultFile :: FilePath
 defaultFile = ".argonrc"
 
-optStart, optStartKeys, optTable, optRows, optCols, optParents :: OptionSpec
+optStart, optStartKeys, optTable, optLayout, optRows, optCols, optParents
+  :: OptionSpec
 optStart     = "start"
 optStartKeys = "start_keys"
 optTable     = "table"
+optLayout    = "layout"
 optRows      = "rows"
 optCols      = "cols"
 optParents   = "parents"
 
-sectTable, sectSpace, sectKeys :: String
-sectTable = "table"
-sectSpace = "space"
-sectKeys  = "keys"
+sectTable, sectLayout, sectSpace, sectKeys :: String
+sectTable  = "table"
+sectLayout = "layout"
+sectSpace  = "space"
+sectKeys   = "keys"
 
 sectGlobal :: SectionSpec
 sectGlobal = "global"
@@ -78,14 +82,17 @@ config = do
   mapErrorT (>>= return . either (Left . show) Right) $ do
     input <- eInput
     let sectionNames = map (\n -> (words n, n)) $ sections input
-    tableNames <- findSections sectTable sectionNames
-    spaceNames <- findSections sectSpace sectionNames
-    modeNames  <- findSections sectKeys  sectionNames
-    tables <- mapM (mapSndM $ getTable input) tableNames
-    let tableMap = fromList tables
+    tableNames  <- findSections sectTable sectionNames
+    layoutNames <- findSections sectLayout sectionNames
+    spaceNames  <- findSections sectSpace sectionNames
+    modeNames   <- findSections sectKeys  sectionNames
+    tables  <- mapM (mapSndM $ getTable input) tableNames
+    let tableMap  = fromList tables
+    layouts <- mapM (mapSndM $ getLayout input tableMap) layoutNames
+    let layoutMap = fromList layouts
     spaces <-
       mapM
-        (\(n, s) -> getSpace input tableMap n s >>= return . (n, ))
+        (\(n, s) -> getSpace input layoutMap n s >>= return . (n, ))
         spaceNames
     keys <- mapM (mapSndM (getKeys input) . mapFst mkModeRef) modeNames
     start <- get input sectGlobal optStart
@@ -125,23 +132,49 @@ getTable cp sect = do
   where
     f opt = get cp sect opt >>= parseIntegerList
 
-getSpace
+-- Like Data.ConfigFile.get, but accepts a list of SectionSpecs, returning
+-- the option value from the first section which has that option.
+getPref :: ConfigParser -> [SectionSpec] -> OptionSpec -> ConfigM' String
+getPref cp ss opt = case filter (\s -> has_option cp s opt) ss of
+  [] -> parseError
+    ("Required option `" ++ opt ++ "' not found in any relevant section.")
+  (sect : _) -> get cp sect opt
+
+getLayout
   :: ConfigParser
   -> Map String (Table Pix)
+  -> SectionSpec
+  -> ConfigM' (Layout Pix String)
+getLayout cp tables sect = do
+  table <-
+    get cp sect optTable
+    >>= returnJust "table" . flip lookup tables
+  tileNames <-
+    options cp sect
+    >>= return . filter (not . (`elem` [optStart, optTable]))
+  tiles <-
+    mapM (\n -> getTile cp sect n >>= return . (n, )) tileNames
+  return Layout
+    { laTable = table
+    , laTiles = fromList tiles
+    }
+
+getSpace
+  :: ConfigParser
+  -> Map String (Layout Pix String)
   -> String
   -> SectionSpec
   -> ConfigM' Workspace
-getSpace cp tables name sect = do
-  table <- get cp sect optTable >>= returnJust "table" . flip lookup tables
-  start <- get cp sect optStart >>= return . ref
-  tileNames <-
-    options cp sect >>= return . filter (not . (`elem` [optStart, optTable]))
-  tiles <- mapM (\n -> getTile cp sect n >>= return . (ref n, )) tileNames
+getSpace cp layouts name sect = do
+  layout <-
+    get cp sect optLayout
+    >>= returnJust "layout" . flip lookup layouts
+  let layout' = $(upd 'laTiles) (mapKeys ref) layout
+  start <-
+    get cp sect optStart
+    >>= return . ref
   return Workspace
-    { spLayout = Layout
-      { laTable = table
-      , laTiles = fromList tiles
-      }
+    { spLayout = layout'
     , spStatus = emptyStatusbar
     , spStartTile = start
     }
