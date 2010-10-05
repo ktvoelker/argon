@@ -28,8 +28,11 @@ instance HasLayout Statusbar Chr StatusRef where
 instance HasLayout Workspace Pix TileRef where
   layout = spLayout
 
-data EventType =
-  EReady | ECreate | EDestroy | ESpace | EFocus deriving (Enum, Eq, Ord, Show)
+data Trigger =
+    TReady
+  | TSpace SpaceRef
+  | TFocus TileRef
+  deriving (Eq, Ord, Show)
 
 type KeyMap = Map (KeyMask, KeySym) Command
 
@@ -46,7 +49,7 @@ data Config = Config
   , cKeys       :: Heir ModeRef KeyMap KeyMap
   , cStartMode  :: ModeRef
   , cIgnoreMask :: KeyMask
-  , cEvents     :: Map EventType Command
+  , cTriggers   :: Map Trigger Command
   , cAttracts   :: [(Attract, TileRef)]
   } deriving (Show)
 
@@ -88,7 +91,7 @@ emptyConfig = Config
   , cFloatMask  = mod1Mask
   , cKeys       = mkKeyHeir Map.empty
   , cStartMode  = error "No start mode"
-  , cEvents     = Map.empty
+  , cTriggers   = Map.empty
   , cIgnoreMask = lockMask .|. mod2Mask .|. mod3Mask .|. mod5Mask
   , cAttracts   = []
   }

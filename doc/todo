@@ -21,9 +21,10 @@ Add commands to show and hide the floating layer.
   CShowFloat
   CHideFloat
 
-Implement user-defined event-handling support.
+Implement user-defined trigger support.
   under [global], "on ready"
-  under [space x], "on enter"
+  under [space x], "on enter" (ESpace)
+  under [space x], "on enter x" (EFocus)
 
 
 Medium Priority
