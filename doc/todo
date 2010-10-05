@@ -17,9 +17,17 @@ High-Priority Features
 Add attraction support to INI configuration parser.
 
 Add commands to show and hide the floating layer.
-  Maintain this state per-workspace.
-  CShowFloat
-  CHideFloat
+  State.World.wFloats :: Map SpaceRef Bool
+
+  New command: CShowFloat Bool
+
+  Command support in Config.INI
+    Generalize the Bool handling and allow lots of sensible-looking values
+
+  Change State.refreshSpace
+
+  Change History.setFocusTile to show the floating layer whenever it receives
+  the focus.
 
 Implement user-defined trigger support.
   under [global], "on ready"
