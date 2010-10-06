@@ -62,10 +62,6 @@ Implement user-defined trigger support.
 
 Medium Priority
 ---------------
-Implement CFocusName command
-
-Implement CFocusQuery command
-
 Tabs on tiles showing what windows are present
 
 Implement statusbar support.
