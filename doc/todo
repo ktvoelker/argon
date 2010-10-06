@@ -96,6 +96,9 @@ Check for invalid space and tile refs in runCommand.
 
 Low Priority Refactoring
 ------------------------
+Generate a function dependency graph and see if there are better ways of
+organizing the functions into modules.
+
 Decide whether the Action system is worth keeping. It isn't used consistently,
 and a lot of our X11 calls (like mapWindow, et cetera) are fairly simple and
 probably don't deserve the overhead of constructing an Action and putting it
