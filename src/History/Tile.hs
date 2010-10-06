@@ -8,6 +8,8 @@ import History
 import State
 import Types
 
+import Control.Monad
+
 type TileHistory = History TileRef
 
 setFocusTile :: TileRef -> X11State ()
@@ -17,6 +19,7 @@ setFocusTile tr = do
 
 setFocusTile' :: TileRef -> X11State ()
 setFocusTile' tr = do
+  when (tileIsFloat tr) $ setShowFloat tr True
   modifyWorld $ $(upd 'wFocus) ctr
   modifyLocalFocus ctr tr
   where

@@ -66,6 +66,7 @@ data Command =
   -- Remember the focused tile, execute a command, and then move the top
   -- window from the remembered tile to the current tile.
   | CPut        Command
+  | CShowFloat  Bool
   | CQuit
   | CKill
   | CNextWin

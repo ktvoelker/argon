@@ -52,5 +52,8 @@ runCommand' cmd = do
       runCommand cmd
       to <- getFocusTileM
       removeWin from >>= maybe (return ()) (addWin to)
+    CShowFloat yes  -> do
+      tr <- getFocusTileM
+      setShowFloat tr yes
     _               -> return ()
 

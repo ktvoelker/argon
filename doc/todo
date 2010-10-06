@@ -51,18 +51,8 @@ Clean up the mess of movement commands
 
 Add attraction support to INI configuration parser.
 
-Add commands to show and hide the floating layer.
-  State.World.wFloats :: Map SpaceRef Bool
-
-  New command: CShowFloat Bool
-
-  Command support in Config.INI
-    Generalize the Bool handling and allow lots of sensible-looking values
-
-  Change State.refreshSpace
-
-  Change History.setFocusTile to show the floating layer whenever it receives
-  the focus.
+Add support for show_float command to Config.INI.
+  Generalize the Bool handling and allow lots of sensible-looking values.
 
 Implement user-defined trigger support.
   under [global], "on ready"

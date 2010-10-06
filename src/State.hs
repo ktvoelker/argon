@@ -58,6 +58,7 @@ data World = World
   , wHistory :: History TileRef
   , wMode    :: Mode
   , wKeyMode :: ModeRef
+  , wFloats  :: Map SpaceRef Bool
   } deriving (Show)
 
 data Mode =
@@ -112,6 +113,11 @@ updateX11Focus = do
   getDisplay >>= dprint . defaultRootWindow
   act $ AFocus win
 
+setShowFloat :: (RefSpace a) => a -> Bool -> X11State ()
+setShowFloat sr yes = do
+  modifyWorld $ $(upd 'wFloats) $ insert (getSpaceRef sr, yes)
+  refreshFocusSpace
+
 findWindow :: World -> Window -> Maybe TileRef
 findWindow wo win = listToMaybe $ keys $ filter (member win . snd) $ wTiles wo
 
@@ -129,9 +135,13 @@ partitionSpace sr = do
     $ fmap popFront
     $ filterWithKey (\tr _ -> not (tileIsFloat tr) && sameSpace sr tr)
     $ wTiles wo
-  ; floats = toList $ getTileWindows wo $ getFloatRef sr
+  ; floats =
+      if showFloat
+         then toList $ getTileWindows wo $ getFloatRef sr
+         else []
   ; tilesV' = catMaybes tilesV
   ; tilesH' = concatMap toList tilesH
+  ; showFloat = wFloats wo ! getSpaceRef sr
   }
   return (floats ++ tilesV', tilesH')
 
@@ -180,6 +190,7 @@ emptyWorld c = World
   , wHistory = emptyHist
   , wMode    = MNormal
   , wKeyMode = cStartMode c
+  , wFloats  = fmap (const True) $ cSpaces c
   }
   where
     spacesList = elems $ cSpaces c
