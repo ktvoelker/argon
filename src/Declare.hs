@@ -64,10 +64,9 @@ data TileQuery =
   | QSpace    SpaceRef
   -- The focused tile.
   | QCurrent
-  | QHistBack Int
-  | QHistFwd  Int
+  | QHistBack
+  | QHistFwd
   | QDir      Dir
-  | QAttract  Attract
   | QDisjunct [TileQuery]
   | QEmptiest TileQuery
   deriving (Eq, Ord, Show)

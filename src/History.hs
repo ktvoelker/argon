@@ -13,15 +13,15 @@ data History a =
 emptyHist :: History a
 emptyHist = History { fwd = [], back = [] }
 
-histBack :: a -> History a -> (Maybe a, History a)
+histBack :: a -> History a -> Maybe (a, History a)
 histBack from h = case back h of
-  []       -> (Nothing, h)
-  (b : bs) -> (Just b, $(upd 'fwd) (from :) h { back = bs })
+  []       -> Nothing
+  (b : bs) -> Just (b, $(upd 'fwd) (from :) h { back = bs })
 
-histFwd :: a -> History a -> (Maybe a, History a)
+histFwd :: a -> History a -> Maybe (a, History a)
 histFwd from h = case fwd h of
-  []       -> (Nothing, h)
-  (b : bs) -> (Just b, $(upd 'back) (from :) h { fwd = bs })
+  []       -> Nothing
+  (b : bs) -> Just (b, $(upd 'back) (from :) h { fwd = bs })
 
 histGo :: a -> History a -> History a
 histGo from h = h { fwd = [], back = from : back h }

@@ -15,8 +15,6 @@ High-Priority Features
 ----------------------
 Clean up the mess of movement commands
 
-  Tile.Query.evalTileQuery
-
   Implement CMove
 
   Implement CFocus

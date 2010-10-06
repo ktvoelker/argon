@@ -106,6 +106,26 @@ sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
     shareBegin = max ap bp
     shareEnd   = min (ap +. as) (bp +. bs)
 
+followDir :: Config -> Dir -> TileRef -> Maybe TileRef
+followDir c dir tr =
+  -- Choose the bordering tile with the most shared edge, if any.
+  fmap snd
+  $ listToMaybe
+  -- Sort the bordering tiles in descending order by their amounts
+  -- of shared edge.
+  $ sortBy (\a b -> compare (fst b) (fst a))
+  -- Pair each bordering tile with the length of its shared edge.
+  $ map (\to -> (sharedEdge ld (laTable lay) from $ snd to, fst to))
+  -- Pick out the bordering tiles.
+  $ filter (borders ld from . snd)
+  -- Get all the tiles in the workspace.
+  $ toList $ laTiles lay
+  where
+    ld    = lookDir ! dir
+    space = cSpace c tr
+    lay   = spLayout space
+    from  = laTiles lay ! tr
+
 focusDir :: Dir -> X11State ()
 focusDir dir = do
   debug "Focus dir:"
@@ -121,33 +141,15 @@ focusDir dir = do
      -- TODO
      then return ()
      -- A tile is focused.
-     else do
-       let
-         ld    = lookDir ! dir
-         space = cSpace c tr
-         lay   = spLayout space
-         from  = laTiles lay ! tr
-         -- Choose the bordering tile with the most shared edge, if any.
-         b     = fmap snd
-           $ listToMaybe
-           -- Sort the bordering tiles in descending order by their amounts
-           -- of shared edge.
-           $ sortBy (\a b -> compare (fst b) (fst a))
-           -- Pair each bordering tile with the length of its shared edge.
-           $ map (\to -> (sharedEdge ld (laTable lay) from $ snd to, fst to))
-           -- Pick out the bordering tiles.
-           $ filter (borders ld from . snd)
-           -- Get all the tiles in the workspace.
-           $ toList $ laTiles lay
-       case b of
-         -- Nowhere to move.
-         Nothing  -> return ()
-         -- Somewhere to move.
-         Just tr' -> do
-           debug "Move focus to tile:"
-           dprint tr'
-           -- Record the newly-focused tile.
-           setFocusTile tr'
-           -- Tell X to focus the window atop that tile.
-           updateX11Focus
+     else case followDir c dir tr of
+       -- Nowhere to move.
+       Nothing  -> return ()
+       -- Somewhere to move.
+       Just tr' -> do
+         debug "Move focus to tile:"
+         dprint tr'
+         -- Record the newly-focused tile.
+         setFocusTile tr'
+         -- Tell X to focus the window atop that tile.
+         updateX11Focus
 

@@ -1,13 +1,45 @@
 
-module Tile.Query where
+module Tile.Query (evalTileQuery) where
 
+import Focus
+import History
+import State
 import Types
 
-type TileQueryResult = [(TileRef, Provenance)]
+type TileQueryResult = [(TileRef, Maybe (History TileRef))]
 
-data Provenance = PNone | PBack | PFwd deriving (Enum, Eq, Ord, Show)
+evalTileQuery :: TileQuery -> Config -> World -> TileQueryResult
+evalTileQuery tq c wo = nubBy (\a b -> fst a == fst b) $ eval tq c wo
 
-evalTileQuery :: TileQuery -> World -> TileQueryResult
--- TODO
-evalTileQuery _ _ = []
+nonHist :: TileRef -> TileQueryResult
+nonHist = nonHists . (: [])
+
+nonHists :: [TileRef] -> TileQueryResult
+nonHists = map (, Nothing)
+
+eval :: TileQuery -> Config -> World -> TileQueryResult
+eval (QAbsolute tr) _ _ = nonHist tr
+eval (QRelative xs) _ wo =
+  case lookup tr $ wTiles wo of
+    Nothing -> []
+    Just _  -> nonHist tr
+  where
+    tr = mkTileRef (getSpaceRef $ wFocus wo) xs
+eval (QSpace sr) _ wo = nonHist $ wFocuses wo ! sr
+eval QCurrent _ wo = wFocus wo
+eval QHistBack _ wo = evalHist histBack wo
+eval QHistFwd _ wo = evalHist histFwd wo
+eval (QDir dir) c wo = nonHists $ maybeToList $ followDir c dir $ wFocus wo
+eval (QDisjunct tqs) _ wo = tqs >>= flip eval wo
+eval (QEmptiest tq) _ wo =
+  -- TODO is the built-in sortBy stable?
+  sortBy (\a b -> compare (fst a) (fst b))
+  $ map (\(tr, h) -> (size $ wTiles wo ! tr, h))
+  $ eval tq wo
+
+evalHist
+  :: (a -> History a -> Maybe (a, History a)) -> World -> TileQueryResult
+evalHist f wo = case f (wFocus wo) (wHistory wo) of
+  Nothing  -> []
+  Just (tr, h) -> [(tr, Just h)]
 
