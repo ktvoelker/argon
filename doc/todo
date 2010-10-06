@@ -9,36 +9,17 @@ High-Priority Bugs
 
 High-Priority Testing
 ---------------------
-CPut
 
 
 High-Priority Features
 ----------------------
 Clean up the mess of movement commands
 
-  data TileQuery
-    Absolute TileRef
-    Relative String
-    Current
-    History Int
-    Direction Dir
-    Attraction {...}
-    Disjunction [TileQuery]
-      Eliminates duplicates, keeping the provenance of the first appearance.
-    Emptiest TileQuery
-      Stably sorts the list according to emptiness.
+  Tile.Query.evalTileQuery
 
-  type TileQueryResult = [(TileRef, Provenance)]
-  data Provenance = NotHistory | Back | Forward
+  Implement CMove
 
-  Commands:
-
-    move From To Breadth Depth
-      Last two arguments have defaults (marked by *).
-      data Breadth = FirstTile* | AllTiles
-      data Depth = TopWindow* | AllWindows
-
-    focus To
+  Implement CFocus
       Remove the destination from the back/forward list if the provenance
       says to do so.
 
@@ -46,6 +27,8 @@ Clean up the mess of movement commands
 
       But don't tell the history anything if the destination is the same as
       the current focus.
+
+  Implement new commands and tile queries in Config.INI
 
   Change attraction to use a TileQuery instead of a TileRef.
 

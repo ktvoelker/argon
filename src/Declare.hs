@@ -55,25 +55,38 @@ data Config = Config
 
 data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
 
+data TileQuery =
+  -- A tile.
+    QAbsolute TileRef
+  -- A tile on the focused space, by name.
+  | QRelative (Maybe String)
+  -- The most-recently-focused tile of a space.
+  | QSpace    SpaceRef
+  -- The focused tile.
+  | QCurrent
+  | QHistBack Int
+  | QHistFwd  Int
+  | QDir      Dir
+  | QAttract  Attract
+  | QDisjunct [TileQuery]
+  | QEmptiest TileQuery
+  deriving (Eq, Ord, Show)
+
+data Breadth = FirstTile | AllTiles deriving (Enum, Eq, Ord, Show)
+
+data Depth = TopWindow | AllWindows deriving (Enum, Eq, Ord, Show)
+
 data Command =
-    CFocusDir   Dir
-  | CFocusName  TileRef Bool
-  | CFocusQuery Attract
-  | CSpace      SpaceRef
+    CMove       TileQuery TileQuery Breadth Depth
+    CFocus      TileQuery
   | CExec       Exec
   | CSeq        [Command]
   | CKeyMode    ModeRef
-  -- Remember the focused tile, execute a command, and then move the top
-  -- window from the remembered tile to the current tile.
-  | CPut        Command
   | CShowFloat  Bool
   | CQuit
   | CKill
   | CNextWin
   | CPrevWin
-  | CHistBack
-  | CHistFwd
-  | CFocusFloat
   deriving (Eq, Ord, Show)
 
 data XInfo = XInfo
