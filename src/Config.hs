@@ -3,7 +3,7 @@ module Config where
 
 import Declare
 
-import qualified Config.INI    as CI
+import qualified Config.INI as CI
 
 data ConfigMode =
   ConfigINI
