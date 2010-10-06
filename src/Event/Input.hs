@@ -6,7 +6,6 @@ import Debug
 import Declare
 import Event.Default
 import Fields
-import History.Tile
 import State
 import Types
 import X11

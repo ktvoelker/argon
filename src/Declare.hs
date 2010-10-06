@@ -77,7 +77,7 @@ data Depth = TopWindow | AllWindows deriving (Enum, Eq, Ord, Show)
 
 data Command =
     CMove       TileQuery TileQuery Breadth Depth
-    CFocus      TileQuery
+  | CFocus      TileQuery
   | CExec       Exec
   | CSeq        [Command]
   | CKeyMode    ModeRef

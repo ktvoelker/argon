@@ -15,17 +15,6 @@ High-Priority Features
 ----------------------
 Clean up the mess of movement commands
 
-  Implement CMove
-
-  Implement CFocus
-      Remove the destination from the back/forward list if the provenance
-      says to do so.
-
-      Otherwise, tell the history about the jump.
-
-      But don't tell the history anything if the destination is the same as
-      the current focus.
-
   Implement new commands and tile queries in Config.INI
 
   Change attraction to use a TileQuery instead of a TileRef.
@@ -79,6 +68,9 @@ Low Priority Refactoring
 ------------------------
 Create a single, uniform abstraction for getting the whole value, or a
 projected value, from any reader or state monad and use it everywhere.
+
+Generalize monadic functions as much as possible. Most functions should be
+able to operate in something more general than X11State.
 
 Audit all functions that run in X11State to see if this is really necessary.
 Ideally, break any complex X11State function into two parts, one of which is

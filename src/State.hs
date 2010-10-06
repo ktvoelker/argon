@@ -24,13 +24,20 @@ import Graphics.X11.Xlib.Extras
 type X11State a = MaybeT (StateT World (ReaderT X11Env IO)) a
 
 getWorld :: X11State World
-getWorld = lift get
+getWorld = liftIO get
 
 putWorld :: World -> X11State ()
-putWorld = lift . put
+putWorld = liftIO . put
 
 modifyWorld :: (World -> World) -> X11State ()
-modifyWorld = lift . modify
+modifyWorld = liftIO . modify
+
+withModifyWorld :: (World -> (a, World)) -> X11State ()
+withModifyWorld f = do
+  wo <- getWorld
+  let (a, wo') = f wo
+  putWorld wo'
+  return a
 
 quitState :: X11State a
 quitState = fail "quit"
@@ -94,6 +101,14 @@ getFocusTileM = getWorld >>= return . getFocusTile
 
 getFocusTile :: World -> TileRef
 getFocusTile = wFocus
+
+setFocusTile :: TileRef -> X11State ()
+setFocusTile tr = do
+  when (tileIsFloat tr) $ setShowFloat tr True
+  modifyWorld $ $(upd 'wFocus) ctr
+  modifyLocalFocus ctr tr
+  where
+    ctr = const tr
 
 getFocusWindow :: X11State Window
 getFocusWindow = do

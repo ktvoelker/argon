@@ -24,12 +24,13 @@ eval (QRelative xs) _ wo =
     Nothing -> []
     Just _  -> nonHist tr
   where
-    tr = mkTileRef (getSpaceRef $ wFocus wo) xs
-eval (QSpace sr) _ wo = nonHist $ wFocuses wo ! sr
-eval QCurrent _ wo = wFocus wo
+    tr = mkTileRef (getSpaceRef $ getFocusTile wo) xs
+eval (QSpace sr) _ wo = nonHist $ getLocalFocus wo sr
+eval QCurrent _ wo = nonHist $ getFocusTile wo
 eval QHistBack _ wo = evalHist histBack wo
 eval QHistFwd _ wo = evalHist histFwd wo
-eval (QDir dir) c wo = nonHists $ maybeToList $ followDir c dir $ wFocus wo
+eval (QDir dir) c wo =
+  nonHists $ maybeToList $ followDir c dir $ getFocusTile wo
 eval (QDisjunct tqs) _ wo = tqs >>= flip eval wo
 eval (QEmptiest tq) _ wo =
   -- TODO is the built-in sortBy stable?

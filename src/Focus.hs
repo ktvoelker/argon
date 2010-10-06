@@ -6,7 +6,6 @@ import Declare
 import Declare.Access
 import Debug
 import Fields
-import History.Tile
 import Layout
 import Maths.Unsafe
 import State
