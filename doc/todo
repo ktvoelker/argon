@@ -13,11 +13,7 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
-Clean up the mess of movement commands
-
-  Implement new commands and tile queries in Config.INI
-
-  Change attraction to use a TileQuery instead of a TileRef.
+Change attraction to use a TileQuery instead of a TileRef.
 
 Add attraction support to INI configuration parser.
 

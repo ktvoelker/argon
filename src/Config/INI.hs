@@ -226,38 +226,75 @@ getCommand' xs = case xs of
 
 commands :: Map String ([String] -> ConfigM' Command)
 commands = fromList
-  [ ("focus_dir",   cmdFocusDir)
-  , ("space",       cmdSpace)
+  [ ("move",        cmdMove)
+  , ("focus",       cmdFocus)
   , ("exec",        cmdExec)
   , ("seq",         cmdSeq)
   , ("key_mode",    cmdKeyMode)
-  , ("put",         cmdPut)
   , ("quit",        constCmd CQuit)
   , ("kill",        constCmd CKill)
   , ("next_win",    constCmd CNextWin)
   , ("prev_win",    constCmd CPrevWin)
-  , ("hist_back",   constCmd CHistBack)
-  , ("hist_fwd",    constCmd CHistFwd)
-  , ("focus_float", constCmd CFocusFloat)
   ]
 
-cmdFocusDir, cmdSpace, cmdExec, cmdSeq, cmdKeyMode, cmdPut
-  :: [String] -> ConfigM' Command
+cmdMove, cmdFocus, cmdExec, cmdSeq, cmdKeyMode :: [String] -> ConfigM' Command
 
-cmdFocusDir [dir] =
-  returnJust "direction" (lookup dir dirs) >>= return . CFocusDir
-cmdFocusDir _ = parseError "`focus_dir' expects one direction"
+cmdMove = f FirstTile TopWindow
+  where
+    err = parseError "Not enough arguments to `move'"
+    f _ _ [] = err
+    f _ d ("broad" : xs) = f AllTiles d xs
+    f b _ ("deep" : xs) = f b AllWindows xs
+    f b d xs = do
+      from' <- from
+      to'   <- to
+      return $ CMove from' to' b d
+      where
+        (left, right) = break (== "->") xs
+        arrow = not $ null right
+        from = if arrow then parseQuery left else return QCurrent
+        to = parseQuery $ if arrow then tail right else left
 
-dirs :: Map String Dir
-dirs = fromList
-  [ ("up",    DUp)
-  , ("down",  DDown)
-  , ("left",  DLeft)
-  , ("right", DRight)
+cmdFocus = parseQuery >=> return . CFocus
+
+staticQueries :: Map String TileQuery
+staticQueries = fromList $
+  [ (".",         QCurrent)
+  , ("./.",       QCurrent)
+  , ("hist-back", QHistBack)
+  , ("hist-fwd",  QHistFwd)
+  , ("dir-up",    QDir DUp)
+  , ("dir-down",  QDir DDown)
+  , ("dir-left",  QDir DLeft)
+  , ("dir-right", QDir DRight)
   ]
 
-cmdSpace [space] = return $ CSpace $ mkSpaceRef space
-cmdSpace _       = parseError "`space' expects one argument"
+parseQuery :: [String] -> ConfigM' TileQuery
+parseQuery [] = return QCurrent
+parseQuery [xs] = return $ parseLeafQuery xs
+parseQuery ("emptiest:" : xs) = parseQuery xs >>= return . QEmptiest
+parseQuery xs = return $ QDisjunct $ map parseLeafQuery xs
+
+parseLeafQuery :: String -> TileQuery
+parseLeafQuery xs
+  | Just q <- lookup xs staticQueries = q
+  | otherwise =
+    if space == "." && tile == "."
+       then QCurrent
+       else
+         if space == "."
+            then QRelative tile'
+            else
+              if tile == "."
+                 then QSpace spaceRef
+                 else QAbsolute $ mkTileFloatRef spaceRef tile'
+    where
+      (left, right) = break (== '/') xs
+      slash = not $ null right
+      space = if slash then left else "."
+      spaceRef = mkSpaceRef space
+      tile = if slash then right else left
+      tile' = if tile == "^" then Nothing else Just tile
 
 cmdExec (prog : args) = return $ CExec Exec { exProg = prog, exArgs = args }
 cmdExec _             = parseError "`exec' expects at least one argument"
@@ -273,8 +310,6 @@ cmdSeq = f >=> return . CSeq
 
 cmdKeyMode [m] = return $ CKeyMode $ mkModeRef m
 cmdKeyMode _   = parseError "`key_mode' expects one argument"
-
-cmdPut = getCommand' >=> return . CPut
 
 constCmd :: Command -> a -> ConfigM' Command
 constCmd cmd = const $ return cmd

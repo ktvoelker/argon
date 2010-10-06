@@ -27,6 +27,9 @@ mkTileRef sr = Ref.TileRef sr . Just
 mkFloatRef :: SpaceRef -> TileRef
 mkFloatRef sr = Ref.TileRef sr Nothing
 
+mkTileFloatRef :: SpaceRef -> Maybe String -> TileRef
+mkTileFloatRef = Ref.TileRef
+
 mkStatusRef :: SpaceRef -> String -> StatusRef
 mkStatusRef = Ref.StatusRef
 

@@ -24,15 +24,15 @@ import Graphics.X11.Xlib.Extras
 type X11State a = MaybeT (StateT World (ReaderT X11Env IO)) a
 
 getWorld :: X11State World
-getWorld = liftIO get
+getWorld = lift get
 
 putWorld :: World -> X11State ()
-putWorld = liftIO . put
+putWorld = lift . put
 
 modifyWorld :: (World -> World) -> X11State ()
-modifyWorld = liftIO . modify
+modifyWorld = lift . modify
 
-withModifyWorld :: (World -> (a, World)) -> X11State ()
+withModifyWorld :: (World -> (a, World)) -> X11State a
 withModifyWorld f = do
   wo <- getWorld
   let (a, wo') = f wo

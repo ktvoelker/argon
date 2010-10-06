@@ -6,11 +6,15 @@ import Declare
 import Exec
 import Fields
 import Focus
+import History
 import State
 import Tile
+import Tile.Query
 import Types
 import X11
 
+import Control.Monad
+import Data.Maybe
 import Graphics.X11.Xlib.Extras
 
 runCommand, runCommand' :: Command -> X11State ()
@@ -79,5 +83,4 @@ runCommand' cmd = do
           modifyWorld $ $(upd 'wHistory) $ maybe (histGo tr) const h
           setFocusTile tr
           refreshFocusSpace
-    _               -> return ()
 
