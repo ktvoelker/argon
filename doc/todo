@@ -49,9 +49,6 @@ Clean up the mess of movement commands
 
   Change attraction to use a TileQuery instead of a TileRef.
 
-Allow attraction to also be predicated upon a particular current space or
-tile.
-
 Add attraction support to INI configuration parser.
 
 Add commands to show and hide the floating layer.
