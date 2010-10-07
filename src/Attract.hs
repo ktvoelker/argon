@@ -5,6 +5,7 @@ import Declare
 import Declare.Access
 import Debug
 import State
+import Tile.Query
 import Types
 import X11
 
@@ -28,7 +29,9 @@ attract win = do
   -- Otherwise, return the focused tile.
   debug "Attracted tile:"
   dprint att
-  return $ fromMaybe (getFocusTile wo) att
+  return
+    $ fromMaybe (getFocusTile wo)
+    $ att >>= (\tq -> fmap fst $ listToMaybe $ evalTileQuery tq c wo)
 
 attractOne :: Window -> Attract -> X11State Bool
 attractOne win att = fmap (all id) $ sequence $ map (($ att) . ($ win)) ways
@@ -45,7 +48,7 @@ stringWay atom pred win want =
 maybeWay :: (Attract -> Maybe a) -> (Window -> a -> X11State Bool)
          -> Window -> Attract -> X11State Bool
 maybeWay proj pred win att =
-  fromMaybe (return False) $ proj att >>= Just . pred win
+  fromMaybe (return True) $ proj att >>= Just . pred win
 
 eitherWay
   :: (Window -> a -> X11State Bool)

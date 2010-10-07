@@ -13,9 +13,11 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
-Change attraction to use a TileQuery instead of a TileRef.
-
 Add attraction support to INI configuration parser.
+  [attract foo]
+  prop=val
+  prop=val
+  tile=tq
 
 Add support for show_float command to Config.INI.
   Generalize the Bool handling and allow lots of sensible-looking values.

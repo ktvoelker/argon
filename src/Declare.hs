@@ -50,7 +50,7 @@ data Config = Config
   , cStartMode  :: ModeRef
   , cIgnoreMask :: KeyMask
   , cTriggers   :: Map Trigger Command
-  , cAttracts   :: [(Attract, TileRef)]
+  , cAttracts   :: [(Attract, TileQuery)]
   } deriving (Show)
 
 data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
