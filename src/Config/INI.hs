@@ -16,6 +16,7 @@ defaultFile :: FilePath
 defaultFile = ".argonrc"
 
 optStart, optStartKeys, optTable, optLayout, optRows, optCols, optParents
+  , optTile, optName, optClass, optTransient, optFocus
   :: OptionSpec
 optStart     = "start"
 optStartKeys = "start_keys"
@@ -24,12 +25,18 @@ optLayout    = "layout"
 optRows      = "rows"
 optCols      = "cols"
 optParents   = "parents"
+optTile      = "tile"
+optName      = "name"
+optClass     = "class"
+optTransient = "transient"
+optFocus     = "focus"
 
-sectTable, sectLayout, sectSpace, sectKeys :: String
-sectTable  = "table"
-sectLayout = "layout"
-sectSpace  = "space"
-sectKeys   = "keys"
+sectTable, sectLayout, sectSpace, sectKeys, sectAttract :: String
+sectTable   = "table"
+sectLayout  = "layout"
+sectSpace   = "space"
+sectKeys    = "keys"
+sectAttract = "attract"
 
 sectGlobal :: SectionSpec
 sectGlobal = "global"
@@ -85,7 +92,8 @@ config = do
     tableNames  <- findSections sectTable sectionNames
     layoutNames <- findSections sectLayout sectionNames
     spaceNames  <- findSections sectSpace sectionNames
-    modeNames   <- findSections sectKeys  sectionNames
+    modeNames   <- findSections sectKeys sectionNames
+    attNames    <- findSections sectAttract sectionNames
     tables  <- mapM (mapSndM $ getTable input) tableNames
     let tableMap  = fromList tables
     layouts <- mapM (mapSndM $ getLayout input tableMap) layoutNames
@@ -97,11 +105,13 @@ config = do
     keys <- mapM (mapSndM (getKeys input) . mapFst mkModeRef) modeNames
     start <- get input sectGlobal optStart
     startKeys <- get input sectGlobal optStartKeys
+    atts <- mapM (getAttract input . snd) attNames
     return emptyConfig
       { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces
       , cKeys       = mkKeyHeir $ fromList keys
       , cStartSpace = mkSpaceRef start
       , cStartMode  = mkModeRef startKeys
+      , cAttracts   = fromList atts
       }
 
 ni :: ConfigM' a
@@ -216,6 +226,62 @@ getKey cp sect opt = do
       cmd <- getCommand str
       return ((foldr (.|.) 0 mods', sym'), cmd)
 
+emptyAttract :: Attract
+emptyAttract =
+  Attract
+  { xName  = Nothing
+  , xClass = Nothing
+  , xTrans = Nothing
+  , xFocus = Nothing
+  }
+
+attractProps :: Map String (Attract -> String -> ConfigM' Attract)
+attractProps = fromList
+  [ (optName,      \att xs -> return att { xName  = Just xs })
+  , (optClass,     \att xs -> return att { xClass = Just xs })
+  , (optTransient, \att -> parseBool >=> \b -> return att { xTrans = Just b })
+  , (optFocus,     applyFocusProp)
+  ]
+
+bools :: Map String Bool
+bools = fromList $
+  map (, True)
+  [ "yes"
+  , "true"
+  , "1"
+  ]
+  ++
+  map (, False)
+  [ "no"
+  , "false"
+  , "0"
+  ]
+
+parseBool :: String -> ConfigM' Bool
+parseBool xs
+  | Just b <- lookup xs bools = return b
+  | otherwise = parseError "Expected a Boolean value"
+
+applyFocusProp :: Attract -> String -> ConfigM' Attract
+applyFocusProp att xs =
+  return $ att
+  { xFocus =
+      Just
+        $ either
+        (Left . mkSpaceRef)
+        (\(s, t) -> Right $ mkTileRef (mkSpaceRef s) t)
+        $ parseSpaceOrTileRef xs
+  }
+
+getAttract :: ConfigParser -> SectionSpec -> ConfigM' (Attract, TileQuery)
+getAttract cp sect = do
+  att <-
+    foldM (\att (opt, f) -> get cp sect opt >>= f att) emptyAttract
+    $ toList
+    $ filterWithKey (\opt _ -> has_option cp sect opt) attractProps
+  tq  <- get cp sect optTile >>= parseQuery . words
+  return (att, tq)
+
 getCommand :: String -> ConfigM' Command
 getCommand = getCommand' . words
 
@@ -289,12 +355,17 @@ parseLeafQuery xs
                  then QSpace spaceRef
                  else QAbsolute $ mkTileFloatRef spaceRef tile'
     where
-      (left, right) = break (== '/') xs
-      slash = not $ null right
-      space = if slash then left else "."
+      (space, tile) = case parseSpaceOrTileRef xs of
+        Left xs   -> (".", xs)
+        Right tup -> tup
       spaceRef = mkSpaceRef space
-      tile = if slash then right else left
       tile' = if tile == "^" then Nothing else Just tile
+
+parseSpaceOrTileRef :: String -> Either String (String, String)
+parseSpaceOrTileRef xs = if slash then Right (left, right) else Left left
+  where
+    (left, right) = break (== '/') xs
+    slash = not $ null right
 
 cmdExec (prog : args) = return $ CExec Exec { exProg = prog, exArgs = args }
 cmdExec _             = parseError "`exec' expects at least one argument"
