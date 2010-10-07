@@ -61,6 +61,9 @@ Visually indicate the focus, perhaps by a colored border.
 
 Check for invalid space and tile refs in runCommand.
 
+Make the language of commands and tile queries more robust by using a proper
+grammar in Config.INI.
+
 
 Low Priority Refactoring
 ------------------------
@@ -117,6 +120,8 @@ in the queue.
 
 Move Collection stuff into a separate module re-exported by Types.
   Make the Collection interface into multiple, better interfaces.
+
+Produce more detailed, informative error messages in Config.INI.
 
 
 Low Priority Bugs and Mysteries
