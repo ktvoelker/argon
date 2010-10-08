@@ -292,18 +292,20 @@ getCommand' xs = case xs of
 
 commands :: Map String ([String] -> ConfigM' Command)
 commands = fromList
-  [ ("move",        cmdMove)
-  , ("focus",       cmdFocus)
-  , ("exec",        cmdExec)
-  , ("seq",         cmdSeq)
-  , ("key_mode",    cmdKeyMode)
-  , ("quit",        constCmd CQuit)
-  , ("kill",        constCmd CKill)
-  , ("next_win",    constCmd CNextWin)
-  , ("prev_win",    constCmd CPrevWin)
+  [ ("move",       cmdMove)
+  , ("focus",      cmdFocus)
+  , ("exec",       cmdExec)
+  , ("seq",        cmdSeq)
+  , ("key_mode",   cmdKeyMode)
+  , ("show_float", cmdShowFloat)
+  , ("quit",       constCmd CQuit)
+  , ("kill",       constCmd CKill)
+  , ("next_win",   constCmd CNextWin)
+  , ("prev_win",   constCmd CPrevWin)
   ]
 
-cmdMove, cmdFocus, cmdExec, cmdSeq, cmdKeyMode :: [String] -> ConfigM' Command
+cmdMove, cmdFocus, cmdExec, cmdSeq, cmdKeyMode, cmdShowFloat
+  :: [String] -> ConfigM' Command
 
 cmdMove = f FirstTile TopWindow
   where
@@ -381,6 +383,9 @@ cmdSeq = f >=> return . CSeq
 
 cmdKeyMode [m] = return $ CKeyMode $ mkModeRef m
 cmdKeyMode _   = parseError "`key_mode' expects one argument"
+
+cmdShowFloat [b] = parseBool b >>= return . CShowFloat
+cmdShowFloat _   = parseError "`show_float' expects one argument"
 
 constCmd :: Command -> a -> ConfigM' Command
 constCmd cmd = const $ return cmd

@@ -16,9 +16,6 @@ Attraction
 
 High-Priority Features
 ----------------------
-Add support for show_float command to Config.INI.
-  Generalize the Bool handling and allow lots of sensible-looking values.
-
 Implement user-defined trigger support.
   under [global], "on ready"
   under [space x], "on enter" (ESpace)
