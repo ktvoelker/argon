@@ -11,12 +11,15 @@ High-Priority Testing
 ---------------------
 CFocus
 CMove
+CShowFloat
 Attraction
 
 
 High-Priority Features
 ----------------------
-Implement user-defined trigger support.
+Fix the cycle of dependencies that runTrigger has created.
+
+Implement trigger support in Config.INI.
   under [global], "on ready"
   under [space x], "on enter" (ESpace)
   under [space x], "on enter x" (EFocus)
