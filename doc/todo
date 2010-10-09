@@ -118,21 +118,13 @@ should be codified as functions:
 Generate a function dependency graph and see if there are better ways of
 organizing the functions into modules.
 
-Decide whether the Action system is worth keeping. It isn't used consistently,
-and a lot of our X11 calls (like mapWindow, et cetera) are fairly simple and
-probably don't deserve the overhead of constructing an Action and putting it
-in the queue.
-  
-  A mixture of using Actions and not using them is bad because X11 calls may
-  not be carried out in the intended order, since all calls made through
-  Actions will happen last. Perhaps, instead of the heavyweight Actions
-  system, we should just have a uniform module which abstracts over X11 with
-  a direct, simple API?
-
 Move Collection stuff into a separate module re-exported by Types.
   Make the Collection interface into multiple, better interfaces.
 
 Produce more detailed, informative error messages in Config.INI.
+
+Make a single module which abstracts over all X11 calls. The interface
+presented should use the types from Maths.
 
 
 Low Priority Bugs and Mysteries

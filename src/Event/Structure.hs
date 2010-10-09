@@ -1,7 +1,6 @@
 
 module Event.Structure where
 
-import Action
 import Attract
 import Declare
 import Declare.Access
@@ -10,6 +9,7 @@ import Event.Default
 import Event.Listen
 import Fields
 import Layout
+import Maths.Unsafe
 import State
 import Types
 import X11
@@ -51,10 +51,17 @@ mapRequestHandler e = do
         lay = layout $ cSpace c tr
         ti  = (laTiles lay) ! tr
         ta  = laTable lay
+        (px, py) = realPos ta ti
+        (dw, dh) = realSpan ta ti
       debug "Tiling layout (pos, span):"
       dprint $ realPos ta ti
       dprint $ realSpan ta ti
-      act $ AShow win (realPos ta ti) (realSpan ta ti)
+      d <- getDisplay
+      liftIO $ do
+        moveResizeWindow d win (fi px) (fi py) (fi dw) (fi dh)
+        mapWindow d win
+    fi :: (Num a) => Qty u t x -> a
+    fi = fromIntegral . unwrap
 
 destroyWindowHandler e = do
   debug "Window destroyed:"

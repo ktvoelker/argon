@@ -1,7 +1,6 @@
 
 module Focus where
 
-import Action
 import Declare
 import Declare.Access
 import Debug

@@ -24,16 +24,15 @@ eventLoop = do
   debug "Allocate event pointer"
   ptr <- lift $ mallocBytes 96
   debug "Start looping"
-  runX11State world $ sequence_ $ repeat $ do
-    -- Get the next event from the server.
-    -- debug "Get next event"
-    getDisplay >>= liftIO . flip nextEvent ptr
-    -- Extract a safe event value from the event pointer and handle it.
-    -- debug "Extract and handle event"
-    safely ptr handler
-    -- Run the actions emitted by the handler.
-    -- debug "Run actions"
-    runActions
+  runX11State world $ do
+    runTrigger TReady
+    sequence_ $ repeat $ do
+      -- Get the next event from the server.
+      -- debug "Get next event"
+      getDisplay >>= liftIO . flip nextEvent ptr
+      -- Extract a safe event value from the event pointer and handle it.
+      -- debug "Extract and handle event"
+      safely ptr handler
   debug "Free event pointer"
   lift $ Foreign.Marshal.Alloc.free ptr
 

@@ -27,8 +27,6 @@ xMain = do
     Right config' -> localConfig (const config') $ do
       debug "Init events"
       initEvents
-      debug "Ready trigger"
-      runTrigger $ TReady
       debug "Event loop"
       eventLoop
   debug "Done"

@@ -1,7 +1,6 @@
 
 module State where
 
-import Action
 import Debug
 import Declare
 import Declare.Access
@@ -45,20 +44,8 @@ quitState = fail "quit"
 runX11State :: World -> X11State a -> X11 (Maybe a, World)
 runX11State world = flip runStateT world . runMaybeT
 
--- Execute the actions.
-runActions :: X11State ()
-runActions =
-  getWorld
-  >>= lift . lift . mapM_ runAction . toList . wActions
-  >>  modifyWorld (\w -> w { wActions = empty })
-
--- Enqueue an action.
-act :: Action -> X11State ()
-act a = modifyWorld $ $(upd 'wActions) $ insert a
-
 data World = World
   { wFocus   :: TileRef
-  , wActions :: Queue Action
   , wFocuses :: Map SpaceRef TileRef
   , wTiles   :: Map TileRef (DQ Window)
   , wStatus  :: Map StatusRef String
@@ -119,7 +106,7 @@ runTrigger t = do
   c <- getConfig
   case lookup t $ cTriggers c of
     Nothing  -> return ()
-    Just cmd -> runCommand cmd
+    Just cmd -> return () -- TODO break the cycle -- runCommand cmd
 
 getFocusWindow :: X11State Window
 getFocusWindow = do
@@ -136,8 +123,9 @@ updateX11Focus = do
   win <- getFocusWindow
   debug "Update X11 focus:"
   dprint win
-  getDisplay >>= dprint . defaultRootWindow
-  act $ AFocus win
+  disp <- getDisplay
+  dprint $ defaultRootWindow disp
+  liftIO $ setInputFocus disp win revertToPointerRoot 0
 
 setShowFloat :: (RefSpace a) => a -> Bool -> X11State ()
 setShowFloat sr yes = do
@@ -210,7 +198,6 @@ emptyWorld :: Config -> World
 emptyWorld c = World
   { wFocuses = fmap spStartTile $ cSpaces c
   , wFocus   = spStartTile $ cSpace c $ cStartSpace c
-  , wActions = empty
   , wTiles   = union floats $ emptyWLayout empty spLayout spacesList
   , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
   , wHistory = emptyHist
