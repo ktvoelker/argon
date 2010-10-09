@@ -1,6 +1,7 @@
 
 module Event (module Event, module Event.Listen) where
 
+import Command
 import Debug
 import Declare
 import Event.Default
@@ -16,11 +17,18 @@ import Foreign.Marshal.Alloc
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
+runTriggerImpl :: Trigger -> X11State ()
+runTriggerImpl t = do
+  c <- getConfig
+  case lookup t $ cTriggers c of
+    Nothing  -> return ()
+    Just cmd -> runCommand cmd
+
 eventLoop :: X11 ()
 eventLoop = do
   debug "Get config"
   conf <- getConfig
-  let world = emptyWorld conf
+  let world = (emptyWorld conf) { wTrigger = runTriggerImpl }
   debug "Allocate event pointer"
   ptr <- lift $ mallocBytes 96
   debug "Start looping"

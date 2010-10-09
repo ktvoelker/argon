@@ -17,22 +17,6 @@ Attraction
 
 High-Priority Features
 ----------------------
-Fix the cycle of dependencies that runTrigger has created.
-  setFocusTile => runTrigger => runCommand => setFocusTile
-
-  Option 1:
-  Break the cycle by choosing one function from the cycle and making it
-  be a parameter to all the others. The choice would have to be setFocusTile,
-  since it is the most widely-used, so we don't want to disturb it.
-
-  Option 2:
-  Use GHC's recursive module dependency support. This is a bad idea.
-
-  Option 3:
-  Store one of the functions in the state. Make the global function be a
-  wrapper that looks up the real function and calls it. The best choice for
-  this would be runTrigger.
-
 Implement trigger support in Config.INI.
   under [global], "on ready"
   under [space x], "on enter" (ESpace)

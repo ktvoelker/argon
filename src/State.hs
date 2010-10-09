@@ -53,7 +53,11 @@ data World = World
   , wMode    :: Mode
   , wKeyMode :: ModeRef
   , wFloats  :: Map SpaceRef Bool
+  , wTrigger :: Trigger -> X11State ()
   } deriving (Show)
+
+instance Show (Trigger -> X11State ()) where
+  showsPrec _ _ = ("<runTrigger>" ++)
 
 data Mode =
     MNormal
@@ -102,11 +106,7 @@ setFocusTile tr = do
     ctr = const tr
 
 runTrigger :: Trigger -> X11State ()
-runTrigger t = do
-  c <- getConfig
-  case lookup t $ cTriggers c of
-    Nothing  -> return ()
-    Just cmd -> return () -- TODO break the cycle -- runCommand cmd
+runTrigger t = getWorld >>= flip wTrigger t
 
 getFocusWindow :: X11State Window
 getFocusWindow = do
@@ -204,6 +204,7 @@ emptyWorld c = World
   , wMode    = MNormal
   , wKeyMode = cStartMode c
   , wFloats  = fmap (const True) $ cSpaces c
+  , wTrigger = const $ return ()
   }
   where
     spacesList = elems $ cSpaces c
