@@ -23,6 +23,23 @@ Implement trigger support in Config.INI.
   under [space x], "on enter x" (EFocus)
 
 
+0.2.0 Release
+-------------
+Finish high-priority features.
+Do some system testing. (Put it into real use.)
+Release on: Github
+Mention on: Bloggish
+Make a release on Github which statically links the GHC RTS.
+
+
+0.3.0 Release
+-------------
+Avoid new features.
+Write unit tests.
+Release on: Hackage, AUR, Github
+Mention on: Bloggish, Reddit, csh.noise
+
+
 Medium Priority
 ---------------
 Tabs on tiles showing what windows are present
