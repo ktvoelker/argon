@@ -1,0 +1,51 @@
+
+A New Config Parser
+===================
+
+
+Goals
+-----
+1. Produce as many error message as possible after one execution.
+2. Produce helpful error messages.
+3. Have a clean internal design.
+
+
+High-Level Design
+-----------------
+Parsing will occur in multiple phases. The phases will be structured in a
+tree: there will be a single instance of phase 0 which parses the entire file,
+which will potentially require many sub-parsers that operate in phase 1, and
+so on. (This is a bit of a simplification since each phase may consist of
+many different parsers which can be called upon from above, and any particular
+parser might actually be called upon at varying depths depending on other
+factors.)
+
+Each phase will have a two-part structure: first, the input will be broken
+into tokens. Second, the tokens will be parsed.
+
+A parser may also be parameterized by extra values which it does not parse,
+but which are already usable.
+
+The goal of this design is to allow the parser to discover as much of the
+intended structure of the file as possible by only doing low-level, detailed
+tokenization on small, structural subcomponents of the input.
+
+
+Phase 0
+-------
+Input: String (whole file)
+Tokens: [, ], newline, other_chars
+Returns: Config
+
+
+Phase 1: Section Name
+---------------------
+Input: String (section name)
+Tokens: word
+Returns: section body parser (parameterized with info from section name)
+
+
+Phase 1: Section Body
+---------------------
+Input: String (section body)
+Tokens: word, newline
