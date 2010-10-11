@@ -9,11 +9,18 @@ import Control.Monad
 import Control.Monad.Error
 import Control.Monad.Reader
 import Data.ConfigFile
+import Data.List hiding (lookup, null, filter)
+import Data.Maybe
 import Graphics.X11
 import System.Environment
 
 defaultFile :: FilePath
 defaultFile = ".argonrc"
+
+optOn, optReady, optEnter :: String
+optOn    = "on"
+optReady = "ready"
+optEnter = "enter"
 
 optStart, optStartKeys, optTable, optLayout, optRows, optCols, optParents
   , optTile, optName, optClass, optTransient, optFocus
@@ -68,6 +75,11 @@ mapFst f (a, c) = (f a, c)
 mapSnd :: (a -> b) -> (c, a) -> (c, b)
 mapSnd f (c, a) = (c, f a)
 
+mapFstM :: (Monad m) => (a -> m b) -> (a, c) -> m (b, c)
+mapFstM f (a, c) = do
+  b <- f a
+  return (b, c)
+
 mapSndM :: (Monad m) => (a -> m b) -> (c, a) -> m (c, b)
 mapSndM f (c, a) = do
   b <- f a
@@ -83,12 +95,15 @@ findSections kind sections = do
      then parseError ("Invalid " ++ kind ++ " name")
      else return $ map (mapFst head) found
 
+splitNames :: [String] -> [([String], String)]
+splitNames = map (\n -> (words n, n))
+
 config :: ConfigM Config
 config = do
   eInput <- configFile >>= liftIO . readfile emptyCP { optionxform = id }
   mapErrorT (>>= return . either (Left . show) Right) $ do
     input <- eInput
-    let sectionNames = map (\n -> (words n, n)) $ sections input
+    let sectionNames = splitNames $ sections input
     tableNames  <- findSections sectTable sectionNames
     layoutNames <- findSections sectLayout sectionNames
     spaceNames  <- findSections sectSpace sectionNames
@@ -106,12 +121,14 @@ config = do
     start <- get input sectGlobal optStart
     startKeys <- get input sectGlobal optStartKeys
     atts <- mapM (getAttract input . snd) attNames
+    (triggers, _) <- getTriggers globalTriggers input sectGlobal
     return emptyConfig
       { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces
       , cKeys       = mkKeyHeir $ fromList keys
       , cStartSpace = mkSpaceRef start
       , cStartMode  = mkModeRef startKeys
       , cAttracts   = fromList atts
+      , cTriggers   = fromList triggers
       }
 
 ni :: ConfigM' a
@@ -389,4 +406,43 @@ cmdShowFloat _   = parseError "`show_float' expects one argument"
 
 constCmd :: Command -> a -> ConfigM' Command
 constCmd cmd = const $ return cmd
+
+type Triggers a = Map (String, Bool) (Maybe String -> a)
+
+globalTriggers :: Triggers Trigger
+globalTriggers = fromList $
+  [ ((optReady, False), const TReady)
+  ]
+
+spaceTriggers :: Triggers (SpaceRef -> Trigger)
+spaceTriggers = fromList $
+  [ ((optEnter, False), const TSpace)
+  , ((optEnter, True),  \mt sr -> TFocus $ mkTileRef sr $ fromJust mt)
+  ]
+
+getTriggers
+  :: Triggers a
+  -> ConfigParser
+  -> SectionSpec
+  -> ConfigM' ([(a, Command)], [OptionSpec])
+getTriggers trigs cp sect = do
+  -- Get all the option names and pair each name with itself split into words.
+  opts <- options cp sect >>= return . splitNames
+  -- Transform the split version of each option name into a Maybe Trigger.
+  let opts1 = map (mapFst f) opts
+  -- Partition the options into those which are triggers and the rest.
+  let (opts2, non) = partition (isJust . fst) opts1
+  -- Keep only the original option names of the non-trigger options.
+  let non' = map snd non
+  -- Get rid of the Just around each of the Triggers.
+  let opts3 = map (mapFst fromJust) opts2
+  -- Parse the RHS of each trigger option as a command.
+  opts4 <- mapM (mapSndM getCommand) opts3
+  -- Return the results.
+  return (opts4, non')
+  where
+    f ["on", ev] = g (ev, False) Nothing
+    f ["on", ev, arg] = g (ev, True) $ Just arg
+    f _ = Nothing
+    g key arg = lookup key trigs >>= return . ($ arg)
 
