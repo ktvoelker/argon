@@ -17,10 +17,6 @@ Attraction
 
 High-Priority Features
 ----------------------
-Implement trigger support in Config.INI.
-  under [space x], "on enter" (ESpace)
-  under [space x], "on enter x" (EFocus)
-
 Implement statusbar support.
   This requires a timer system.
 

@@ -117,18 +117,20 @@ config = do
       mapM
         (\(n, s) -> getSpace input layoutMap n s >>= return . (n, ))
         spaceNames
+    let spaces' = map (\(n, (s, t)) -> ((n, s), t)) spaces
+    let (spaces'', spTriggers) = unzip spaces'
     keys <- mapM (mapSndM (getKeys input) . mapFst mkModeRef) modeNames
     start <- get input sectGlobal optStart
     startKeys <- get input sectGlobal optStartKeys
     atts <- mapM (getAttract input . snd) attNames
     (triggers, _) <- getTriggers globalTriggers input sectGlobal
     return emptyConfig
-      { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces
+      { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces''
       , cKeys       = mkKeyHeir $ fromList keys
       , cStartSpace = mkSpaceRef start
       , cStartMode  = mkModeRef startKeys
       , cAttracts   = fromList atts
-      , cTriggers   = fromList triggers
+      , cTriggers   = fromList (triggers ++ concat spTriggers)
       }
 
 ni :: ConfigM' a
@@ -191,7 +193,7 @@ getSpace
   -> Map String (Layout Pix String)
   -> String
   -> SectionSpec
-  -> ConfigM' Workspace
+  -> ConfigM' (Workspace, [(Trigger, Command)])
 getSpace cp layouts name sect = do
   layout <-
     get cp sect optLayout
@@ -200,11 +202,16 @@ getSpace cp layouts name sect = do
   start <-
     get cp sect optStart
     >>= return . ref
-  return Workspace
-    { spLayout = layout'
-    , spStatus = emptyStatusbar
-    , spStartTile = start
-    }
+  let sr = mkSpaceRef name
+  (triggers, _) <- getTriggers spaceTriggers cp sect
+  return
+    ( Workspace
+      { spLayout = layout'
+      , spStatus = emptyStatusbar
+      , spStartTile = start
+      }
+    , map (mapFst ($ sr)) triggers
+    )
   where
     ref = mkTileRef $ mkSpaceRef name
 
