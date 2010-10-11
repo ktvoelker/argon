@@ -22,6 +22,9 @@ Implement trigger support in Config.INI.
   under [space x], "on enter" (ESpace)
   under [space x], "on enter x" (EFocus)
 
+Implement statusbar support.
+  This requires a timer system.
+
 
 0.2.0 Release
 -------------
@@ -43,9 +46,6 @@ Mention on: Bloggish, Reddit, csh.noise
 Medium Priority
 ---------------
 Tabs on tiles showing what windows are present
-
-Implement statusbar support.
-  This requires a timer system.
 
 
 Low Priority Bugs
