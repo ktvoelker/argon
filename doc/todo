@@ -19,7 +19,46 @@ Triggers
 High-Priority Features
 ----------------------
 Implement statusbar support.
-  This requires a timer system.
+
+  1. Fix Config and World so that if two spaces use the same statusbar, they
+     will truly share it (so the updates don't happen twice). Ensure that
+     the World contains a mapping from StatusRef to Window.
+
+  2. Implement a generic timer system, which is just a module that defines a
+     type of priority queues that sort by time in ascending order, and
+     provide two access functions: insert and remove, where remove will remove
+     all items up to the current time.
+
+  3. Implement one specific timer queue in the World, just for statusbar
+     updates. The values in this queue will be StatusRefs.
+
+  4. Create all the statusbar windows during initialization and populate the
+     World with them before going into the event loop.
+
+  5. Add all statusbar tiles to the timer queue during initialization before
+     entering the event loop.
+
+  6. Add a phase to the event loop in which the statusbar timers are removed
+     and executed.
+
+  7. Implement statusbar timer execution:
+     a. Run the command
+     b. Calculate the position inside the statusbar window
+     c. Calculate the size of the tile inside the statusbar window
+     d. Clear the tile
+     e. Write the text into the tile
+
+  8. Add statusbar support to Config.INI:
+     [statusbar foo]
+     layout = whatever
+     ; a tile defined by the layout
+     a = something to execute
+     ; the resolution of a (in seconds)
+     res a = 15
+     ; another tile defined by the layout
+     b = something else to execute
+     [space bar]
+     statusbar = foo
 
 
 0.2.0 Release
