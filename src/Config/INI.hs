@@ -15,7 +15,7 @@ import Graphics.X11
 import System.Environment
 
 defaultFile :: FilePath
-defaultFile = ".argonrc"
+defaultFile = ".argon.ini"
 
 optOn, optReady, optEnter :: String
 optOn    = "on"

@@ -37,8 +37,8 @@ To specify a particular X display, set the `DISPLAY` variable in the
 environment in which you execute `argon`. The default display is `:0.0`.
 
 To specify a particular configuration file, pass its name as the first
-command-line argument to `argon`. The default configuration file is `.argonrc`
-in the directory given by the `HOME` environment variable.
+command-line argument to `argon`. The default configuration file is
+`.argon.ini` in the directory given by the `HOME` environment variable.
 
 The Configuration File
 ----------------------

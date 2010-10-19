@@ -18,6 +18,8 @@ Triggers
 
 High-Priority Features
 ----------------------
+Make an external, socket-based interface for executing Commands.
+
 Implement statusbar support.
 
   1. Fix Config and World so that if two spaces use the same statusbar, they
@@ -91,7 +93,7 @@ move/resize mode. This might be caused by debug mode or Xnest.
 
 Low Priority Features
 ---------------------
-Static checking of Config at startup for incorrect references.
+Check the Config at startup for incorrect references.
 
 Make CKill act on a TileQuery.
 
@@ -104,13 +106,9 @@ Improve the handling of errors in the configuration.
 When a button press event hits the root window, determine which tile it is
 within and focus that tile.
 
-Make an external, socket-based interface for executing Commands.
-
 Keep a per-tile history of most-recently-focused windows.
 
 Visually indicate the focus, perhaps by a colored border.
-
-Check for invalid space and tile refs in runCommand.
 
 Make the language of commands and tile queries more robust by using a proper
 grammar in Config.INI.
