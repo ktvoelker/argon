@@ -1,5 +1,5 @@
 
-module Debug (debug, dprint, dwprint) where
+module Debug (debug, debug', dprint, dprint', dwprint, dwprint') where
 
 import Types
 import X11
@@ -16,17 +16,23 @@ debugEnabled = True
 syncEnabled :: Bool
 syncEnabled = True
 
-debug :: (MonadIO m, MonadReader X11Env m) => String -> m ()
-debug xs = do
+debug, debug' :: (MonadIO m, MonadReader X11Env m) => String -> m ()
+
+debug = debug' . (++ "\n")
+
+debug' xs = do
   if syncEnabled
      then getDisplay >>= liftIO . flip sync False
      else return ()
   if debugEnabled
-     then liftIO $ putStrLn xs
+     then liftIO $ putStr xs
      else return ()
 
-dprint :: (MonadIO m, MonadReader X11Env m, Show a) => a -> m ()
+dprint, dprint' :: (MonadIO m, MonadReader X11Env m, Show a) => a -> m ()
+
 dprint = debug . show
+
+dprint' = debug' . show
 
 class Wrap u w | u -> w where
   wrap   :: u -> w
@@ -35,8 +41,11 @@ class Wrap u w | u -> w where
 wrapped :: (Wrap u w) => (w -> a) -> u -> a
 wrapped = (. wrap)
 
-dwprint :: (Wrap u w, Show w, MonadIO m, MonadReader X11Env m) => u -> m ()
+dwprint, dwprint' :: (Wrap u w, Show w, MonadIO m, MonadReader X11Env m) => u -> m ()
+
 dwprint = wrapped dprint
+
+dwprint' = wrapped dprint'
 
 newtype ShowKeySym = ShowKeySym KeySym
 
