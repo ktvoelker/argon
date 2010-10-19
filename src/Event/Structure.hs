@@ -9,8 +9,8 @@ import Event.Default
 import Event.Listen
 import Fields
 import Layout
-import Maths.Unsafe
 import State
+import Tile
 import Types
 import X11
 
@@ -28,14 +28,12 @@ mapRequestHandler e = do
   tr <- attract win
   debug "Destination tile:"
   dprint tr
-  -- Add the window to the tile queue.
-  modifyTileWindows (insert win) tr
+  -- Add the window to the tile.
+  addWin tr win
   -- Check if the tile is the floating tile.
   let isFloat = tileIsFloat tr
-  -- Position the window.
-  if isFloat
-     then float tr
-     else tile tr
+  -- Map the window.
+  getDisplay >>= liftIO . flip mapWindow win
   -- If the new window is floating on the focused space, focus it.
   if isFloat && sameSpace tr (getFocusTile wo)
      then setFocusTile tr
@@ -44,24 +42,6 @@ mapRequestHandler e = do
   refreshSpace tr
   where
     win = ev_window e
-    float _ = getDisplay >>= liftIO . flip mapWindow win
-    tile tr = do
-      c <- getConfig
-      let
-        lay = layout $ cSpace c tr
-        ti  = (laTiles lay) ! tr
-        ta  = laTable lay
-        (px, py) = realPos ta ti
-        (dw, dh) = realSpan ta ti
-      debug "Tiling layout (pos, span):"
-      dprint $ realPos ta ti
-      dprint $ realSpan ta ti
-      d <- getDisplay
-      liftIO $ do
-        moveResizeWindow d win (fi px) (fi py) (fi dw) (fi dh)
-        mapWindow d win
-    fi :: (Num a) => Qty u t x -> a
-    fi = fromIntegral . unwrap
 
 destroyWindowHandler e = do
   debug "Window destroyed:"

@@ -63,6 +63,9 @@ runCommand' cmd = do
                $ sequence
                $ repeat (removeWin tr)
       }
+      debug "Move windows (from, to, and windows):"
+      dprint from'
+      dprint to'
       -- Reverse the window list before adding them to the destination.
       -- This is good in a few likely cases:
       -- 1. If moving all the windows from one tile, the windows will end up

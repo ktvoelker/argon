@@ -91,6 +91,10 @@ move/resize mode. This might be caused by debug mode or Xnest.
 
 Low Priority Features
 ---------------------
+Static checking of Config at startup for incorrect references.
+
+Make CKill act on a TileQuery.
+
 Add support for setting cIgnoreMask from INI config files.
 
 Floating support in focusDir
@@ -159,8 +163,9 @@ Move Collection stuff into a separate module re-exported by Types.
 
 Produce more detailed, informative error messages in Config.INI.
 
-Make a single module which abstracts over all X11 calls. The interface
-presented should use the types from Maths.
+Make a single module which abstracts over all X11 calls.
+  The interface presented should use the types from Maths.
+  The interface should never require a Display argument.
 
 
 Low Priority Bugs and Mysteries

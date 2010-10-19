@@ -353,6 +353,7 @@ staticQueries :: Map String TileQuery
 staticQueries = fromList $
   [ (".",         QCurrent)
   , ("./.",       QCurrent)
+  , ("float",     QRelative Nothing)
   , ("hist-back", QHistBack)
   , ("hist-fwd",  QHistFwd)
   , ("dir-up",    QDir DUp)
