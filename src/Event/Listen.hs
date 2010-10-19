@@ -39,7 +39,8 @@ grabKeyMap =
     $ \d m c w -> grabKey d m c w False grabModeAsync grabModeAsync
 
 ungrabKeyMap :: KeyMap -> X11 ()
-ungrabKeyMap = grabUngrabKeyMap ungrabKey
+ungrabKeyMap =
+  grabUngrabKeyMap ungrabKey
 
 grabUngrabKeyMap
   :: (Display -> KeyCode -> KeyMask -> Window -> IO ())
@@ -48,9 +49,15 @@ grabUngrabKeyMap
 grabUngrabKeyMap f km = do
   disp <- getDisplay
   root <- getRoot
-  liftIO $ mapM_ (uncurry $ g disp root) $ keys km
+  mapM_ (uncurry $ g disp root) $ keys km
   where
     g disp root mod sym = do
-      code <- keysymToKeycode disp sym
-      f disp code mod root
+      code <- liftIO $ keysymToKeycode disp sym
+      debug' "(un)grab:"
+      dprint' mod
+      debug' " "
+      dprint' code
+      debug' " "
+      dprint sym
+      liftIO $ f disp code mod root
 

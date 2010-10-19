@@ -49,7 +49,7 @@ safely ptr = ((lift . lift . lift) (getEvent ptr) >>=)
 
 handlers :: Map Graphics.X11.EventType (Event -> X11State ())
 handlers = fromList
-  [ (keyRelease,    keyReleaseHandler)
+  [ (keyPress,      keyPressHandler)
   , (buttonPress,   buttonPressHandler)
   , (mapRequest,    mapRequestHandler)
   , (destroyNotify, destroyWindowHandler)

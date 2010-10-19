@@ -19,12 +19,12 @@ eventMask :: Event -> X11State KeyMask
 eventMask e =
   getConfig >>= return . (ev_state e .&.) . complement . cIgnoreMask
 
-keyReleaseHandler, buttonPressHandler :: EventHandler
+keyPressHandler, buttonPressHandler :: EventHandler
 
-keyReleaseHandler e = do
+keyPressHandler e = do
   mask <- eventMask e
   sym  <- getDisplay >>= liftIO . \d -> keycodeToKeysym d (ev_keycode e) 0
-  debug "keyReleaseHandler"
+  debug "keyPressHandler"
   if sym /= 0
      then do
        dprint mask
