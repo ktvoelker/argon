@@ -389,7 +389,7 @@ parseLeafQuery xs
       tile' = if tile == "^" then Nothing else Just tile
 
 parseSpaceOrTileRef :: String -> Either String (String, String)
-parseSpaceOrTileRef xs = if slash then Right (left, right) else Left left
+parseSpaceOrTileRef xs = if slash then Right (left, tail right) else Left left
   where
     (left, right) = break (== '/') xs
     slash = not $ null right
