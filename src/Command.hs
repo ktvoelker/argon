@@ -3,6 +3,7 @@ module Command (runCommand) where
 
 import Debug
 import Declare
+import Event.Listen
 import Exec
 import Fields
 import Focus
@@ -38,7 +39,15 @@ runCommand' cmd = do
       w <- getFocusWindow
       liftIO $ killClient d w
       return ()
-    CKeyMode mr     -> modifyWorld $ $(upd 'wKeyMode) $ const mr
+    CKeyMode mr     -> do
+      c <- getConfig
+      w <- getWorld
+      let kms = cKeys c
+      -- Ungrab the old keymap.
+      lift $ lift $ ungrabKeyMap $ heirLookup (wKeyMode w) kms
+      -- Grab the new keymap.
+      putWorld w { wKeyMode = mr }
+      lift $ lift $ grabKeyMap $ heirLookup mr kms
     CShowFloat yes  -> do
       tr <- getFocusTileM
       setShowFloat tr yes

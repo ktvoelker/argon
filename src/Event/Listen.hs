@@ -36,7 +36,7 @@ addRootEvents = do
 grabKeyMap :: KeyMap -> X11 ()
 grabKeyMap =
   grabUngrabKeyMap
-    $ \d m c w -> grabKey d m c w False grabModeAsync grabModeAsync
+    (\d m c w -> grabKey d m c w False grabModeAsync grabModeAsync)
 
 ungrabKeyMap :: KeyMap -> X11 ()
 ungrabKeyMap =

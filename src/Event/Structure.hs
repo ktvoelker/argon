@@ -17,7 +17,7 @@ import X11
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
-mapRequestHandler, destroyWindowHandler :: EventHandler
+mapRequestHandler, destroyWindowHandler, mappingNotifyHandler :: EventHandler
 
 mapRequestHandler e = do
   debug "Map request!"
@@ -57,4 +57,13 @@ destroyWindowHandler e = do
   refreshFocusSpace
   where
     win = ev_window e
+
+mappingNotifyHandler e = do
+  debug "Keyboard remapped!"
+  c <- getConfig
+  w <- getWorld
+  let km = heirLookup (wKeyMode w) $ cKeys c
+  lift $ lift $ do
+    ungrabKeyMap km
+    grabKeyMap km
 

@@ -53,6 +53,7 @@ handlers = fromList
   , (buttonPress,   buttonPressHandler)
   , (mapRequest,    mapRequestHandler)
   , (destroyNotify, destroyWindowHandler)
+  , (mappingNotify, mappingNotifyHandler)
   , (buttonRelease, buttonReleaseHandler)
   , (motionNotify,  motionNotifyHandler)
   ]

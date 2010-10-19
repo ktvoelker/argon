@@ -5,6 +5,8 @@ TODO
 
 High-Priority Bugs
 ------------------
+On the coding layout, when attempting to move vertically from either of the
+rightmost tiles, the focus moves to the correct row but to the leftmost column.
 
 
 High-Priority Testing
@@ -112,6 +114,8 @@ Visually indicate the focus, perhaps by a colored border.
 
 Make the language of commands and tile queries more robust by using a proper
 grammar in Config.INI.
+
+Consistently use hyphens as word separators in Config.INI, not underscores.
 
 
 Low Priority Refactoring
