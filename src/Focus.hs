@@ -104,8 +104,13 @@ sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
     shareBegin = max ap bp
     shareEnd   = min (ap +. as) (bp +. bs)
 
-followDir :: Config -> Dir -> TileRef -> Maybe TileRef
+followDir, followDirFromTile, followDirFromFloat
+  :: Config -> Dir -> TileRef -> Maybe TileRef
+
 followDir c dir tr =
+  (if tileIsFloat tr then followDirFromTile else followDirFromFloat) c dir tr
+
+followDirFromTile c dir tr =
   -- Choose the bordering tile with the most shared edge, if any.
   fmap snd
   $ listToMaybe
@@ -124,30 +129,6 @@ followDir c dir tr =
     lay   = spLayout space
     from  = laTiles lay ! tr
 
-focusDir :: Dir -> X11State ()
-focusDir dir = do
-  debug "Focus dir:"
-  dprint dir
-  c  <- lift $ lift getConfig
-  wo <- getWorld
-  let tr = getFocusTile wo
-  debug "From tile:"
-  dprint tr
-  dprint $ tileIsFloat tr
-  if tileIsFloat tr
-     -- A floating window is focused.
-     -- TODO
-     then return ()
-     -- A tile is focused.
-     else case followDir c dir tr of
-       -- Nowhere to move.
-       Nothing  -> return ()
-       -- Somewhere to move.
-       Just tr' -> do
-         debug "Move focus to tile:"
-         dprint tr'
-         -- Record the newly-focused tile.
-         setFocusTile tr'
-         -- Tell X to focus the window atop that tile.
-         updateX11Focus
+-- TODO
+followDirFromFloat c dir tr = Nothing
 
