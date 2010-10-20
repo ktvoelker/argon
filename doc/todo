@@ -37,8 +37,8 @@ Make an external, socket-based interface for executing Commands.
     connections. Both share a common channel back to the main thread, which
     uses that channel to listen for both kinds of communication simultaneously.
 
-    The X event passed through the channel should be the low-level,
-    pointer-based representation.
+    The X event passed through the channel should be in the high-level
+    representation.
 
     Determine if it is safe to listen for another X event in the second thread
     while the main thread is calling other Xlib functions.
@@ -51,8 +51,27 @@ Make an external, socket-based interface for executing Commands.
     main thread to deal with, because the main thread wouldn't be able to
     respond to X events while reading from the handle. Instead, spawn a new
     thread for each incoming connection. That new thread will read all the
-    input and ensure that the connection has been closed before passing the
-    input back to the main thread for parsing and execution.
+    input, ensure that the connection has been closed, and parse the input.
+
+      If there are any parse errors, the auxiliary thread can respond with
+      an error message without consulting the main thread.
+
+      Otherwise, pass the Command to the main thread for execution. If
+      multiple Commands were given, combine them with Seq.
+
+      The message sent to the main thread will also include a handle to the
+      auxiliary thread so that response text can be sent back.
+
+        Change the type of runCommand to (Command -> X11State Response).
+
+        data Response =
+          Response { rTo :: Command, rText :: String, rOK :: Bool }
+
+        Turn the Response into text in the auxiliary thread.
+
+      This model prevents a user of the client from executing a command that
+      produces a response and then using that response to affect the execution
+      of later commands on the same connection. That is okay.
 
   The client:
 
