@@ -1,5 +1,5 @@
 
-module Focus where
+module Dir where
 
 import Declare
 import Declare.Access
@@ -94,7 +94,7 @@ lookDir = fromList
 -- Assuming the given tiles share an edge perpendicular to the given gaze,
 -- what is the length of their shared edge?
 sharedEdge :: LookDir -> Table p -> Tile Cel -> Tile Cel -> Span p Y
-sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
+sharedEdge ld t a b = abs' $ max shareLen $ diff 0
   where
     -- ap, bp :: Posn p Y
     -- as, bs :: Span p Y
@@ -103,12 +103,13 @@ sharedEdge ld t a b = abs' $ shareEnd -. shareBegin
     -- shareBegin, shareEnd :: Posn p Y
     shareBegin = max ap bp
     shareEnd   = min (ap +. as) (bp +. bs)
+    shareLen   = shareEnd -. shareBegin
 
 followDir, followDirFromTile, followDirFromFloat
   :: Config -> Dir -> TileRef -> Maybe TileRef
 
 followDir c dir tr =
-  (if tileIsFloat tr then followDirFromTile else followDirFromFloat) c dir tr
+  (if tileIsFloat tr then followDirFromFloat else followDirFromTile) c dir tr
 
 followDirFromTile c dir tr =
   -- Choose the bordering tile with the most shared edge, if any.

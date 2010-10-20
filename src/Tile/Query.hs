@@ -2,7 +2,7 @@
 module Tile.Query (evalTileQuery) where
 
 import Declare
-import Focus
+import Dir
 import History
 import State
 import Types

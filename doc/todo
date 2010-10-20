@@ -5,8 +5,6 @@ TODO
 
 High-Priority Bugs
 ------------------
-On the coding layout, when attempting to move vertically from either of the
-rightmost tiles, the focus moves to the correct row but to the leftmost column.
 
 
 High-Priority Testing

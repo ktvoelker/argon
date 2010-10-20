@@ -2,7 +2,7 @@
 module Tile (nextWin, prevWin, removeWin, addWin) where
 
 import Debug
-import Focus
+import Dir
 import Layout
 import State
 import Types

@@ -3,10 +3,10 @@ module Command (runCommand) where
 
 import Debug
 import Declare
+import Dir
 import Event.Listen
 import Exec
 import Fields
-import Focus
 import History
 import State
 import Tile
