@@ -231,6 +231,9 @@ Make a single module which abstracts over all X11 calls.
   The interface presented should use the types from Maths.
   The interface should never require a Display argument.
 
+Write up some conventions for the use of spacing, line breaks, delimeters,
+curly-brace syntax, and making things line up vertically.
+
 
 Low Priority Bugs and Mysteries
 -------------------------------
