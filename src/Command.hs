@@ -36,9 +36,8 @@ runCommand' cmd = do
     CPrevWin        -> getFocusTileM >>= prevWin
     CKill           -> do
       d <- getDisplay
-      w <- getFocusWindow
-      liftIO $ killClient d w
-      return ()
+      w <- getNonRootFocusWindow
+      whenJust w $ ignore . liftIO . killClient d
     CKeyMode mr     -> do
       c <- getConfig
       w <- getWorld

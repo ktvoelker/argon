@@ -111,9 +111,12 @@ runTrigger t = getWorld >>= flip wTrigger t
 getFocusWindow :: X11State Window
 getFocusWindow = do
   d <- lift $ lift $ getDisplay
+  getNonRootFocusWindow >>= return . fromMaybe (defaultRootWindow d)
+
+getNonRootFocusWindow :: X11State (Maybe Window)
+getNonRootFocusWindow = do
   w <- getWorld
   return
-    $ fromMaybe (defaultRootWindow d)
     $ first
     $ getTileWindows w
     $ getFocusTile w

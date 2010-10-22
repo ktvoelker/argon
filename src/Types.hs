@@ -54,6 +54,12 @@ impossible = error "Impossible!"
 tileIsFloat :: TileRef -> Bool
 tileIsFloat = not . isJust . Ref.trTile
 
+whenJust :: (Monad m) => Maybe a -> (a -> m ()) -> m ()
+whenJust m f = maybe (return ()) f m
+
+ignore :: (Monad m) => m a -> m ()
+ignore = (>> return ())
+
 class Collection a where
   type Entry a
   type Key a

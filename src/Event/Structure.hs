@@ -14,6 +14,7 @@ import Tile
 import Types
 import X11
 
+import Data.List (isSuffixOf)
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
@@ -50,11 +51,17 @@ destroyWindowHandler e = do
   wo <- getWorld
   case wMode wo of
     m@MMouse {} | mWin m == win -> mAbort m
-    _                        -> return ()
-  -- Remove the window from its tile
-  modifyAllTileWindows $ const $ filter (/= win)
-  -- Refresh the display
-  refreshFocusSpace
+    _ -> return ()
+  -- Is this a window we have been managing?
+  --   It seems that when we kill a client, we get destroy events for
+  --   child windows that we weren't aware of, which causes us to call
+  --   refresh, which causes us to manipulate the main window of the
+  --   client, even though it has already been destroyed, too.
+  whenJust (findWindow wo win) $ const $ do
+    -- Remove the window from its tile
+    modifyAllTileWindows $ const $ filter (/= win)
+    -- Refresh the display
+    refreshFocusSpace
   where
     win = ev_window e
 

@@ -53,11 +53,13 @@ grabUngrabKeyMap f km = do
   where
     g disp root mod sym = do
       code <- liftIO $ keysymToKeycode disp sym
+      {-
       debug' "(un)grab:"
       dprint' mod
       debug' " "
       dprint' code
       debug' " "
       dprint sym
+      -}
       liftIO $ f disp code mod root
 
