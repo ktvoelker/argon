@@ -344,17 +344,14 @@ cmdMove = f FirstTile TopWindow
       where
         (left, right) = break (== "->") xs
         arrow = not $ null right
-        from = if arrow then parseQuery left else return QCurrent
+        from = if arrow then parseQuery left else return $ QRef QRCurSpace QRCurTile
         to = parseQuery $ if arrow then tail right else left
 
 cmdFocus = parseQuery >=> return . CFocus
 
 staticQueries :: Map String TileQuery
 staticQueries = fromList $
-  [ (".",         QCurrent)
-  , ("./.",       QCurrent)
-  , ("float",     QRelative Nothing)
-  , ("hist-back", QHistBack)
+  [ ("hist-back", QHistBack)
   , ("hist-fwd",  QHistFwd)
   , ("dir-up",    QDir DUp)
   , ("dir-down",  QDir DDown)
@@ -362,31 +359,50 @@ staticQueries = fromList $
   , ("dir-right", QDir DRight)
   ]
 
-parseQuery :: [String] -> ConfigM' TileQuery
-parseQuery [] = return QCurrent
-parseQuery [xs] = return $ parseLeafQuery xs
-parseQuery ("emptiest:" : xs) = parseQuery xs >>= return . QEmptiest
-parseQuery xs = return $ QDisjunct $ map parseLeafQuery xs
+staticSpaces :: Map String QuerySpaceRef
+staticSpaces = fromList $
+  [ (".", QRCurSpace)
+  , ("*", QRAllSpaces)
+  ]
 
-parseLeafQuery :: String -> TileQuery
+staticTiles :: Map String QueryTileRef
+staticTiles = fromList $
+  [ (".", QRCurTile)
+  , ("*", QRAllTiles)
+  , ("+", QRAllNonFloatTiles)
+  , ("^", QROneTile Nothing)
+  ]
+
+parseQuery, parseQuery' :: [String] -> ConfigM' TileQuery
+
+parseQuery xs = case break (== "-") xs of
+  (_, [])  -> parseQuery' xs
+  (as, bs) -> do
+    as' <- parseQuery as
+    bs' <- parseQuery $ drop 1 bs
+    return $ QDifference as' bs'
+
+parseQuery' [] = parseError "Expected a tile query"
+parseQuery' [xs] = parseLeafQuery xs
+parseQuery' ("emptiest:" : xs) = parseQuery' xs >>= return . QEmptiest
+parseQuery' xs = mapM parseLeafQuery xs >>= return . QDisjunct
+
+parseLeafQuery :: String -> ConfigM' TileQuery
 parseLeafQuery xs
-  | Just q <- lookup xs staticQueries = q
+  | Just r <- lookup xs staticTiles = return $ QRef QRCurSpace r
+  | Just q <- lookup xs staticQueries = return $ q
   | otherwise =
-    if space == "." && tile == "."
-       then QCurrent
-       else
-         if space == "."
-            then QRelative tile'
-            else
-              if tile == "."
-                 then QSpace spaceRef
-                 else QAbsolute $ mkTileFloatRef spaceRef tile'
+    case (spaceRef, tileRef) of
+      (Nothing, Nothing) -> parseError "Invalid space and tile references"
+      (Nothing, _)       -> parseError "Invalid space reference"
+      (_,       Nothing) -> parseError "Invalid tile reference"
+      (Just tr, Just sr) -> return $ QRef tr sr
     where
       (space, tile) = case parseSpaceOrTileRef xs of
         Left xs   -> (".", xs)
         Right tup -> tup
-      spaceRef = mkSpaceRef space
-      tile' = if tile == "^" then Nothing else Just tile
+      spaceRef = lookup space staticSpaces
+      tileRef  = lookup tile  staticTiles
 
 parseSpaceOrTileRef :: String -> Either String (String, String)
 parseSpaceOrTileRef xs = if slash then Right (left, tail right) else Left left

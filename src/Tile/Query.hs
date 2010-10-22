@@ -7,7 +7,7 @@ import History
 import State
 import Types
 
-import Data.List hiding (lookup)
+import Data.List hiding (filter, lookup)
 import Data.Maybe
 
 type TileQueryResult = [(TileRef, Maybe (History TileRef))]
@@ -21,21 +21,42 @@ nonHist = nonHists . (: [])
 nonHists :: [TileRef] -> TileQueryResult
 nonHists = map (, Nothing)
 
-eval :: TileQuery -> Config -> World -> TileQueryResult
-eval (QAbsolute tr) _ _ = nonHist tr
-eval (QRelative xs) _ wo =
-  case lookup tr $ wTiles wo of
-    Nothing -> []
-    Just _  -> nonHist tr
+evalSR :: Config -> World -> QuerySpaceRef -> [SpaceRef]
+evalSR c _ QRAllSpaces     = keys $ cSpaces c
+evalSR _ w QRCurSpace      = [getSpaceRef $ wFocus w]
+evalSR c _ (QROneSpace sr) = filter (== sr) $ keys $ cSpaces c
+
+evalTR :: Config -> World -> SpaceRef -> QueryTileRef -> [TileRef]
+evalTR c w sr QRAllTiles = mkFloatRef sr : evalTR c w sr QRAllNonFloatTiles
+evalTR c _ sr QRAllNonFloatTiles =
+  concatMap (keys . laTiles . spLayout)
+  $ maybeToList
+  $ lookup sr
+  $ cSpaces c
+evalTR _ w sr QRCurTile =
+  maybeToList
+  $ lookup sr
+  $ wFocuses w
+evalTR _ w sr (QROneTile n) = case lookup tr $ wTiles w of
+  Nothing -> []
+  Just _  -> [tr]
   where
-    tr = mkTileFloatRef (getSpaceRef $ getFocusTile wo) xs
-eval (QSpace sr) _ wo = nonHist $ getLocalFocus wo sr
-eval QCurrent _ wo = nonHist $ getFocusTile wo
+    tr = mkTileFloatRef sr n
+
+eval :: TileQuery -> Config -> World -> TileQueryResult
+eval (QRef sr tr) c wo = nonHists $ do
+  sr' <- evalSR c wo sr
+  evalTR c wo sr' tr
 eval QHistBack _ wo = evalHist histBack wo
 eval QHistFwd _ wo = evalHist histFwd wo
 eval (QDir dir) c wo =
   nonHists $ maybeToList $ followDir c dir $ getFocusTile wo
 eval (QDisjunct tqs) c wo = tqs >>= \tq -> eval tq c wo
+eval (QDifference as bs) c wo =
+  deleteFirstsBy (\a b -> fst a == fst b) as' bs'
+  where
+    as' = eval as c wo
+    bs' = eval bs c wo
 eval (QEmptiest tq) c wo =
   -- TODO is the built-in sortBy stable?
   map snd

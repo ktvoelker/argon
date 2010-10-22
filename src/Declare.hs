@@ -55,19 +55,21 @@ data Config = Config
 
 data Dir = DUp | DDown | DLeft | DRight deriving (Enum, Eq, Ord, Show)
 
+data QuerySpaceRef =
+  QRAllSpaces | QRCurSpace | QROneSpace SpaceRef
+  deriving (Eq, Ord, Show)
+
+data QueryTileRef =
+  QRAllTiles | QRAllNonFloatTiles | QRCurTile | QROneTile (Maybe String)
+  deriving (Eq, Ord, Show)
+
 data TileQuery =
-  -- A tile.
-    QAbsolute TileRef
-  -- A tile on the focused space, by name.
-  | QRelative (Maybe String)
-  -- The most-recently-focused tile of a space.
-  | QSpace    SpaceRef
-  -- The focused tile.
-  | QCurrent
+  QRef QuerySpaceRef QueryTileRef
   | QHistBack
   | QHistFwd
   | QDir      Dir
   | QDisjunct [TileQuery]
+  | QDifference TileQuery TileQuery
   | QEmptiest TileQuery
   deriving (Eq, Ord, Show)
 
