@@ -16,6 +16,7 @@ import X11
 
 import Control.Monad
 import Data.Maybe
+import Data.Set (delete)
 import Graphics.X11.Xlib.Extras
 
 runCommand, runCommand' :: Command -> X11State ()
@@ -38,15 +39,8 @@ runCommand' cmd = do
       d <- getDisplay
       w <- getNonRootFocusWindow
       whenJust w $ ignore . liftIO . killClient d
-    CKeyMode mr     -> do
-      c <- getConfig
-      w <- getWorld
-      let kms = cKeys c
-      -- Ungrab the old keymap.
-      lift $ lift $ ungrabKeyMap $ heirLookup (wKeyMode w) kms
-      -- Grab the new keymap.
-      putWorld w { wKeyMode = mr }
-      lift $ lift $ grabKeyMap $ heirLookup mr kms
+    CEnableKeys  -> runKeyModeCommand insert
+    CDisableKeys -> runKeyModeCommand delete
     CHideFloat   -> setShowFloat False
     CShowFloat   -> setShowFloat True
     CMove from to breadth depth -> do
@@ -93,4 +87,18 @@ runCommand' cmd = do
           modifyWorld $ $(upd 'wHistory) $ maybe (histGo tr) const h
           setFocusTile tr
           refreshFocusSpace
+
+runKeyModeCommand :: (Set ModeRef -> Set ModeRef) -> X11State ()
+runKeyModeCommand f = do
+  c <- getConfig
+  w <- getWorld
+  let mode0 = wKeyMode w
+  let mode1 = f mode0
+  let keys0 = cAllKeys c $ mode0
+  let keys1 = cAllKeys c $ mode1
+  -- Ungrab the old keymap.
+  lift $ lift $ ungrabKeyMap keys0
+  -- Grab the new keymap.
+  putWorld w { wKeyMode = mode1 }
+  lift $ lift $ grabKeyMap keys1
 

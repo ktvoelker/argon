@@ -51,7 +51,7 @@ data World = World
   , wStatus  :: Map StatusRef String
   , wHistory :: History TileRef
   , wMode    :: Mode
-  , wKeyMode :: ModeRef
+  , wKeyMode :: Set ModeRef
   , wFloats  :: Map SpaceRef Bool
   , wTrigger :: Trigger -> X11State ()
   } deriving (Show)

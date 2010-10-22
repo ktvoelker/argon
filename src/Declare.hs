@@ -18,6 +18,7 @@ import Control.Monad.Error
 import Control.Monad.Reader
 
 import qualified Data.Map as Map
+import qualified Data.Set as Set
 
 class HasLayout a t r | a -> t r, t -> a r, r -> a t where
   layout :: a -> Layout t r
@@ -36,18 +37,12 @@ data Trigger =
 
 type KeyMap = Map (KeyMask, KeySym) Command
 
-mkKeyHeir :: Map ModeRef ([ModeRef], KeyMap) -> Heir ModeRef KeyMap KeyMap
-mkKeyHeir h = mkHeir h empty $ unionWith $ \a b -> CSeq [a, b]
-
-cStartKeys :: Config -> KeyMap
-cStartKeys c = heirLookup (cStartMode c) (cKeys c)
-
 data Config = Config
   { cSpaces     :: Map SpaceRef Workspace
   , cStartSpace :: SpaceRef
   , cFloatMask  :: KeyMask
-  , cKeys       :: Heir ModeRef KeyMap KeyMap
-  , cStartMode  :: ModeRef
+  , cKeys       :: Map ModeRef KeyMap
+  , cStartMode  :: Set ModeRef
   , cIgnoreMask :: KeyMask
   , cTriggers   :: Map Trigger Command
   , cAttracts   :: [(Attract, TileQuery)]
@@ -78,11 +73,12 @@ data Breadth = FirstTile | AllTiles deriving (Enum, Eq, Ord, Show)
 data Depth = TopWindow | AllWindows deriving (Enum, Eq, Ord, Show)
 
 data Command =
-    CMove       TileQuery TileQuery Breadth Depth
-  | CFocus      TileQuery
-  | CExec       Exec
-  | CSeq        [Command]
-  | CKeyMode    ModeRef
+    CMove        TileQuery TileQuery Breadth Depth
+  | CFocus       TileQuery
+  | CExec        Exec
+  | CSeq         [Command]
+  | CEnableKeys  ModeRef
+  | CDisableKeys ModeRef
   | CHideFloat
   | CShowFloat
   | CQuit
@@ -105,8 +101,8 @@ emptyConfig = Config
   { cSpaces     = Map.empty
   , cStartSpace = error "No start space"
   , cFloatMask  = mod1Mask
-  , cKeys       = mkKeyHeir Map.empty
-  , cStartMode  = error "No start mode"
+  , cKeys       = Map.empty
+  , cStartMode  = Set.empty
   , cTriggers   = Map.empty
   , cIgnoreMask = lockMask .|. mod2Mask .|. mod3Mask .|. mod5Mask
   , cAttracts   = []

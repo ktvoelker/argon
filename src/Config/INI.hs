@@ -22,7 +22,7 @@ optOn    = "on"
 optReady = "ready"
 optEnter = "enter"
 
-optStart, optStartKeys, optTable, optLayout, optRows, optCols, optParents
+optStart, optStartKeys, optTable, optLayout, optRows, optCols
   , optTile, optName, optClass, optTransient, optFocus
   :: OptionSpec
 optStart     = "start"
@@ -31,7 +31,6 @@ optTable     = "table"
 optLayout    = "layout"
 optRows      = "rows"
 optCols      = "cols"
-optParents   = "parents"
 optTile      = "tile"
 optName      = "name"
 optClass     = "class"
@@ -128,7 +127,7 @@ config = do
       { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces''
       , cKeys       = mkKeyHeir $ fromList keys
       , cStartSpace = mkSpaceRef start
-      , cStartMode  = mkModeRef startKeys
+      , cStartMode  = fromList $ map mkModeRef $ words startKeys
       , cAttracts   = fromList atts
       , cTriggers   = fromList (triggers ++ concat spTriggers)
       }
@@ -225,15 +224,11 @@ getTile cp sect opt = do
       }
     _                -> parseError "Expected four integers"
 
-getKeys :: ConfigParser -> SectionSpec -> ConfigM' ([ModeRef], KeyMap)
-getKeys cp sect = do
-  parents <-
-    if has_option cp sect optParents
-       then get cp sect optParents >>= return . words
-       else return []
-  let parentRefs = map mkModeRef parents
-  keys <- options cp sect >>= mapM (getKey cp sect) . filter (/= optParents)
-  return (parentRefs, fromList keys)
+getKeys :: ConfigParser -> SectionSpec -> ConfigM' KeyMap
+getKeys cp sect =
+  options cp sect
+  >>= mapM (getKey cp sect) . filter (/= optParents)
+  >>= return . fromList
 
 getKey
   :: ConfigParser

@@ -1,14 +1,12 @@
 
 module Declare.Common
   ( module Declare.Common
-  , module Heir
   , module Types
   , module Control.Monad.Reader
   , module Data.Bits
   , module Graphics.X11.Types
   ) where
 
-import Heir
 import qualified Ref
 import Types
 
