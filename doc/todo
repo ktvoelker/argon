@@ -13,6 +13,9 @@ CMove
 CShowFloat
 Attraction
 Triggers
+Programs with multiple top-level windows
+  Killing one of these programs may trigger the bug which was fixed for
+  programs with one top-level window. See notes in destroyWindowHandler.
 
 
 High-Priority Features
