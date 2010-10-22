@@ -399,9 +399,10 @@ cmdExec _             = parseError "`exec' expects at least one argument"
 
 cmdSeq = f >=> return . CSeq
   where
+    f []   = return []
     f args = do
       x'  <- getCommand' x
-      xs' <- f xs
+      xs' <- f $ drop 1 xs  -- do not use ``tail'': xs may be empty
       return (x' : xs')
       where
         (x, xs) = break (== ";") args
