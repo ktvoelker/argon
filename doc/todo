@@ -135,6 +135,8 @@ Do some system testing. (Put it into real use.)
 Release on: Github
 Mention on: Bloggish
 Make a release on Github which statically links the GHC RTS.
+Also include a binary with debug and sync enabled.
+  Request a debug log with each error report.
 
 
 0.3.0 Release
