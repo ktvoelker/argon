@@ -97,7 +97,7 @@ setFocusTile :: TileRef -> X11State ()
 setFocusTile tr = do
   old <- getFocusTileM
   when (old /= tr) $ do
-    when (tileIsFloat tr) $ setShowFloat tr True
+    when (tileIsFloat tr) $ setShowFloat True
     modifyWorld $ $(upd 'wFocus) ctr
     modifyLocalFocus ctr tr
     when (not $ sameSpace old tr) $ runTrigger $ TSpace $ getSpaceRef tr
@@ -130,9 +130,16 @@ updateX11Focus = do
   dprint $ defaultRootWindow disp
   liftIO $ setInputFocus disp win revertToPointerRoot 0
 
-setShowFloat :: (RefSpace a) => a -> Bool -> X11State ()
-setShowFloat sr yes = do
-  modifyWorld $ $(upd 'wFloats) $ insert (getSpaceRef sr, yes)
+toggleShowFloat :: X11State ()
+toggleShowFloat = do
+  sr <- getFocusTileM
+  modifyWorld $ $(upd 'wFloats) $ adjust not $ getSpaceRef sr
+  refreshFocusSpace
+
+setShowFloat :: Bool -> X11State ()
+setShowFloat v = do
+  sr <- getFocusTileM
+  modifyWorld $ $(upd 'wFloats) $ insert (getSpaceRef sr, v)
   refreshFocusSpace
 
 findWindow :: World -> Window -> Maybe TileRef
