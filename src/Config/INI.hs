@@ -316,16 +316,17 @@ getCommand' xs = case xs of
 
 commands :: Map String ([String] -> ConfigM' Command)
 commands = fromList
-  [ ("move",         cmdMove)
-  , ("focus",        cmdFocus)
-  , ("exec",         cmdExec)
-  , ("seq",          cmdSeq)
-  , ("key_mode",     cmdKeyMode)
-  , ("toggle_float", constCmd CToggleFloat)
-  , ("quit",         constCmd CQuit)
-  , ("kill",         constCmd CKill)
-  , ("next_win",     constCmd CNextWin)
-  , ("prev_win",     constCmd CPrevWin)
+  [ ("move",       cmdMove)
+  , ("focus",      cmdFocus)
+  , ("exec",       cmdExec)
+  , ("seq",        cmdSeq)
+  , ("key_mode",   cmdKeyMode)
+  , ("show_float", constCmd CShowFloat)
+  , ("hide_float", constCmd CHideFloat)
+  , ("quit",       constCmd CQuit)
+  , ("kill",       constCmd CKill)
+  , ("next_win",   constCmd CNextWin)
+  , ("prev_win",   constCmd CPrevWin)
   ]
 
 cmdMove, cmdFocus, cmdExec, cmdSeq, cmdKeyMode
@@ -391,18 +392,13 @@ parseLeafQuery :: String -> ConfigM' TileQuery
 parseLeafQuery xs
   | Just r <- lookup xs staticTiles = return $ QRef QRCurSpace r
   | Just q <- lookup xs staticQueries = return $ q
-  | otherwise =
-    case (spaceRef, tileRef) of
-      (Nothing, Nothing) -> parseError "Invalid space and tile references"
-      (Nothing, _)       -> parseError "Invalid space reference"
-      (_,       Nothing) -> parseError "Invalid tile reference"
-      (Just tr, Just sr) -> return $ QRef tr sr
+  | otherwise = return $ QRef spaceRef tileRef
     where
       (space, tile) = case parseSpaceOrTileRef xs of
         Left xs   -> (".", xs)
         Right tup -> tup
-      spaceRef = lookup space staticSpaces
-      tileRef  = lookup tile  staticTiles
+      spaceRef = fromMaybe (QROneSpace $ mkSpaceRef space) $ lookup space staticSpaces
+      tileRef  = fromMaybe (QROneTile $ Just tile) $ lookup tile staticTiles
 
 parseSpaceOrTileRef :: String -> Either String (String, String)
 parseSpaceOrTileRef xs = if slash then Right (left, tail right) else Left left

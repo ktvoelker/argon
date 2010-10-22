@@ -47,7 +47,8 @@ runCommand' cmd = do
       -- Grab the new keymap.
       putWorld w { wKeyMode = mr }
       lift $ lift $ grabKeyMap $ heirLookup mr kms
-    CToggleFloat -> toggleShowFloat
+    CHideFloat   -> setShowFloat False
+    CShowFloat   -> setShowFloat True
     CMove from to breadth depth -> do
       c  <- getConfig
       wo <- getWorld

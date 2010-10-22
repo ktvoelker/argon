@@ -130,16 +130,18 @@ updateX11Focus = do
   dprint $ defaultRootWindow disp
   liftIO $ setInputFocus disp win revertToPointerRoot 0
 
-toggleShowFloat :: X11State ()
-toggleShowFloat = do
-  sr <- getFocusTileM
-  modifyWorld $ $(upd 'wFloats) $ adjust not $ getSpaceRef sr
-  refreshFocusSpace
-
 setShowFloat :: Bool -> X11State ()
 setShowFloat v = do
-  sr <- getFocusTileM
-  modifyWorld $ $(upd 'wFloats) $ insert (getSpaceRef sr, v)
+  tr <- getFocusTileM
+  when (tileIsFloat tr) $ do
+    getWorld >>=
+      setFocusTile
+      . head
+      . filter (not . tileIsFloat)
+      . filter (sameSpace tr)
+      . keys
+      . wTiles
+  modifyWorld $ $(upd 'wFloats) $ insert (getSpaceRef tr, v)
   refreshFocusSpace
 
 findWindow :: World -> Window -> Maybe TileRef

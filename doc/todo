@@ -5,6 +5,7 @@ TODO
 
 High-Priority Bugs
 ------------------
+Hidden floats aren't hidden
 
 
 High-Priority Testing
@@ -19,6 +20,20 @@ Programs with multiple top-level windows
 
 High-Priority Features
 ----------------------
+Replace the heirarchical keybinding system with a disjunctive one:
+
+  Two commands, CEnableKeys ModeRef and CDisableKeys ModeRef.
+
+  cKeys :: Map ModeRef KeyMap
+
+  wKeyMode :: [ModeRef]
+
+  Get rid of the Heir module.
+
+Add a trigger for the floating layer becoming hidden and visible.
+
+Show (but don't focus) the floating layer whenever a window is added to it.
+
 Make an external, socket-based interface for executing Commands.
 
   General:

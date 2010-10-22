@@ -83,7 +83,8 @@ data Command =
   | CExec       Exec
   | CSeq        [Command]
   | CKeyMode    ModeRef
-  | CToggleFloat
+  | CHideFloat
+  | CShowFloat
   | CQuit
   | CKill
   | CNextWin
