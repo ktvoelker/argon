@@ -6,12 +6,12 @@ TODO
 High-Priority Bugs
 ------------------
 Hidden floats aren't hidden
+Windows don't disappear when switching to a different space
+  These two problems could be related
 
 
 High-Priority Testing
 ---------------------
-Disjunctive key modes
-CShowFloat
 Attraction
   Including an attraction that puts transients in the floating layer
 Triggers
