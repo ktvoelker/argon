@@ -20,6 +20,10 @@ Programs with multiple top-level windows
 
 High-Priority Features
 ----------------------
+Make disjunctive key modes compile
+
+  Fix enable and disable commands to accept sets of modes
+
 Add a trigger for the floating layer becoming hidden and visible.
 
 Show (but don't focus) the floating layer whenever a window is added to it.
