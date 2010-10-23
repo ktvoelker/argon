@@ -150,6 +150,26 @@ Visually indicate the focus, perhaps by a colored border.
 Make the language of commands and tile queries more robust by using a proper
 grammar in Config.INI.
 
+  Also, don't use the ConfigFile module. It doesn't allow empty sections,
+  and its interface is frustrating.
+
+  Parse in three passes:
+
+    1. Tokenize from characters into generic word, punctuation, and newline
+       tokens.
+
+    2. Tokenize from those tokens into higher-level tokens: start of section
+       and entry.
+
+    3. Parse from those tokens into an AST of sections and entries.
+       This step is fairly trivial, but separating it from step 2 might
+       produce better error messages.
+
+  Then, process the AST into a richer AST of sections and entries, with unique
+  node constructors for each kind of section and entry.
+
+  Then, process that AST into a Config while performing verification.
+
 Consistently use hyphens as word separators in Config.INI, not underscores.
 
 
