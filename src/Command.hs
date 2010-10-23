@@ -3,6 +3,7 @@ module Command (runCommand) where
 
 import Debug
 import Declare
+import Declare.Access
 import Dir
 import Event.Listen
 import Exec
@@ -18,6 +19,8 @@ import Control.Monad
 import Data.Maybe
 import Data.Set (delete)
 import Graphics.X11.Xlib.Extras
+
+import qualified Data.Set as Set
 
 runCommand, runCommand' :: Command -> X11State ()
 
@@ -39,8 +42,8 @@ runCommand' cmd = do
       d <- getDisplay
       w <- getNonRootFocusWindow
       whenJust w $ ignore . liftIO . killClient d
-    CEnableKeys  -> runKeyModeCommand insert
-    CDisableKeys -> runKeyModeCommand delete
+    CEnableKeys  xs -> runKeyModeCommand $ flip (Set.fold insert) xs
+    CDisableKeys xs -> runKeyModeCommand $ flip (Set.fold delete) xs
     CHideFloat   -> setShowFloat False
     CShowFloat   -> setShowFloat True
     CMove from to breadth depth -> do

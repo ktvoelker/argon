@@ -3,6 +3,7 @@ module Event.Listen where
 
 import Debug
 import Declare
+import Declare.Access
 import Types
 import X11
 
@@ -39,8 +40,8 @@ grabKeyMap =
     (\d m c w -> grabKey d m c w False grabModeAsync grabModeAsync)
 
 ungrabKeyMap :: KeyMap -> X11 ()
-ungrabKeyMap =
-  grabUngrabKeyMap ungrabKey
+ungrabKeyMap _ = getDisplay >>= liftIO . flip ungrabKeyboard currentTime
+  -- grabUngrabKeyMap ungrabKey
 
 grabUngrabKeyMap
   :: (Display -> KeyCode -> KeyMask -> Window -> IO ())

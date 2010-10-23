@@ -78,7 +78,7 @@ getKeys :: X11State KeyMap
 getKeys = do
   wo <- getWorld
   c  <- getConfig
-  return $ heirLookup (wKeyMode wo) (cKeys c)
+  return $ cAllKeys c $ wKeyMode wo
 
 getLocalFocus :: (RefSpace a) => World -> a -> TileRef
 getLocalFocus w sr = wFocuses w ! getSpaceRef sr

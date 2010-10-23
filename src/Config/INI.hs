@@ -125,7 +125,7 @@ config = do
     (triggers, _) <- getTriggers globalTriggers input sectGlobal
     return emptyConfig
       { cSpaces     = fromList $ map (mapFst mkSpaceRef) spaces''
-      , cKeys       = mkKeyHeir $ fromList keys
+      , cKeys       = fromList keys
       , cStartSpace = mkSpaceRef start
       , cStartMode  = fromList $ map mkModeRef $ words startKeys
       , cAttracts   = fromList atts
@@ -227,7 +227,7 @@ getTile cp sect opt = do
 getKeys :: ConfigParser -> SectionSpec -> ConfigM' KeyMap
 getKeys cp sect =
   options cp sect
-  >>= mapM (getKey cp sect) . filter (/= optParents)
+  >>= mapM (getKey cp sect)
   >>= return . fromList
 
 getKey
@@ -311,20 +311,21 @@ getCommand' xs = case xs of
 
 commands :: Map String ([String] -> ConfigM' Command)
 commands = fromList
-  [ ("move",       cmdMove)
-  , ("focus",      cmdFocus)
-  , ("exec",       cmdExec)
-  , ("seq",        cmdSeq)
-  , ("key_mode",   cmdKeyMode)
-  , ("show_float", constCmd CShowFloat)
-  , ("hide_float", constCmd CHideFloat)
-  , ("quit",       constCmd CQuit)
-  , ("kill",       constCmd CKill)
-  , ("next_win",   constCmd CNextWin)
-  , ("prev_win",   constCmd CPrevWin)
+  [ ("move",         cmdMove)
+  , ("focus",        cmdFocus)
+  , ("exec",         cmdExec)
+  , ("seq",          cmdSeq)
+  , ("enable_keys",  cmdKeys CEnableKeys)
+  , ("disable_keys", cmdKeys CDisableKeys)
+  , ("show_float",   constCmd CShowFloat)
+  , ("hide_float",   constCmd CHideFloat)
+  , ("quit",         constCmd CQuit)
+  , ("kill",         constCmd CKill)
+  , ("next_win",     constCmd CNextWin)
+  , ("prev_win",     constCmd CPrevWin)
   ]
 
-cmdMove, cmdFocus, cmdExec, cmdSeq, cmdKeyMode
+cmdMove, cmdFocus, cmdExec, cmdSeq
   :: [String] -> ConfigM' Command
 
 cmdMove = f FirstTile TopWindow
@@ -414,8 +415,9 @@ cmdSeq = f >=> return . CSeq
       where
         (x, xs) = break (== ";") args
 
-cmdKeyMode [m] = return $ CKeyMode $ mkModeRef m
-cmdKeyMode _   = parseError "`key_mode' expects one argument"
+cmdKeys :: (Set ModeRef -> Command) -> [String] -> ConfigM' Command
+cmdKeys _ [] = parseError "Expected at least one key mode argument"
+cmdKeys f xs = return $ f $ fromList $ map mkModeRef xs
 
 constCmd :: Command -> a -> ConfigM' Command
 constCmd cmd = const $ return cmd

@@ -77,8 +77,8 @@ data Command =
   | CFocus       TileQuery
   | CExec        Exec
   | CSeq         [Command]
-  | CEnableKeys  ModeRef
-  | CDisableKeys ModeRef
+  | CEnableKeys  (Set ModeRef)
+  | CDisableKeys (Set ModeRef)
   | CHideFloat
   | CShowFloat
   | CQuit

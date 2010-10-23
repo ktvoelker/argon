@@ -69,7 +69,7 @@ mappingNotifyHandler e = do
   debug "Keyboard remapped!"
   c <- getConfig
   w <- getWorld
-  let km = heirLookup (wKeyMode w) $ cKeys c
+  let km = cAllKeys c $ wKeyMode w
   lift $ lift $ do
     ungrabKeyMap km
     grabKeyMap km
