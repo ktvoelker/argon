@@ -150,6 +150,8 @@ Visually indicate the focus, perhaps by a colored border.
 Make the language of commands and tile queries more robust by using a proper
 grammar in Config.INI.
 
+  Don't support the DEFAULT section.
+
   Also, don't use the ConfigFile module. It doesn't allow empty sections,
   and its interface is frustrating.
 
