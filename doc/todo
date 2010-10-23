@@ -12,6 +12,7 @@ High-Priority Testing
 ---------------------
 CShowFloat
 Attraction
+  Including an attraction that puts transients in the floating layer
 Triggers
 Programs with multiple top-level windows
   Killing one of these programs may trigger the bug which was fixed for
@@ -27,6 +28,11 @@ Make disjunctive key modes compile
 Add a trigger for the floating layer becoming hidden and visible.
 
 Show (but don't focus) the floating layer whenever a window is added to it.
+
+When a transient is mapped, if its main window is focused, focus the
+transient, even if that moves the focus to a different tile.
+
+Figure out how to properly ignore windows like dzen2
 
 Make an external, socket-based interface for executing Commands.
 
@@ -93,48 +99,6 @@ Make an external, socket-based interface for executing Commands.
 
     This program is effectively netcat specialized to understand the Argon
     language for describing a socket to open and aware of the default socket.
-
-Implement statusbar support.
-
-  1. Fix Config and World so that if two spaces use the same statusbar, they
-     will truly share it (so the updates don't happen twice). Ensure that
-     the World contains a mapping from StatusRef to Window.
-
-  2. Implement a generic timer system, which is just a module that defines a
-     type of priority queues that sort by time in ascending order, and
-     provide two access functions: insert and remove, where remove will remove
-     all items up to the current time.
-
-  3. Implement one specific timer queue in the World, just for statusbar
-     updates. The values in this queue will be StatusRefs.
-
-  4. Create all the statusbar windows during initialization and populate the
-     World with them before going into the event loop.
-
-  5. Add all statusbar tiles to the timer queue during initialization before
-     entering the event loop.
-
-  6. Add a phase to the event loop in which the statusbar timers are removed
-     and executed.
-
-  7. Implement statusbar timer execution:
-     a. Run the command
-     b. Calculate the position inside the statusbar window
-     c. Calculate the size of the tile inside the statusbar window
-     d. Clear the tile
-     e. Write the text into the tile
-
-  8. Add statusbar support to Config.INI:
-     [statusbar foo]
-     layout = whatever
-     ; a tile defined by the layout
-     a = something to execute
-     ; the resolution of a (in seconds)
-     res a = 15
-     ; another tile defined by the layout
-     b = something else to execute
-     [space bar]
-     statusbar = foo
 
 
 0.2.0 Release
