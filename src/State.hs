@@ -200,7 +200,8 @@ refreshSpace sr = do
      then do
        (v, h) <- partitionSpace sr
        liftIO $ do
-         restackWindows d v
+         -- can't use restack when windows have children
+         mapM_ (lowerWindow d) v
          mapM_ (unmapWindow d) h
          mapM_ (mapWindow d) v
        updateX11Focus

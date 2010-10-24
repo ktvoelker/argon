@@ -5,20 +5,33 @@ TODO
 
 High-Priority Bugs
 ------------------
+Something is wrong with the parser that is breaking the on ready trigger in my
+config.
 
 
 High-Priority Testing
 ---------------------
 Triggers
   TReady
-Attraction
-Programs with multiple top-level windows
+Killing programs with multiple top-level windows
   Killing one of these programs may trigger the bug which was fixed for
   programs with one top-level window. See notes in destroyWindowHandler.
 
 
 High-Priority Features
 ----------------------
+Get rid of refreshSpace.
+
+  Carry out minimal actions necessary to correct the view.
+
+  Keep refreshSpace in some form to use when switching spaces, but rename it to
+  make sure it isn't used anywhere else.
+
+  Put all the window visibility and stacking operations in a separate module.
+
+  Don't unmap hidden tiled windows on the current workspace, just make sure
+  they are underneath the visible windows of their tiles.
+
 Figure out how to properly ignore windows like dzen2
 
 Make an external, socket-based interface for executing Commands.

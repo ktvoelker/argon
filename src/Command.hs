@@ -80,7 +80,9 @@ runCommand' cmd = do
         [] -> return ()
         (tr : _) -> do
           fmap concat (mapM popWins from') >>= mapM_ (addWin tr) . reverse
+          debug "Moved all windows"
           refreshFocusSpace
+          debug "Refresh done after window move"
     (CFocus tq) -> do
       c  <- getConfig
       wo <- getWorld

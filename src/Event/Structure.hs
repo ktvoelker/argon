@@ -34,12 +34,14 @@ mapRequestHandler e = do
   -- Check if the tile is the floating tile.
   let isFloat = tileIsFloat tr
   -- Map the window.
+  debug "Map new window"
   getDisplay >>= liftIO . flip mapWindow win
   -- If the new window is floating on the focused space, focus it.
   if isFloat && sameSpace tr (getFocusTile wo)
      then setFocusTile tr
      else return ()
   -- Refresh the display.
+  debug "Refresh"
   refreshSpace tr
   where
     win = ev_window e
