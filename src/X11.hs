@@ -3,14 +3,16 @@ module X11
   ( asks, lift, liftIO, liftM, liftM2
   , X11, X11Env, getDisplay, getConfig
   , dispScr, withDispScr, localConfig, runX11
-  , getRoot
+  , getRoot, getWindowAtom
   ) where
 
 import Declare
 import Fields
 
 import Control.Monad.Reader
+import Foreign.C.String
 import Graphics.X11
+import Graphics.X11.Xlib.Extras
 
 type X11 a = ReaderT X11Env IO a
 
@@ -44,4 +46,12 @@ runX11 x11 dStr c = do
   ret  <- runReaderT x11 X11Env { xeDisplay = disp, xeConfig = c }
   closeDisplay disp
   return ret
+
+-- TODO Don't assume the string encoding in the TP matches ours.
+getWindowAtom
+  :: (MonadReader X11Env m, MonadIO m) => Atom -> Window -> m String
+getWindowAtom atom win = do
+  d <- getDisplay
+  liftIO $
+    getTextProperty d win atom >>= peekCString . tp_value
 

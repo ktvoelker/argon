@@ -27,9 +27,6 @@ Programs with multiple top-level windows
 
 High-Priority Features
 ----------------------
-When a transient is mapped, if its main window is focused, focus the
-transient.
-
 Figure out how to properly ignore windows like dzen2
 
 Make an external, socket-based interface for executing Commands.

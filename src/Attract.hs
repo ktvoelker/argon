@@ -36,14 +36,8 @@ attract win = do
 attractOne :: Window -> Attract -> X11State Bool
 attractOne win att = fmap (all id) $ sequence $ map (($ att) . ($ win)) ways
 
--- TODO Don't assume the string encoding in the TP matches ours.
 stringWay :: Atom -> (a -> String -> Bool) -> Window -> a -> X11State Bool
-stringWay atom pred win want =
-  getDisplay
-  >>= \d -> liftIO $
-    getTextProperty d win atom
-    >>= peekCString . tp_value
-    >>= return . (pred want)
+stringWay atom pred win want = getWindowAtom atom win >>= return . (pred want)
 
 maybeWay :: (Attract -> Maybe a) -> (Window -> a -> X11State Bool)
          -> Window -> Attract -> X11State Bool
