@@ -84,11 +84,13 @@ runCommand' cmd = do
     (CFocus tq) -> do
       c  <- getConfig
       wo <- getWorld
+      let old = getFocusTile wo
       case evalTileQuery tq c wo of
         [] -> return ()
-        ((tr, h) : _) -> when (getFocusTile wo /= tr) $ do
+        ((tr, h) : _) -> when (old /= tr) $ do
           modifyWorld $ $(upd 'wHistory) $ maybe (histGo tr) const h
           setFocusTile tr
+          refreshSpace old
           refreshFocusSpace
 
 runKeyModeCommand :: (Set ModeRef -> Set ModeRef) -> X11State ()
