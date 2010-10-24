@@ -326,6 +326,7 @@ commands = fromList
   , ("hide_float",   constCmd CHideFloat)
   , ("quit",         constCmd CQuit)
   , ("kill",         constCmd CKill)
+  , ("destroy",      constCmd CDestroy)
   , ("next_win",     constCmd CNextWin)
   , ("prev_win",     constCmd CPrevWin)
   ]
@@ -464,7 +465,7 @@ getTriggers trigs cp sect = do
   -- Get rid of the Just around each of the Triggers.
   let opts3 = map (mapFst fromJust) opts2
   -- Parse the RHS of each trigger option as a command.
-  opts4 <- mapM (mapSndM getCommand) opts3
+  opts4 <- mapM (mapSndM $ get cp sect >=> getCommand) opts3
   -- Return the results.
   return (opts4, non')
   where

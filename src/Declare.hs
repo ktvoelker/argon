@@ -84,6 +84,7 @@ data Command =
   | CShowFloat
   | CQuit
   | CKill
+  | CDestroy
   | CNextWin
   | CPrevWin
   deriving (Eq, Ord, Show)

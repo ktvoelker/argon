@@ -5,17 +5,16 @@ TODO
 
 High-Priority Bugs
 ------------------
-Something is wrong with the parser that is breaking the on ready trigger in my
-config.
+Killing programs with multiple windows causes a crash.
+
+  See notes in destroyWindowHandler, since this problem was fixed for a
+  different case already.
+
+Pidgin freezes when it tries to quit. A bad free is noted on the console.
 
 
 High-Priority Testing
 ---------------------
-Triggers
-  TReady
-Killing programs with multiple top-level windows
-  Killing one of these programs may trigger the bug which was fixed for
-  programs with one top-level window. See notes in destroyWindowHandler.
 
 
 High-Priority Features
@@ -191,6 +190,8 @@ Consistently use hyphens as word separators in Config.INI, not underscores.
 
 Low Priority Refactoring
 ------------------------
+Make the CDestroy and CKill commands accept tile queries.
+
 Create a single, uniform abstraction for getting the whole value, or a
 projected value, from any reader or state monad and use it everywhere.
 

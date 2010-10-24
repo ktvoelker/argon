@@ -18,6 +18,7 @@ import X11
 import Control.Monad
 import Data.Maybe
 import Data.Set (delete)
+import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
 import qualified Data.Set as Set
@@ -42,6 +43,10 @@ runCommand' cmd = do
       d <- getDisplay
       w <- getNonRootFocusWindow
       whenJust w $ ignore . liftIO . killClient d
+    CDestroy        -> do
+      d <- getDisplay
+      w <- getNonRootFocusWindow
+      whenJust w $ liftIO . destroyWindow d
     CEnableKeys  xs -> runKeyModeCommand $ flip (Set.fold insert) xs
     CDisableKeys xs -> runKeyModeCommand $ flip (Set.fold delete) xs
     CHideFloat   -> setShowFloat False
