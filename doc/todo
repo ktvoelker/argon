@@ -26,10 +26,8 @@ Programs with multiple top-level windows
 
 High-Priority Features
 ----------------------
-Show (but don't focus) the floating layer whenever a window is added to it.
-
 When a transient is mapped, if its main window is focused, focus the
-transient, even if that moves the focus to a different tile.
+transient.
 
 Figure out how to properly ignore windows like dzen2
 

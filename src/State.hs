@@ -130,23 +130,33 @@ updateX11Focus = do
   dprint $ defaultRootWindow disp
   liftIO $ setInputFocus disp win revertToPointerRoot 0
 
+setShowFloatOn :: (RefSpace a) => Bool -> a -> X11State ()
+setShowFloatOn v' rs = do
+  let sr = getSpaceRef rs
+  -- Is the float visible?
+  v <- gets ((! sr) . wFloats)
+  -- Is the visibility changing?
+  when (v /= v') $ do
+    -- Make sure the float is not focused when hidden.
+    tr <- getFocusTileM
+    when (not v' && sameSpace sr tr && tileIsFloat tr) $ do
+      -- Pick a non-floating tile to focus.
+      getWorld >>=
+        setFocusTile
+        . head
+        . filter (not . tileIsFloat)
+        . filter (sameSpace sr)
+        . keys
+        . wTiles
+    -- Record the new state.
+    modifyWorld $ $(upd 'wFloats) $ insert (sr, v')
+    -- Refresh.
+    when (sameSpace sr tr) refreshFocusSpace
+    -- Fire triggers.
+    runTrigger $ TShowFloat sr v
+
 setShowFloat :: Bool -> X11State ()
-setShowFloat v = do
-  tr <- getFocusTileM
-  let sr = getSpaceRef tr
-  when (not v && tileIsFloat tr) $ do
-    -- Pick a non-floating tile to focus
-    getWorld >>=
-      setFocusTile
-      . head
-      . filter (not . tileIsFloat)
-      . filter (sameSpace sr)
-      . keys
-      . wTiles
-  modifyWorld $ $(upd 'wFloats) $ insert (sr, v)
-  refreshFocusSpace
-  -- Fire triggers
-  runTrigger $ TShowFloat sr v
+setShowFloat v = getFocusTileM >>= setShowFloatOn v
 
 findWindow :: World -> Window -> Maybe TileRef
 findWindow wo win = listToMaybe $ keys $ filter (member win . snd) $ wTiles wo

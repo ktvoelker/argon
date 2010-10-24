@@ -43,7 +43,6 @@ addWin tr win = do
   debug "Add window:"
   dprint win
   dprint tr
-  if win `mod` 256 == 42 then debug "WHOA\nWHOA\nWHOA" else return ()
   modifyTileWindows (flip pushFront win) tr
   lift $ lift $ layoutWindow tr win
 
