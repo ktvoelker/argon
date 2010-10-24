@@ -63,9 +63,17 @@ locWay f win ref = do
     Nothing -> False
     Just tr -> f ref tr
 
+getAtom :: String -> X11State Atom
+getAtom xs = do
+  d <- getDisplay
+  liftIO $ internAtom d xs True
+
 ways :: [Window -> Attract -> X11State Bool]
-ways = [ maybeWay xName  $ stringWay wM_NAME          (==)
-       , maybeWay xClass $ stringWay wM_CLASS         (==)
+ways = [ maybeWay xName $ stringWay wM_NAME (==)
+       , maybeWay xClass $ stringWay wM_CLASS (==)
+       , \w v -> do
+           a <- getAtom "WM_WINDOW_ROLE"
+           maybeWay xRole (stringWay a (==)) w v
        , maybeWay xTrans $ stringWay wM_TRANSIENT_FOR notEmpty
        , maybeWay xFocus $ eitherWay spaceWay tileWay
        ]

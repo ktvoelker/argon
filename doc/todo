@@ -11,9 +11,7 @@ High-Priority Testing
 ---------------------
 Triggers
   TReady
-  TSpace
-  TFocus
-  TShowFloat
+Attraction
 Programs with multiple top-level windows
   Killing one of these programs may trigger the bug which was fixed for
   programs with one top-level window. See notes in destroyWindowHandler.
@@ -123,6 +121,15 @@ move/resize mode. This might be caused by debug mode or Xnest.
 Low Priority Features
 ---------------------
 Make triggers more powerful by using tile queries.
+
+  Also, add space queries.
+
+  Also, add complements to TSpace and TFocus which are triggered when the
+  focus leaves a space or tile.
+
+  Create a separate, single config section for triggers. Since we are using
+  queries to identify spaces, it would be silly to associate triggers with
+  particular spaces.
 
 Check the Config at startup for incorrect references.
 

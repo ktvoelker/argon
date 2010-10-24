@@ -25,7 +25,7 @@ optShowFloat = "show-float"
 optHideFloat = "hide-float"
 
 optStart, optStartKeys, optTable, optLayout, optRows, optCols
-  , optTile, optName, optClass, optTransient, optFocus
+  , optTile, optName, optClass, optRole, optTransient, optFocus
   :: OptionSpec
 optStart     = "start"
 optStartKeys = "start_keys"
@@ -36,6 +36,7 @@ optCols      = "cols"
 optTile      = "tile"
 optName      = "name"
 optClass     = "class"
+optRole      = "role"
 optTransient = "transient"
 optFocus     = "focus"
 
@@ -252,6 +253,7 @@ emptyAttract =
   Attract
   { xName  = Nothing
   , xClass = Nothing
+  , xRole  = Nothing
   , xTrans = Nothing
   , xFocus = Nothing
   }
@@ -260,6 +262,7 @@ attractProps :: Map String (Attract -> String -> ConfigM' Attract)
 attractProps = fromList
   [ (optName,      \att xs -> return att { xName  = Just xs })
   , (optClass,     \att xs -> return att { xClass = Just xs })
+  , (optRole,      \att xs -> return att { xRole  = Just xs })
   , (optTransient, \att -> parseBool >=> \b -> return att { xTrans = Just b })
   , (optFocus,     applyFocusProp)
   ]
