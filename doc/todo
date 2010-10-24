@@ -136,6 +136,10 @@ Medium Priority
 ---------------
 Tabs on tiles showing what windows are present
 
+Draw a border around each window
+
+Color the border and tab of the focused window
+
 
 Low Priority Bugs
 -----------------
@@ -170,8 +174,6 @@ When a button press event hits the root window, determine which tile it is
 within and focus that tile.
 
 Keep a per-tile history of most-recently-focused windows.
-
-Visually indicate the focus, perhaps by a colored border.
 
 Make the language of commands and tile queries more robust by using a proper
 grammar in Config.INI.
