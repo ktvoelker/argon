@@ -5,16 +5,10 @@ TODO
 
 High-Priority Bugs
 ------------------
-Hidden floats aren't hidden
-  This should be fixed now.
-Windows don't disappear when switching to a different space
-  This should be fixed now.
 
 
 High-Priority Testing
 ---------------------
-Attraction
-  Including an attraction that puts transients in the floating layer
 Triggers
   TReady
   TSpace

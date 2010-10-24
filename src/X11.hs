@@ -10,7 +10,9 @@ import Declare
 import Fields
 
 import Control.Monad.Reader
+import Foreign
 import Foreign.C.String
+import GHC.Ptr
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
@@ -51,7 +53,16 @@ runX11 x11 dStr c = do
 getWindowAtom
   :: (MonadReader X11Env m, MonadIO m) => Atom -> Window -> m String
 getWindowAtom atom win = do
-  d <- getDisplay
-  liftIO $
-    getTextProperty d win atom >>= peekCString . tp_value
+  disp <- getDisplay
+  liftIO $ alloca $ \tp -> do
+    status <- xGetTextProperty disp win tp atom
+    if status == 0
+       then return ""
+       else peek tp >>= f . tp_value
+  where
+    f :: CString -> IO String
+    f c_str =
+      if c_str == nullPtr
+         then return ""
+         else peekCString c_str
 
