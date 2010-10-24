@@ -5,6 +5,9 @@ TODO
 
 High-Priority Bugs
 ------------------
+The attraction for Pidgin conversations in my config is only using the tiles on
+the bottom row.
+
 Killing programs with multiple windows causes a crash.
 
   See notes in destroyWindowHandler, since this problem was fixed for a
@@ -31,7 +34,17 @@ Get rid of refreshSpace.
   Don't unmap hidden tiled windows on the current workspace, just make sure
   they are underneath the visible windows of their tiles.
 
-Figure out how to properly ignore windows like dzen2
+  Specifics: (* means only if on the focused space)
+
+  rotateWin: raise the new top window*
+  addWin: raise the window* (this covers moving windows and map requests)
+  mouse click: raise the window*
+
+  In refreshSpace (now being used only for space changes), don't change the
+  stacking order at all. It is probably preserved across unmapping and mapping.
+
+  refreshSpace will also be used for show/hide floats. Again, if stacking order
+  is preserved across unmapping and mapping, this will work well.
 
 Make an external, socket-based interface for executing Commands.
 
