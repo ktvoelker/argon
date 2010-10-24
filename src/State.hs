@@ -175,15 +175,13 @@ partitionSpace sr = do
     $ fmap popFront
     $ filterWithKey (\tr _ -> not (tileIsFloat tr) && sameSpace sr tr)
     $ wTiles wo
-  ; floats =
-      if showFloat
-         then toList $ getTileWindows wo $ getFloatRef sr
-         else []
-  ; tilesV' = catMaybes tilesV
-  ; tilesH' = concatMap toList tilesH
+  ; floats = toList $ getTileWindows wo $ getFloatRef sr
+  ; tilesV' = f showFloat $ catMaybes tilesV
+  ; tilesH' = f (not showFloat) $ concatMap toList tilesH
   ; showFloat = wFloats wo ! getSpaceRef sr
+  ; f c = if c then (floats ++) else id
   }
-  return (floats ++ tilesV', tilesH')
+  return (tilesV', tilesH')
 
 spaceWindows :: (RefSpace a) => a -> X11State [Window]
 spaceWindows sr = do
