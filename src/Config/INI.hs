@@ -17,10 +17,12 @@ import System.Environment
 defaultFile :: FilePath
 defaultFile = ".argon.ini"
 
-optOn, optReady, optEnter :: String
-optOn    = "on"
-optReady = "ready"
-optEnter = "enter"
+optOn, optReady, optEnter, optShowFloat, optHideFloat :: String
+optOn        = "on"
+optReady     = "ready"
+optEnter     = "enter"
+optShowFloat = "show-float"
+optHideFloat = "hide-float"
 
 optStart, optStartKeys, optTable, optLayout, optRows, optCols
   , optTile, optName, optClass, optTransient, optFocus
@@ -433,6 +435,8 @@ spaceTriggers :: Triggers (SpaceRef -> Trigger)
 spaceTriggers = fromList $
   [ ((optEnter, False), const TSpace)
   , ((optEnter, True),  \mt sr -> TFocus $ mkTileRef sr $ fromJust mt)
+  , ((optShowFloat, False), const $ flip TShowFloat True)
+  , ((optHideFloat, False), const $ flip TShowFloat False)
   ]
 
 getTriggers

@@ -133,16 +133,20 @@ updateX11Focus = do
 setShowFloat :: Bool -> X11State ()
 setShowFloat v = do
   tr <- getFocusTileM
-  when (tileIsFloat tr) $ do
+  let sr = getSpaceRef tr
+  when (not v && tileIsFloat tr) $ do
+    -- Pick a non-floating tile to focus
     getWorld >>=
       setFocusTile
       . head
       . filter (not . tileIsFloat)
-      . filter (sameSpace tr)
+      . filter (sameSpace sr)
       . keys
       . wTiles
-  modifyWorld $ $(upd 'wFloats) $ insert (getSpaceRef tr, v)
+  modifyWorld $ $(upd 'wFloats) $ insert (sr, v)
   refreshFocusSpace
+  -- Fire triggers
+  runTrigger $ TShowFloat sr v
 
 findWindow :: World -> Window -> Maybe TileRef
 findWindow wo win = listToMaybe $ keys $ filter (member win . snd) $ wTiles wo

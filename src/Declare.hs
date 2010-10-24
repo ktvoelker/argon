@@ -33,6 +33,7 @@ data Trigger =
     TReady
   | TSpace SpaceRef
   | TFocus TileRef
+  | TShowFloat SpaceRef Bool
   deriving (Eq, Ord, Show)
 
 type KeyMap = Map (KeyMask, KeySym) Command
