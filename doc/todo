@@ -8,6 +8,11 @@ High-Priority Bugs
 The attraction for Pidgin conversations in my config is only using the tiles on
 the bottom row.
 
+Destroying a Pidgin conversation window causes Pidgin to crash.
+
+  This was observed when the destroyed window was above another conversation
+  window.
+
 Killing programs with multiple windows causes a crash.
 
   See notes in destroyWindowHandler, since this problem was fixed for a
