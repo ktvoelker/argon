@@ -62,8 +62,10 @@ destroyWindowHandler e = do
   whenJust (findWindow wo win) $ const $ do
     -- Remove the window from its tile
     modifyAllTileWindows $ const $ filter (/= win)
-    -- Refresh the display
-    refreshFocusSpace
+    -- Do not refresh the display here.
+    -- It isn't necessary, and if the client is in the act of closing
+    -- a bunch of windows, we might tinker with one that has already
+    -- been destroyed.
   where
     win = ev_window e
 
