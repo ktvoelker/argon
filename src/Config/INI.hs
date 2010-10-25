@@ -325,7 +325,7 @@ commands = fromList
   , ("hide_float",   constCmd CHideFloat)
   , ("quit",         constCmd CQuit)
   , ("kill",         constCmd CKill)
-  , ("destroy",      constCmd CDestroy)
+  , ("delete",       constCmd CDelete)
   , ("next_win",     constCmd CNextWin)
   , ("prev_win",     constCmd CPrevWin)
   ]

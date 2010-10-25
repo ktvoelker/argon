@@ -17,6 +17,11 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
+Replace the X11 error handler with one that just prints out a debug message
+and continues running.
+
+  Perhaps make the crashingness configurable in the Debug module.
+
 Make an external, socket-based interface for executing Commands.
 
   General:

@@ -30,7 +30,7 @@ eventLoop = do
   conf <- getConfig
   let world = (emptyWorld conf) { wTrigger = runTriggerImpl }
   debug "Allocate event pointer"
-  ptr <- lift $ mallocBytes 96
+  ptr <- liftIO $ mallocBytes 96
   debug "Start looping"
   runX11State world $ do
     runTrigger TReady

@@ -63,9 +63,9 @@ destroyWindowHandler e = do
   --   child windows that we weren't aware of, which causes us to call
   --   refresh, which causes us to manipulate the main window of the
   --   client, even though it has already been destroyed, too.
-  whenJust (findWindow wo win) $ const $ do
+  whenJust (findWindow wo win) $ \tr -> do
     -- Remove the window from its tile
-    modifyAllTileWindows $ const $ filter (/= win)
+    modifyTileWindows (filter (/= win)) tr
     -- Do not refresh the display here.
     -- It isn't necessary, and if the client is in the act of closing
     -- a bunch of windows, we might tinker with one that has already

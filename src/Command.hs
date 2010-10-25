@@ -18,6 +18,7 @@ import X11
 import Control.Monad
 import Data.Maybe
 import Data.Set (delete)
+import Foreign.Marshal.Alloc
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
@@ -43,10 +44,26 @@ runCommand' cmd = do
       d <- getDisplay
       w <- getNonRootFocusWindow
       whenJust w $ ignore . liftIO . killClient d
-    CDestroy        -> do
+    CDelete         -> do
       d <- getDisplay
-      w <- getNonRootFocusWindow
-      whenJust w $ liftIO . destroyWindow d
+      whenJustM getNonRootFocusWindow $ \w -> do
+        aProt <- getAtom "WM_PROTOCOLS"
+        aDel  <- getAtom "WM_DELETE_WINDOW"
+        debug "Deletion atoms:"
+        dprint aProt
+        dprint aDel
+        liftIO $ do
+          ptr <- mallocBytes 96
+          prots <- getWMProtocols d w
+          fromMaybe (return ()) $ do
+            aProt <- aProt
+            aDel <- aDel
+            guard $ aDel `elem` prots
+            return $ do
+              setEventType ptr clientMessage
+              setClientMessageEvent ptr w aProt 32 aDel 0
+              sendEvent d w False noEventMask ptr
+          Foreign.Marshal.Alloc.free ptr
     CEnableKeys  xs -> runKeyModeCommand $ flip (Set.fold insert) xs
     CDisableKeys xs -> runKeyModeCommand $ flip (Set.fold delete) xs
     CHideFloat   -> setShowFloat False

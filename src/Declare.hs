@@ -73,7 +73,7 @@ data Command =
   | CShowFloat
   | CQuit
   | CKill
-  | CDestroy
+  | CDelete
   | CNextWin
   | CPrevWin
   deriving (Eq, Ord, Show)

@@ -57,6 +57,9 @@ tileIsFloat = not . isJust . Ref.trTile
 whenJust :: (Monad m) => Maybe a -> (a -> m ()) -> m ()
 whenJust m f = maybe (return ()) f m
 
+whenJustM :: (Monad m) => m (Maybe a) -> (a -> m ()) -> m ()
+whenJustM m f = m >>= flip whenJust f
+
 ignore :: (Monad m) => m a -> m ()
 ignore = (>> return ())
 

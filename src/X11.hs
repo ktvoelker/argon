@@ -3,7 +3,7 @@ module X11
   ( asks, lift, liftIO, liftM, liftM2
   , X11, X11Env, getDisplay, getConfig
   , dispScr, withDispScr, localConfig, runX11
-  , getRoot, getWindowAtom
+  , getRoot, getWindowAtom, getAtom
   ) where
 
 import Declare
@@ -48,6 +48,12 @@ runX11 x11 dStr c = do
   ret  <- runReaderT x11 X11Env { xeDisplay = disp, xeConfig = c }
   closeDisplay disp
   return ret
+
+getAtom :: (MonadReader X11Env m, MonadIO m) => String -> m (Maybe Atom)
+getAtom xs = do
+  d <- getDisplay
+  a <- liftIO $ internAtom d xs True
+  return $ if a == none then Nothing else Just a
 
 -- TODO Don't assume the string encoding in the TP matches ours.
 getWindowAtom

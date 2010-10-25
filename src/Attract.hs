@@ -63,12 +63,6 @@ locWay f win ref = do
     Nothing -> False
     Just tr -> f ref tr
 
-getAtom :: String -> X11State (Maybe Atom)
-getAtom xs = do
-  d <- getDisplay
-  a <- liftIO $ internAtom d xs True
-  return $ if a == none then Nothing else Just a
-
 ways :: [Window -> Attract -> X11State Bool]
 ways = [ maybeWay xName $ stringWay wM_NAME (==)
        , maybeWay xClass $ stringWay wM_CLASS (==)
