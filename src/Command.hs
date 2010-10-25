@@ -84,10 +84,15 @@ runCommand' cmd = do
       case to' of
         [] -> return ()
         (tr : _) -> do
-          fmap concat (mapM popWins from') >>= mapM_ (addWin tr) . reverse
+          d <- getDisplay
+          let hiddenFloat = tileIsFloat tr && not (wFloats wo ! getSpaceRef tr)
+          let visible = sameSpace tr (getFocusTile wo) && not hiddenFloat
+          let add win = do
+          { addWin tr win
+          ; when visible $ liftIO $ raiseWindow d win
+          }
+          fmap concat (mapM popWins from') >>= mapM_ add . reverse
           debug "Moved all windows"
-          refreshFocusSpace
-          debug "Refresh done after window move"
     (CFocus tq) -> do
       c  <- getConfig
       wo <- getWorld
@@ -97,8 +102,6 @@ runCommand' cmd = do
         ((tr, h) : _) -> when (old /= tr) $ do
           modifyWorld $ $(upd 'wHistory) $ maybe (histGo tr) const h
           setFocusTile tr
-          refreshSpace old
-          refreshFocusSpace
 
 runKeyModeCommand :: (Set ModeRef -> Set ModeRef) -> X11State ()
 runKeyModeCommand f = do

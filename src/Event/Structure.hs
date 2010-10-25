@@ -14,6 +14,7 @@ import Tile
 import Types
 import X11
 
+import Control.Monad
 import Data.List (isSuffixOf)
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
@@ -31,18 +32,19 @@ mapRequestHandler e = do
   dprint tr
   -- Add the window to the tile.
   addWin tr win
-  -- Check if the tile is the floating tile.
+  -- Check if the window is floating.
   let isFloat = tileIsFloat tr
-  -- Map the window.
-  debug "Map new window"
-  getDisplay >>= liftIO . flip mapWindow win
-  -- If the new window is floating on the focused space, focus it.
-  if isFloat && sameSpace tr (getFocusTile wo)
-     then setFocusTile tr
-     else return ()
-  -- Refresh the display.
-  debug "Refresh"
-  refreshSpace tr
+  -- Find out where the focus is.
+  let focus = getFocusTile wo
+  -- Map and raise the window if it is on the focused space.
+  when (sameSpace tr focus) $ do
+    debug "Map new window"
+    d <- getDisplay
+    liftIO $ do
+      mapWindow d win
+      raiseWindow d win
+    -- If the new window is in the focused tile, focus it.
+    when (tr == focus) $ setFocusTile tr
   where
     win = ev_window e
 

@@ -23,7 +23,11 @@ rotateWin
   -> X11State ()
 rotateWin pop push tr = do
   modifyTileWindows f tr
-  refreshSpace tr
+  wo <- getWorld
+  let win = first $ getTileWindows wo tr
+  case win of
+    Nothing  -> return ()
+    Just win -> getDisplay >>= liftIO . flip raiseWindow win
   where
     f q = case pop q of
       (Nothing, _) -> q

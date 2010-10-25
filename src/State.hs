@@ -97,10 +97,13 @@ setFocusTile :: TileRef -> X11State ()
 setFocusTile tr = do
   old <- getFocusTileM
   when (old /= tr) $ do
-    when (tileIsFloat tr) $ setShowFloat True
+    when (tileIsFloat tr) $ setShowFloatOn True tr
     modifyWorld $ $(upd 'wFocus) ctr
     modifyLocalFocus ctr tr
-    when (not $ sameSpace old tr) $ runTrigger $ TSpace $ getSpaceRef tr
+    when (not $ sameSpace old tr) $ do
+      refreshMapping old
+      refreshMapping tr
+      runTrigger $ TSpace $ getSpaceRef tr
     runTrigger $ TFocus tr
   where
     ctr = const tr
@@ -151,7 +154,7 @@ setShowFloatOn v' rs = do
     -- Record the new state.
     modifyWorld $ $(upd 'wFloats) $ insert (sr, v')
     -- Refresh.
-    when (sameSpace sr tr) refreshFocusSpace
+    when (sameSpace sr tr) refreshFocusMapping
     -- Fire triggers.
     runTrigger $ TShowFloat sr v
 
@@ -168,20 +171,19 @@ getTileWindows w = (wTiles w !)
 -- windows, with visible windows listed from top to bottom.
 partitionSpace :: (RefSpace a) => a -> X11State ([Window], [Window])
 partitionSpace sr = do
+  c  <- getConfig
   wo <- getWorld
   let
-  { (tilesV, tilesH) = unzip
-    $ elems
-    $ fmap popFront
-    $ filterWithKey (\tr _ -> not (tileIsFloat tr) && sameSpace sr tr)
-    $ wTiles wo
-  ; floats = toList $ getTileWindows wo $ getFloatRef sr
-  ; tilesV' = f showFloat $ catMaybes tilesV
-  ; tilesH' = f (not showFloat) $ concatMap toList tilesH
+  { floats = toList $ getTileWindows wo $ getFloatRef sr
+  ; tileds = concatMap (toList . getTileWindows wo)
+    $ keys
+    $ laTiles
+    $ spLayout
+    $ cSpaces c ! getSpaceRef sr
   ; showFloat = wFloats wo ! getSpaceRef sr
   ; f c = if c then (floats ++) else id
   }
-  return (tilesV', tilesH')
+  return (f showFloat tileds, f (not showFloat) [])
 
 spaceWindows :: (RefSpace a) => a -> X11State [Window]
 spaceWindows sr = do
@@ -192,8 +194,8 @@ spaceWindows sr = do
     $ filterWithKey (\tr _ -> sameSpace sr tr)
     $ wTiles wo
 
-refreshSpace :: (RefSpace a) => a -> X11State ()
-refreshSpace sr = do
+refreshMapping :: (RefSpace a) => a -> X11State ()
+refreshMapping sr = do
   wo <- getWorld
   d  <- getDisplay
   if sameSpace sr $ wFocus wo
@@ -201,14 +203,14 @@ refreshSpace sr = do
        (v, h) <- partitionSpace sr
        liftIO $ do
          -- can't use restack when windows have children
-         mapM_ (lowerWindow d) v
+         -- mapM_ (lowerWindow d) v
          mapM_ (unmapWindow d) h
          mapM_ (mapWindow d) v
        updateX11Focus
      else spaceWindows sr >>= liftIO . mapM_ (unmapWindow d)
 
-refreshFocusSpace :: X11State ()
-refreshFocusSpace = getFocusTileM >>= refreshSpace
+refreshFocusMapping :: X11State ()
+refreshFocusMapping = getFocusTileM >>= refreshMapping
 
 modifyTileWindows :: (DQ Window -> DQ Window) -> TileRef -> X11State ()
 modifyTileWindows f = modifyWorld . $(upd 'wTiles) . adjust f

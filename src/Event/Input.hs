@@ -102,7 +102,7 @@ raiseAndFocusWindow win = do
   case tr of
     Nothing -> return ()
     Just tr -> do
-      modifyTileWindows (flip pushFront win . filter (/= win)) tr
       setFocusTile tr
-      refreshSpace tr
+      modifyTileWindows (flip pushFront win . filter (/= win)) tr
+      getDisplay >>= liftIO . flip raiseWindow win
 

@@ -15,29 +15,7 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
-Get rid of refreshSpace.
-
-  Carry out minimal actions necessary to correct the view.
-
-  Keep refreshSpace in some form to use when switching spaces, but rename it to
-  make sure it isn't used anywhere else.
-
-  Put all the window visibility and stacking operations in a separate module.
-
-  Don't unmap hidden tiled windows on the current workspace, just make sure
-  they are underneath the visible windows of their tiles.
-
-  Specifics: (* means only if on the focused space)
-
-  rotateWin: raise the new top window*
-  addWin: raise the window* (this covers moving windows and map requests)
-  mouse click: raise the window*
-
-  In refreshSpace (now being used only for space changes), don't change the
-  stacking order at all. It is probably preserved across unmapping and mapping.
-
-  refreshSpace will also be used for show/hide floats. Again, if stacking order
-  is preserved across unmapping and mapping, this will work well.
+Get rid of statusbar code.
 
 Make an external, socket-based interface for executing Commands.
 
@@ -120,6 +98,7 @@ Also include a binary with debug and sync enabled.
 0.3.0 Release
 -------------
 Avoid new features.
+Refactor.
 Write unit tests.
 Release on: Hackage, AUR, Github
 Mention on: Bloggish, Reddit, csh.noise
