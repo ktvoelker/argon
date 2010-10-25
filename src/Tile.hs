@@ -27,7 +27,9 @@ rotateWin pop push tr = do
   let win = first $ getTileWindows wo tr
   case win of
     Nothing  -> return ()
-    Just win -> getDisplay >>= liftIO . flip raiseWindow win
+    Just win -> do
+      getDisplay >>= liftIO . flip raiseWindow win
+      updateX11Focus
   where
     f q = case pop q of
       (Nothing, _) -> q

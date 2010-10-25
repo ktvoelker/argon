@@ -100,10 +100,12 @@ setFocusTile tr = do
     when (tileIsFloat tr) $ setShowFloatOn True tr
     modifyWorld $ $(upd 'wFocus) ctr
     modifyLocalFocus ctr tr
-    when (not $ sameSpace old tr) $ do
-      refreshMapping old
-      refreshMapping tr
-      runTrigger $ TSpace $ getSpaceRef tr
+    if sameSpace old tr
+       then updateX11Focus
+       else do
+         refreshMapping old
+         refreshMapping tr
+         runTrigger $ TSpace $ getSpaceRef tr
     runTrigger $ TFocus tr
   where
     ctr = const tr

@@ -44,7 +44,9 @@ mapRequestHandler e = do
       mapWindow d win
       raiseWindow d win
     -- If the new window is in the focused tile, focus it.
-    when (tr == focus) $ setFocusTile tr
+    when (tr == focus) $ do
+      setFocusTile tr
+      updateX11Focus
   where
     win = ev_window e
 
@@ -68,6 +70,7 @@ destroyWindowHandler e = do
     -- It isn't necessary, and if the client is in the act of closing
     -- a bunch of windows, we might tinker with one that has already
     -- been destroyed.
+    updateX11Focus
   where
     win = ev_window e
 
