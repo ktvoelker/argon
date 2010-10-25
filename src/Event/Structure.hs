@@ -16,6 +16,7 @@ import X11
 
 import Control.Monad
 import Data.List (isSuffixOf)
+import Data.Maybe
 import Graphics.X11
 import Graphics.X11.Xlib.Extras
 
@@ -24,35 +25,35 @@ mapRequestHandler, destroyWindowHandler, mappingNotifyHandler :: EventHandler
 mapRequestHandler e = do
   debug "Map request!"
   wo <- getWorld
-  -- Add standard event handlers.
-  lift $ lift $ addStdEvents win
-  -- Find out where the window belongs.
-  tr <- attract win
-  debug "Destination tile:"
-  dprint tr
-  -- Add the window to the tile.
-  addWin tr win
-  -- Check if the window is floating.
-  let isFloat = tileIsFloat tr
-  -- Find out where the focus is.
-  let focus = getFocusTile wo
-  -- Map and raise the window if it is on the focused space.
-  when (sameSpace tr focus) $ do
-    debug "Map new window"
-    d <- getDisplay
-    liftIO $ do
-      mapWindow d win
-      raiseWindow d win
-    -- If the new window is in the focused tile, focus it.
-    when (tr == focus) $ do
-      setFocusTile tr
-      updateX11Focus
+  -- Don't do anything if the window is already known to us.
+  when (not $ isJust $ findWindow wo win) $ do
+    -- Add standard event handlers.
+    lift $ lift $ addStdEvents win
+    -- Find out where the window belongs.
+    tr <- attract win
+    debug "Destination tile:"
+    dprint tr
+    -- Add the window to the tile.
+    addWin tr win
+    -- Check if the window is floating.
+    let isFloat = tileIsFloat tr
+    -- Find out where the focus is.
+    let focus = getFocusTile wo
+    -- Map and raise the window if it is on the focused space.
+    when (sameSpace tr focus) $ do
+      debug "Map new window"
+      d <- getDisplay
+      liftIO $ do
+        mapWindow d win
+        raiseWindow d win
+      -- If the new window is in the focused tile, focus it.
+      when (tr == focus) $ do
+        setFocusTile tr
+        updateX11Focus
   where
     win = ev_window e
 
 destroyWindowHandler e = do
-  debug "Window destroyed:"
-  dprint $ win
   -- If we were doing a mouse mode operation on this window, end it.
   wo <- getWorld
   case wMode wo of
@@ -64,6 +65,8 @@ destroyWindowHandler e = do
   --   refresh, which causes us to manipulate the main window of the
   --   client, even though it has already been destroyed, too.
   whenJust (findWindow wo win) $ \tr -> do
+    debug "Window destroyed:"
+    dprint $ win
     -- Remove the window from its tile
     modifyTileWindows (filter (/= win)) tr
     -- Do not refresh the display here.
