@@ -4,14 +4,12 @@ module Declare
   , module Declare.Attract
   , module Declare.Common
   , module Declare.Layout
-  , module Declare.Statusbar
   , module Declare.Workspace
   ) where
 
 import Declare.Attract
 import Declare.Common
 import Declare.Layout
-import Declare.Statusbar
 import Declare.Workspace
 
 import Control.Monad.Error
@@ -19,15 +17,6 @@ import Control.Monad.Reader
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
-
-class HasLayout a t r | a -> t r, t -> a r, r -> a t where
-  layout :: a -> Layout t r
-
-instance HasLayout Statusbar Chr StatusRef where
-  layout = stLayout
-
-instance HasLayout Workspace Pix TileRef where
-  layout = spLayout
 
 data Trigger =
     TReady

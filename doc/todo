@@ -17,8 +17,6 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
-Get rid of statusbar code.
-
 Make an external, socket-based interface for executing Commands.
 
   General:

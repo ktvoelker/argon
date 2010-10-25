@@ -209,7 +209,6 @@ getSpace cp layouts name sect = do
   return
     ( Workspace
       { spLayout = layout'
-      , spStatus = emptyStatusbar
       , spStartTile = start
       }
     , map (mapFst ($ sr)) triggers

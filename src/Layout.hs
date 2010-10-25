@@ -34,7 +34,7 @@ layoutWindow :: TileRef -> Window -> X11 ()
 layoutWindow tr win = when (not $ tileIsFloat tr) $ do
   c <- getConfig
   let
-    lay = layout $ cSpace c tr
+    lay = spLayout $ cSpace c tr
     ti  = (laTiles lay) ! tr
     ta  = laTable lay
     (px, py) = realPos ta ti

@@ -48,7 +48,6 @@ data World = World
   { wFocus   :: TileRef
   , wFocuses :: Map SpaceRef TileRef
   , wTiles   :: Map TileRef (DQ Window)
-  , wStatus  :: Map StatusRef String
   , wHistory :: History TileRef
   , wMode    :: Mode
   , wKeyMode :: Set ModeRef
@@ -228,7 +227,6 @@ emptyWorld c = World
   { wFocuses = fmap spStartTile $ cSpaces c
   , wFocus   = spStartTile $ cSpace c $ cStartSpace c
   , wTiles   = union floats $ emptyWLayout empty spLayout spacesList
-  , wStatus  = emptyWLayout "" (stLayout . spStatus) spacesList
   , wHistory = emptyHist
   , wMode    = MNormal
   , wKeyMode = cStartMode c
