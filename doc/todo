@@ -14,6 +14,13 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
+When choosing between different bordering tiles during a directional
+movement, choose the tile most recent in the history. Only use border length
+when none of the bordering tiles are in the history.
+
+Implement a command that selects a space by running dmenu. This will be a
+short-term substitute for the much more involved socket interface.
+
 Replace the X11 error handler with one that just prints out a debug message
 and continues running.
 
