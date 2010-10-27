@@ -76,6 +76,7 @@ data Command =
   | CDelete
   | CNextWin
   | CPrevWin
+  | CSpaceMenu
   deriving (Eq, Ord, Show)
 
 data XInfo = XInfo

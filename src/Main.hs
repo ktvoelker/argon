@@ -11,6 +11,7 @@ import X11
 
 import Control.Monad.Error
 import Control.Monad.Reader
+import Graphics.X11.Xlib.Extras
 import System.Environment
 
 xMain :: X11 ()

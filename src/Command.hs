@@ -24,6 +24,11 @@ import Graphics.X11.Xlib.Extras
 
 import qualified Data.Set as Set
 
+-- for CSpaceMenu
+import qualified Ref (srSpace)
+import GHC.IO.Exception (ExitCode(ExitSuccess))
+import qualified System.Process as Proc (readProcessWithExitCode)
+
 runCommand, runCommand' :: Command -> X11State ()
 
 runCommand cmd = do
@@ -119,6 +124,13 @@ runCommand' cmd = do
         ((tr, h) : _) -> when (old /= tr) $ do
           modifyWorld $ $(upd 'wHistory) $ maybe (histGo tr) const h
           setFocusTile tr
+    CSpaceMenu -> do
+      c <- getConfig
+      let ss = map Ref.srSpace $ keys $ cSpaces c
+      (code, out, _) <-
+        liftIO $ Proc.readProcessWithExitCode "dmenu" [] $ unlines ss
+      when (code == ExitSuccess) $
+        runCommand' $ CFocus $ QRef (QROneSpace $ mkSpaceRef out) QRCurTile
 
 runKeyModeCommand :: (Set ModeRef -> Set ModeRef) -> X11State ()
 runKeyModeCommand f = do

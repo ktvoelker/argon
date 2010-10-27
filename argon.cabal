@@ -22,7 +22,9 @@ executable argon
     X11 >= 1.5,
     MaybeT,
     mtl,
-    unix >= 2.4
+    unix >= 2.4,
+    -- for CSpaceMenu
+    process
   hs-source-dirs: src
   main-is: Main.hs
   extensions:

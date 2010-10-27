@@ -328,6 +328,7 @@ commands = fromList
   , ("delete",       constCmd CDelete)
   , ("next_win",     constCmd CNextWin)
   , ("prev_win",     constCmd CPrevWin)
+  , ("space_menu",   constCmd CSpaceMenu)
   ]
 
 cmdMove, cmdFocus, cmdExec, cmdSeq

@@ -14,13 +14,6 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
-Implement a command that selects a space by running dmenu. This will be a
-short-term substitute for the much more involved socket interface.
-
-Replace the X11 error handler with one that just prints out a debug message
-and continues running.
-
-  Perhaps make the crashingness configurable in the Debug module.
 
 
 0.2.0 Release
@@ -65,6 +58,9 @@ backward history. The forward history is limited by the backward history.
 
 Refactoring
 -----------
+Get the specific command-handling logic out of the huge runCommand'
+function.
+
 Make the CDestroy and CKill commands accept tile queries.
 
 Create a single, uniform abstraction for getting the whole value, or a
@@ -118,6 +114,8 @@ Make a single module which abstracts over all X11 calls.
 
 Write up some conventions for the use of spacing, line breaks, delimeters,
 curly-brace syntax, and making things line up vertically.
+
+Look at the length of each module to see if any should be broken up.
 
 
 Low Priority Features
