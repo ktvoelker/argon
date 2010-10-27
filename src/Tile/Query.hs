@@ -50,7 +50,7 @@ eval (QRef sr tr) c wo = nonHists $ do
 eval QHistBack _ wo = evalHist histBack wo
 eval QHistFwd _ wo = evalHist histFwd wo
 eval (QDir dir) c wo =
-  nonHists $ maybeToList $ followDir c dir $ getFocusTile wo
+  nonHists $ maybeToList $ followDir c dir (getFocusTile wo) $ wHistory wo
 eval (QDisjunct tqs) c wo = tqs >>= \tq -> eval tq c wo
 eval (QDifference as bs) c wo =
   deleteFirstsBy (\a b -> fst a == fst b) as' bs'

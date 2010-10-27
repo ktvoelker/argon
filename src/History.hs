@@ -1,8 +1,13 @@
 
-module History (History, emptyHist, histBack, histFwd, histGo) where
+module History
+  (History, emptyHist, histBack, histFwd, histGo, findFirstBack
+  ) where
 
 import Fields
 import Types
+
+import Data.Maybe
+import qualified Data.Set as Set
 
 data History a =
   History
@@ -25,4 +30,7 @@ histFwd from h = case fwd h of
 
 histGo :: a -> History a -> History a
 histGo from h = h { fwd = [], back = from : back h }
+
+findFirstBack :: (Ord a) => Set a -> History a -> Maybe a
+findFirstBack set = listToMaybe . filter (flip Set.member set) . back
 

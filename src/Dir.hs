@@ -5,12 +5,14 @@ import Declare
 import Declare.Access
 import Debug
 import Fields
+import History
 import Layout
 import Maths.Unsafe
 import State
 import Types
 import X11
 
+import Control.Monad
 import Data.List (sortBy)
 import Data.Maybe
 import Graphics.X11
@@ -105,19 +107,29 @@ sharedEdge ld t a b = abs' $ max shareLen $ diff 0
     shareEnd   = min (ap +. as) (bp +. bs)
     shareLen   = shareEnd -. shareBegin
 
-followDir, followDirFromTile, followDirFromFloat
-  :: Config -> Dir -> TileRef -> Maybe TileRef
+followDir :: Config -> Dir -> TileRef -> History TileRef -> Maybe TileRef
 
-followDir c dir tr =
-  (if tileIsFloat tr then followDirFromFloat else followDirFromTile) c dir tr
+followDir c dir tr hist =
+  -- Go to the most-recently-focused tile in the given direction.
+  findFirstBack (fromList candidates) hist
+  -- Or, if no such tile exists...
+  `mplus`
+  -- Go to the tile that shares the longest border with the current one.
+  listToMaybe candidates
+  where
+    f = if tileIsFloat tr then followDirFromFloat else followDirFromTile
+    candidates = f c dir tr
+
+followDirFromTile, followDirFromFloat :: Config -> Dir -> TileRef -> [TileRef]
 
 followDirFromTile c dir tr =
-  -- Choose the bordering tile with the most shared edge, if any.
-  fmap snd
-  $ listToMaybe
+  -- Get rid of the shared border lengths.
+  map snd
   -- Sort the bordering tiles in descending order by their amounts
   -- of shared edge.
   $ sortBy (\a b -> compare (fst b) (fst a))
+  -- Remove tiles which have no shared edge.
+  $ filter ((> span 0) . fst)
   -- Pair each bordering tile with the length of its shared edge.
   $ map (\to -> (sharedEdge ld (laTable lay) from $ snd to, fst to))
   -- Pick out the bordering tiles.
@@ -131,5 +143,5 @@ followDirFromTile c dir tr =
     from  = laTiles lay ! tr
 
 -- TODO
-followDirFromFloat c dir tr = Nothing
+followDirFromFloat _ _ _ = []
 
