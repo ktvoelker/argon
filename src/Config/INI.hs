@@ -415,12 +415,7 @@ cmdSeq = f >=> return . CSeq
   where
     f []   = return []
     f args = do
-      liftIO $ do
-        putStrLn "cmdSeq loop"
-        print x
-        print xs
       x'  <- getCommand' x
-      liftIO $ print x'
       xs' <- f $ drop 1 xs  -- do not use ``tail'': xs may be empty
       return (x' : xs')
       where

@@ -40,7 +40,9 @@ runCommand cmd = do
 runCommand' cmd = do
   dprint cmd
   case cmd of
-    CQuit           -> quitState
+    CQuit           -> do
+      debug "QUITTING..."
+      quitState
     (CSeq xs)       -> mapM_ runCommand xs
     (CExec x)       -> exec x
     CNextWin        -> getFocusTileM >>= nextWin

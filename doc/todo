@@ -5,7 +5,6 @@ TODO
 
 High-Priority Bugs
 ------------------
-CQuit causes a hang.
 
 
 High-Priority Testing
@@ -14,6 +13,7 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
+Figure out how to change between normal and debug builds via cabal.
 
 
 0.2.0 Release
@@ -186,4 +186,8 @@ Figure out why Xnest segfaults when killing it after the WM has quit.
 
 Figure out why xev got an unending stream of zero keypresses.
   Perhaps this has something to do with Xnest?
+
+Figure out why Control-Mod4-Mod1-F12 causes a keymap change and, at least when
+bound to CQuit, seems to begin the process of quitting but hang before
+finishing.
 
