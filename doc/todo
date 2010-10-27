@@ -19,6 +19,7 @@ High-Priority Features
 -------------
 Do more system testing. (Keep using it.)
 Write comprehensive documentation.
+Write a list of interesting and unique features.
 Release on: Github
 Mention on: Bloggish
 Make a binary release as well. Make sure it runs on a system without Haskell.
