@@ -11,10 +11,20 @@ import Control.Monad.Trans
 import Graphics.X11
 
 debugEnabled :: Bool
-debugEnabled = True
+debugEnabled =
+#ifdef DEBUG
+  True
+#else
+  False
+#endif
 
 syncEnabled :: Bool
-syncEnabled = True
+syncEnabled =
+#ifdef DEBUG
+  True
+#else
+  False
+#endif
 
 debug, debug' :: (MonadIO m, MonadReader X11Env m) => String -> m ()
 
