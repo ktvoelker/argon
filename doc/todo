@@ -63,6 +63,9 @@ Medium Priority Bugs
 The window doesn't move or resize as fast as the mouse is moving in
 move/resize mode.
 
+The history will tend to grow forever. Set a limit on the length of the
+backward history. The forward history is limited by the backward history.
+
 
 Refactoring
 -----------
