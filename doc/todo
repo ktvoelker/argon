@@ -13,18 +13,15 @@ High-Priority Testing
 
 High-Priority Features
 ----------------------
-Figure out how to change between normal and debug builds via cabal.
 
 
 0.2.0 Release
 -------------
-Finish high-priority features.
-Do some system testing. (Put it into real use.)
+Do more system testing. (Keep using it.)
+Write comprehensive documentation.
 Release on: Github
 Mention on: Bloggish
-Make a release on Github which statically links the GHC RTS.
-Also include a binary with debug and sync enabled.
-  Request a debug log with each error report.
+Make a binary release as well. Make sure it runs on a system without Haskell.
 
 
 0.3.0 Release
