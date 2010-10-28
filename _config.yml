@@ -1,0 +1,4 @@
+
+exclude: Makefile
+markdown: maruku
+

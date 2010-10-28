@@ -1,0 +1,40 @@
+
+body {
+  padding-top: 1em;
+  padding-left: 1em;
+}
+
+a, a:visited, a:hover, a:active {
+  border: none;
+  text-decoration: none;
+}
+
+#logo {
+  float: right;
+  padding-top: 1em;
+  padding-right: 1em;
+  padding-bottom: 2em;
+  padding-left: 2em;
+}
+
+#logo img {
+  width: 1in;
+  height: 1in;
+}
+
+#content {
+  max-width: 800px;
+}
+
+li {
+  padding-top: 0.25em;
+}
+
+li:first-child {
+  padding-top: 0;
+}
+
+pre {
+  padding-left: 1em;
+}
+
