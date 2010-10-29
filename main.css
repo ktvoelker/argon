@@ -9,6 +9,7 @@ a, a:visited, a:hover, a:active {
   text-decoration: none;
 }
 
+/*
 #logo {
   float: right;
   padding-top: 1em;
@@ -21,8 +22,26 @@ a, a:visited, a:hover, a:active {
   width: 1in;
   height: 1in;
 }
+*/
+
+#logo {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  max-width: 10%;
+}
+
+#logo img {
+  width: 1in;
+  max-width: 100%;
+  height: auto;
+}
 
 #content {
+  max-width: 85%;
+}
+
+#content2 {
   max-width: 800px;
 }
 
