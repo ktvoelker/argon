@@ -38,3 +38,11 @@ pre {
   padding-left: 1em;
 }
 
+td, th {
+  padding-left: 1em;
+}
+
+td:first-child, th:first-child {
+  padding-left: 0;
+}
+
