@@ -52,7 +52,7 @@ A layout looks like this:
     tile1 = 1 0 1 2
     tile2 = 0 1 1 1
 
-The four integers which describe are tile are the column, row, column span,
+The four integers which describe a tile are the column, row, column span,
 and row span, respectively.
 
 ### Spaces ###
