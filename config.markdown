@@ -111,7 +111,51 @@ Wildcard | As a space | As a tile
 
 ### List of Commands ###
 
-TODO
+First, the syntax of the syntax:
+
+Metasyntax | Meaning
+-----------|-----------------
+`TQ`       | A tile query
+`(A B)`    | A sequence of arguments
+`[A B]`    | A sequence of optional arguments
+`{A B}`    | A set of Boolean flags which may be given in any order
+`A ...`    | A sequence of any number of `A` arguments
+
+And here are the actual commands:
+
+Syntax                        | Meaning
+------------------------------|---------------------------
+`move [TQ] TQ {broad deep}`   | Move windows (see below)
+`focus TQ`                    | Move the focus to the first query result
+`exec PROGRAM ARG ...`        | Execute a program with arguments
+`seq COMMAND (; COMMAND) ...` | Execute a sequence of commands
+`enable_keys KEYS ...`        | Enable some keybinding groups
+`disable_keys KEYS ...`       | Disable some keybinding groups
+`show_float`                  | Show the floating layer of the current space
+`hide_float`                  | Hide the floating layer of the current space
+`quit`                        | Quit Argon
+`kill`                        | Kill the client owning the focused window
+`delete`                      | Delete (close) the focused window
+`next_win`                    | Focus the next window in the same tile
+`prev_win`                    | Focus the previous window in the same tile
+`space_menu`                  | Display a menu of all spaces (see below)
+
+#### The `move` Command ####
+
+The `move` command moves windows. It is complex and powerful, but intended
+to be simple in the most common cases. For example, `move dir-right` moves
+the currently-focused window one tile to the right. Read on if you want a
+complete specification of the behavior of `move`.
+
+The default for the first tile query, which identifies the source, is `./.`
+(the current tile). The second tile query identifies the destination.
+
+If the `broad` flag is given, then windows are moved from all tiles selected
+by the first query. Otherwise, windows are only moved from the first tile
+thus selected.
+
+If the `deep` flag is given, then all windows in the selected tiles are moved.
+Otherwise, only the top window from each selected tile is moved.
 
 ## Keybindings ##
 
