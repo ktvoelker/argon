@@ -9,11 +9,6 @@ It was designed to do [what I want](principles.html).
 Feel free to [email me](mailto:ktvoelker@gmail.com) your thoughts or questions
 about Argon.
 
-## Table of Contents ##
-
-* Table of contents
-{:toc}
-
 # Features #
 
 * Reusable tile layouts
@@ -55,6 +50,10 @@ There are two options:
 * Run `cabal install`. Note that the directory to which `cabal` installs
   Argon may not be on your execution path.
 
+If you don't have [GHC](http://www.haskell.org/ghc/), the Haskell compiler,
+you may need to install [the GMP library](http://gmplib.org/). You almost
+certainly have all [the other dependencies](deps.html) already.
+
 # Configuration #
 
 You need a [configuration file](config.html) to run Argon. An example
@@ -75,7 +74,8 @@ be able to configure a "custom session" by editing the script
 [ask anyway](mailto:ktvoelker@gmail.com).
 
 How to use Argon itself depends almost entirely on your
-[configuration file](config.html).
+[configuration file](config.html), but there are a few
+[features](use.html) that are not exposed by the configuration.
 
 # Bugs #
 
