@@ -3,30 +3,6 @@ TODO
 ====
 
 
-High-Priority Bugs
-------------------
-Closing the Gimp causes a crash. This is probably the same bug in
-destroyWindowHandler that we haven't found a good fix for.
-
-
-High-Priority Testing
----------------------
-
-
-High-Priority Features
-----------------------
-
-
-0.2.0 Release
--------------
-Do more system testing. (Keep using it.)
-Write comprehensive documentation.
-Write a list of interesting and unique features.
-Release on: Github
-Mention on: Bloggish
-Make a binary release as well. Make sure it runs on a system without Haskell.
-
-
 0.3.0 Release
 -------------
 Avoid new features.
