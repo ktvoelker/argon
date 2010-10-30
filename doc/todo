@@ -5,6 +5,8 @@ TODO
 
 High-Priority Bugs
 ------------------
+Closing the Gimp causes a crash. This is probably the same bug in
+destroyWindowHandler that we haven't found a good fix for.
 
 
 High-Priority Testing
@@ -128,6 +130,12 @@ Make triggers more powerful by using tile queries.
   Create a separate, single config section for triggers. Since we are using
   queries to identify spaces, it would be silly to associate triggers with
   particular spaces.
+
+Change the enable_keys and disable_keys commands to enable and disable
+any mix of key groups, triggers, and attractions.
+
+  This eliminates the need for the "focus" option in attractions, so
+  eliminate it. It isn't used or documented, anyway.
 
 Check the Config at startup for incorrect references.
 
