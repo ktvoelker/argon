@@ -23,23 +23,23 @@ about Argon.
 
 # Download #
 
-I am going to be making a release very soon. I just have to finish this
-documentation and fix one known bug. In the meantime, you can clone the
-sources and check out the `0.2.0` branch. See below for instructions on
-cloning.
-
-<!--
 There are two options:
 
-* Get the pre-built [binary package](http://github.com/downloads/ktvoelker/argon/argon-0.2.0-binary.tar.bz2/qr_code).
-* Get the [source package](http://github.com/downloads/ktvoelker/argon/argon-0.2.0.tar.bz2/qr_code),
+* Get the pre-built binary package with
+[lzma](http://github.com/downloads/ktvoelker/argon/argon-0.2.0-binary.tar.xz)
+(916K)
+or
+[gzip](http://github.com/downloads/ktvoelker/argon/argon-0.2.0-binary.tar.gz)
+(1360K)
+compression
+* Get the
+[source package](http://github.com/downloads/ktvoelker/argon/argon-0.2.0.tar.gz) (40K),
 which can be built with [`cabal`](http://www.haskell.org/cabal/).
 
 Argon is licensed under the
 [GNU General Public License v3.0](http://www.gnu.org/licenses/gpl.html).
-The full text of the license is included in both download packages in the
+The full text of the license is included in all download packages in the
 file `LICENSE`.
--->
 
 # Installation #
 
