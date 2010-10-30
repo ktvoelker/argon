@@ -5,8 +5,6 @@ TODO
 
 High-Priority Bugs
 ------------------
-Closing the Gimp causes a crash. This is probably the same bug in
-destroyWindowHandler that we haven't found a good fix for.
 
 
 High-Priority Testing

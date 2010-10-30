@@ -73,7 +73,7 @@ destroyWindowHandler e = do
     -- It isn't necessary, and if the client is in the act of closing
     -- a bunch of windows, we might tinker with one that has already
     -- been destroyed.
-    updateX11Focus
+    updateX11FocusCarefully
   where
     win = ev_window e
 

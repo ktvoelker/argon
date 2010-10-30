@@ -125,6 +125,18 @@ getNonRootFocusWindow = do
     $ getTileWindows w
     $ getFocusTile w
 
+updateX11FocusCarefully :: X11State ()
+updateX11FocusCarefully = do
+  ok <- getFocusWindow >>= windowExists
+  when ok updateX11Focus
+
+windowExists :: Window -> X11State Bool
+windowExists win = do
+  disp <- getDisplay
+  root <- getRoot
+  (_, _, wins) <- liftIO $ queryTree disp root
+  return $ win `elem` wins
+
 updateX11Focus :: X11State ()
 updateX11Focus = do
   win <- getFocusWindow
