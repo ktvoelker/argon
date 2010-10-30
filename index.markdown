@@ -9,8 +9,24 @@ It was designed to do [what I want](principles.html).
 Feel free to [email me](mailto:ktvoelker@gmail.com) your thoughts or questions
 about Argon.
 
-Download
---------
+## Table of Contents ##
+
+* Table of contents
+{:toc}
+
+# Features #
+
+* Reusable tile layouts
+* A floating window layer above every tiled workspace that can be shown
+  and hidden on command
+* Powerful commands for changing the focus and moving windows
+* A history of recently-focused tiles
+* Pattern-matching on new windows to put them where you want them
+* Keybinding groups which can be enabled and disabled independently
+  of each other
+* User-defined event-handling hooks
+
+# Download #
 
 I am going to be making a release very soon. I just have to finish this
 documentation and fix one known bug. In the meantime, you can clone the
@@ -30,8 +46,7 @@ The full text of the license is included in both download packages in the
 file `LICENSE`.
 -->
 
-Installation
-------------
+# Installation #
 
 There are two options:
 
@@ -40,10 +55,7 @@ There are two options:
 * Run `cabal install`. Note that the directory to which `cabal` installs
   Argon may not be on your execution path.
 
-Then, use `argon` as your [window manager](wm-install.html).
-
-Use
----
+# Configuration #
 
 You need a [configuration file](config.html) to run Argon. An example
 configuration is included in both download packages at `src/argon.ini`. The
@@ -51,16 +63,28 @@ example was written for a 1920x1200 display and a Dvorak keyboard, so you may
 not find it directly useful, but it may help you understand how to write your
 own.
 
-Bugs
-----
+# Use #
+
+If you start X by running `startx`, then the script `$HOME/.xinitrc` is
+responsible for starting your window manager. But if you use `startx`, you
+probably already knew that.
+
+If you use a display manager to start X, like GDM, KDM, or XDM, then you may
+be able to configure a "custom session" by editing the script
+`$HOME/.xsession`. I'm not an expert at this, but if you're having trouble,
+[ask anyway](mailto:ktvoelker@gmail.com).
+
+How to use Argon itself depends almost entirely on your
+[configuration file](config.html).
+
+# Bugs #
 
 To report a bug, please [send me an email](mailto:ktvoelker@gmail.com).
 
 It would be helpful for you to include the [runtime log](debug.html) of Argon
 with your bug report.
 
-Development
------------
+# Development #
 
 You can clone the latest sources from
 [GitHub](http://github.com/ktvoelker/argon) by running:

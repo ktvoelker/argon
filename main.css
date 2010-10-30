@@ -4,25 +4,30 @@ body {
   padding-left: 1em;
 }
 
+#page-title {
+  font-size: xx-large;
+}
+
+h1 {
+  font-size: x-large;
+}
+
+h2 {
+  font-size: large;
+}
+
+h3 {
+  font-weight: bold;
+}
+
 a, a:visited, a:hover, a:active {
   border: none;
   text-decoration: none;
 }
 
-/*
-#logo {
-  float: right;
-  padding-top: 1em;
-  padding-right: 1em;
-  padding-bottom: 2em;
-  padding-left: 2em;
+.maruku_toc li {
+  list-style-type: disc;
 }
-
-#logo img {
-  width: 1in;
-  height: 1in;
-}
-*/
 
 #logo {
   position: fixed;
@@ -45,7 +50,7 @@ a, a:visited, a:hover, a:active {
   max-width: 800px;
 }
 
-li {
+li, li li:first-child {
   padding-top: 0.25em;
 }
 
