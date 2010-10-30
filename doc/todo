@@ -17,8 +17,4 @@ High-Priority Features
 
 0.2.0 Release
 -------------
-Make a binary package and make sure it can run on a system without Haskell.
-  Mention that it can in the documentation.
-Release on: Github
-Mention on: Bloggish
 
